@@ -85,6 +85,36 @@ export default function TasksPage() {
     }
   };
 
+  const deleteCategory = async (listId: string, listTitle: string) => {
+    if (!confirm(`Delete category "${listTitle}" and all its tasks? This cannot be undone.`)) return;
+    try {
+      const res = await fetch(`/api/tasklists/${listId}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete category");
+      refresh();
+    } catch {
+      setFormError("Couldn't delete that category. Try again.");
+    }
+  };
+
+  const deleteTaskItem = async (taskId: string, taskListId: string) => {
+    setPendingIds((prev) => new Set(prev).add(taskId));
+    try {
+      const res = await fetch(`/api/tasks/${taskId}?taskListId=${taskListId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete task");
+      refresh();
+    } catch {
+      setFormError("Couldn't delete that task. Try again.");
+    } finally {
+      setPendingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(taskId);
+        return next;
+      });
+    }
+  };
+
   if (sessionStatus === "unauthenticated") {
     return (
       <div className="max-w-3xl mx-auto px-6 py-10">
@@ -167,16 +197,25 @@ export default function TasksPage() {
             <div key={list.id} className="border border-rule">
               <div className="flex items-center justify-between px-4 py-2.5 border-b border-rule bg-paper-raised">
                 <h2 className="text-xs uppercase tracking-widest">{list.title}</h2>
-                <button
-                  onClick={() => {
-                    setAddingToList(isAdding ? null : list.id);
-                    setNewTaskTitle("");
-                  }}
-                  className="text-ink-soft hover:text-accent text-sm leading-none"
-                  aria-label="Add task"
-                >
-                  +
-                </button>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => {
+                      setAddingToList(isAdding ? null : list.id);
+                      setNewTaskTitle("");
+                    }}
+                    className="text-ink-soft hover:text-accent text-sm leading-none"
+                    aria-label="Add task"
+                  >
+                    +
+                  </button>
+                  <button
+                    onClick={() => deleteCategory(list.id, list.title)}
+                    className="text-ink-soft/50 hover:text-red-600 text-xs leading-none"
+                    aria-label="Delete category"
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
 
               {isAdding && (
@@ -206,7 +245,7 @@ export default function TasksPage() {
                   {listTasks.map((task) => {
                     const pending = pendingIds.has(task.id);
                     return (
-                      <li key={task.id} className="py-3 flex items-start gap-3">
+                      <li key={task.id} className="py-3 flex items-start gap-3 group">
                         <button
                           onClick={() => toggleTask(task.id, list.id, task.status)}
                           disabled={pending}
@@ -216,7 +255,7 @@ export default function TasksPage() {
                               : "border-ink-soft hover:border-ink"
                           } ${pending ? "opacity-40" : ""}`}
                         />
-                        <div>
+                        <div className="flex-1">
                           <p
                             className={`text-sm ${
                               task.status === "completed" ? "line-through text-ink-soft" : ""
@@ -230,6 +269,14 @@ export default function TasksPage() {
                             </p>
                           )}
                         </div>
+                        <button
+                          onClick={() => deleteTaskItem(task.id, list.id)}
+                          disabled={pending}
+                          className="text-ink-soft/40 hover:text-red-600 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                          aria-label="Delete task"
+                        >
+                          ✕
+                        </button>
                       </li>
                     );
                   })}

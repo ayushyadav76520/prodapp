@@ -23,7 +23,7 @@ export function NavBar() {
       <aside className="hidden md:flex md:flex-col md:w-60 md:shrink-0 md:border-r md:border-rule md:py-8 md:px-6">
         <div className="mb-10">
           <p className="font-serif text-3xl font-semibold tracking-tight text-ink lowercase">
-            conflict
+            conflict<span className="text-accent">-calendar</span>
           </p>
           <button
             onClick={toggle}

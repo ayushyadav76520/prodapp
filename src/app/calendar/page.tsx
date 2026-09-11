@@ -44,6 +44,7 @@ export default function CalendarPage() {
   const [endTime, setEndTime] = useState("");
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const groups = useMemo(() => {
     if (selectedDate) {
@@ -140,6 +141,23 @@ export default function CalendarPage() {
       setFormError(err instanceof Error ? err.message : "Failed to create event");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const deleteEventItem = async (eventId: string, calendarId?: string) => {
+    if (!confirm("Delete this event? This cannot be undone.")) return;
+    setDeletingId(eventId);
+    try {
+      const res = await fetch(
+        `/api/events/${eventId}?calendarId=${encodeURIComponent(calendarId ?? "primary")}`,
+        { method: "DELETE" }
+      );
+      if (!res.ok) throw new Error("Failed to delete event");
+      refresh();
+    } catch {
+      setFormError("Couldn't delete that event. Try again.");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -260,9 +278,9 @@ export default function CalendarPage() {
         </div>
       )}
 
-      {error && (
+      {(error || formError) && (
         <div className="border border-red-600/30 bg-red-600/5 p-4 text-sm text-red-700 dark:text-red-400">
-          {error}
+          {error ?? formError}
         </div>
       )}
 
@@ -285,12 +303,22 @@ export default function CalendarPage() {
               </h2>
               <ul className="divide-y divide-rule px-4">
                 {dayEvents.map((event) => (
-                  <li key={event.id} className="py-3 flex items-baseline justify-between gap-4">
+                  <li key={event.id} className="py-3 flex items-baseline justify-between gap-4 group">
                     <p className="font-medium text-sm">{event.summary || "(No title)"}</p>
-                    <p className="text-xs text-ink-soft whitespace-nowrap">
-                      {formatEventTime(event)}
-                      {event.recurringEventId && " · Recurring"}
-                    </p>
+                    <div className="flex items-center gap-3">
+                      <p className="text-xs text-ink-soft whitespace-nowrap">
+                        {formatEventTime(event)}
+                        {event.recurringEventId && " · Recurring"}
+                      </p>
+                      <button
+                        onClick={() => deleteEventItem(event.id, event.calendarId)}
+                        disabled={deletingId === event.id}
+                        className="text-ink-soft/40 hover:text-red-600 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                        aria-label="Delete event"
+                      >
+                        ✕
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>

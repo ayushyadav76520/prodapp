@@ -218,4 +218,31 @@ export async function deleteTask(
   }
 }
 
+export async function deleteTaskList(
+  accessToken: string,
+  taskListId: string
+): Promise<void> {
+  const res = await fetch(
+    `${TASKS_BASE}/users/@me/lists/${encodeURIComponent(taskListId)}`,
+    { method: "DELETE", headers: { Authorization: `Bearer ${accessToken}` } }
+  );
+  if (!res.ok && res.status !== 404) {
+    throw new GoogleApiError(await res.text(), res.status);
+  }
+}
+
+export async function deleteEvent(
+  accessToken: string,
+  calendarId: string,
+  eventId: string
+): Promise<void> {
+  const res = await fetch(
+    `${CALENDAR_BASE}/calendars/${encodeURIComponent(calendarId)}/events/${encodeURIComponent(eventId)}`,
+    { method: "DELETE", headers: { Authorization: `Bearer ${accessToken}` } }
+  );
+  if (!res.ok && res.status !== 404 && res.status !== 410) {
+    throw new GoogleApiError(await res.text(), res.status);
+  }
+}
+
 export { GoogleApiError };

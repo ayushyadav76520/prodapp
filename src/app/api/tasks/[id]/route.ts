@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { patchTask, GoogleApiError } from "@/lib/google-api";
+import { patchTask, deleteTask, GoogleApiError } from "@/lib/google-api";
 
 export async function PATCH(
   req: NextRequest,
@@ -27,5 +27,32 @@ export async function PATCH(
     }
     console.error(err);
     return NextResponse.json({ error: "Failed to update task" }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await auth();
+  if (!session?.accessToken) {
+    return NextResponse.json({ error: "Not signed in" }, { status: 401 });
+  }
+
+  const { id } = await params;
+  const taskListId = req.nextUrl.searchParams.get("taskListId");
+  if (!taskListId) {
+    return NextResponse.json({ error: "Missing taskListId" }, { status: 400 });
+  }
+
+  try {
+    await deleteTask(session.accessToken, taskListId, id);
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    if (err instanceof GoogleApiError) {
+      return NextResponse.json({ error: err.message }, { status: err.status });
+    }
+    console.error(err);
+    return NextResponse.json({ error: "Failed to delete task" }, { status: 500 });
   }
 }

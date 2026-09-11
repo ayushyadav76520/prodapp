@@ -18,7 +18,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "conflict",
+  title: "conflict-calendar",
   description: "Calendar, Tasks & Skills, synced with Google",
   manifest: "/manifest.json",
 };
