@@ -40,7 +40,8 @@ export default function CalendarPage() {
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -101,22 +102,38 @@ export default function CalendarPage() {
     setSaving(true);
     setFormError(null);
     try {
-      const startDateTime = time ? `${date}T${time}:00` : date;
+      const allDay = !startTime;
+      const startDateTime = startTime ? `${date}T${startTime}:00` : date;
+      // Default end time: start + 1 hour if no end time given.
+      let endDateTime = startDateTime;
+      if (startTime) {
+        if (endTime) {
+          endDateTime = `${date}T${endTime}:00`;
+        } else {
+          const [h, m] = startTime.split(":").map(Number);
+          const endH = (h + 1) % 24;
+          endDateTime = `${date}T${String(endH).padStart(2, "0")}:${String(m).padStart(2, "0")}:00`;
+        }
+      }
+      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
       const res = await fetch("/api/events", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           summary: title.trim(),
           startDateTime,
-          endDateTime: startDateTime,
-          allDay: !time,
+          endDateTime,
+          allDay,
+          timeZone,
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Failed to create event");
       setTitle("");
       setDate("");
-      setTime("");
+      setStartTime("");
+      setEndTime("");
       setShowForm(false);
       refresh();
     } catch (err) {
@@ -199,20 +216,39 @@ export default function CalendarPage() {
             placeholder="Event title"
             className="w-full border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
           />
-          <div className="flex gap-3">
+          <div>
+            <label className="text-[10px] uppercase tracking-widest text-ink-soft">Date</label>
             <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
+              className="mt-1 w-full border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
             />
-            <input
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              placeholder="All day if empty"
-              className="border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
-            />
+          </div>
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <label className="text-[10px] uppercase tracking-widest text-ink-soft">
+                Start time (blank = all day)
+              </label>
+              <input
+                type="time"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+                className="mt-1 w-full border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="text-[10px] uppercase tracking-widest text-ink-soft">
+                End time
+              </label>
+              <input
+                type="time"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+                disabled={!startTime}
+                className="mt-1 w-full border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-accent disabled:opacity-40"
+              />
+            </div>
           </div>
           <button
             onClick={addEvent}
@@ -243,11 +279,11 @@ export default function CalendarPage() {
           )}
 
           {groups.map(({ date, events: dayEvents }) => (
-            <section key={date.toDateString()}>
-              <h2 className="text-xs uppercase tracking-widest text-ink-soft mb-2 border-b border-rule pb-1">
+            <section key={date.toDateString()} className="border border-rule">
+              <h2 className="text-xs uppercase tracking-widest text-ink-soft px-4 py-2.5 border-b border-rule bg-paper-raised">
                 {dateHeading(date)}
               </h2>
-              <ul className="divide-y divide-rule">
+              <ul className="divide-y divide-rule px-4">
                 {dayEvents.map((event) => (
                   <li key={event.id} className="py-3 flex items-baseline justify-between gap-4">
                     <p className="font-medium text-sm">{event.summary || "(No title)"}</p>

@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { summary, startDateTime, endDateTime, allDay } = body;
+  const { summary, startDateTime, endDateTime, allDay, timeZone } = body;
 
   if (!summary || !startDateTime) {
     return NextResponse.json({ error: "Missing title or start time" }, { status: 400 });
@@ -87,8 +87,8 @@ export async function POST(req: NextRequest) {
         }
       : {
           summary,
-          start: { dateTime: startDateTime },
-          end: { dateTime: endDateTime ?? startDateTime },
+          start: { dateTime: startDateTime, timeZone: timeZone || "UTC" },
+          end: { dateTime: endDateTime ?? startDateTime, timeZone: timeZone || "UTC" },
         };
 
     const created = await insertEvent(session.accessToken, "primary", event);

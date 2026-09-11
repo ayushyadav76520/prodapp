@@ -8,36 +8,56 @@ import { SyncStatus } from "@/components/SyncStatus";
 export default function TasksPage() {
   const { status: sessionStatus } = useSession();
   const { tasks, taskLists, syncState, error, refresh } = useTasksData();
-  const [showForm, setShowForm] = useState(false);
-  const [title, setTitle] = useState("");
-  const [due, setDue] = useState("");
+  const [addingToList, setAddingToList] = useState<string | null>(null);
+  const [newTaskTitle, setNewTaskTitle] = useState("");
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [pendingIds, setPendingIds] = useState<Set<string>>(new Set());
+  const [showCategoryForm, setShowCategoryForm] = useState(false);
+  const [categoryName, setCategoryName] = useState("");
+  const [savingCategory, setSavingCategory] = useState(false);
 
-  const addTask = async () => {
-    if (!title.trim() || saving) return;
+  const addTask = async (taskListId: string) => {
+    if (!newTaskTitle.trim() || saving) return;
     setSaving(true);
     setFormError(null);
     try {
       const res = await fetch("/api/tasks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: title.trim(),
-          due: due ? `${due}T00:00:00.000Z` : undefined,
-        }),
+        body: JSON.stringify({ title: newTaskTitle.trim(), taskListId }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Failed to create task");
-      setTitle("");
-      setDue("");
-      setShowForm(false);
+      setNewTaskTitle("");
+      setAddingToList(null);
       refresh();
     } catch (err) {
       setFormError(err instanceof Error ? err.message : "Failed to create task");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const addCategory = async () => {
+    if (!categoryName.trim() || savingCategory) return;
+    setSavingCategory(true);
+    setFormError(null);
+    try {
+      const res = await fetch("/api/tasklists", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: categoryName.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed to create category");
+      setCategoryName("");
+      setShowCategoryForm(false);
+      refresh();
+    } catch (err) {
+      setFormError(err instanceof Error ? err.message : "Failed to create category");
+    } finally {
+      setSavingCategory(false);
     }
   };
 
@@ -85,7 +105,7 @@ export default function TasksPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-10 space-y-6">
+    <div className="max-w-6xl mx-auto px-6 py-10 space-y-6">
       <header className="flex items-start justify-between border-b border-rule pb-4">
         <div>
           <p className="text-[11px] uppercase tracking-[0.2em] text-accent font-medium mb-1">
@@ -98,97 +118,127 @@ export default function TasksPage() {
 
       <div className="flex justify-end">
         <button
-          onClick={() => setShowForm((v) => !v)}
+          onClick={() => setShowCategoryForm((v) => !v)}
           className="text-xs uppercase tracking-widest border border-rule px-3 py-1.5 hover:border-ink transition-colors"
         >
-          {showForm ? "Cancel" : "+ Add Task"}
+          {showCategoryForm ? "Cancel" : "+ New Category"}
         </button>
       </div>
 
-      {showForm && (
-        <div className="border border-rule p-5 space-y-3 bg-paper-raised">
-          {formError && <p className="text-sm text-red-700 dark:text-red-400">{formError}</p>}
+      {showCategoryForm && (
+        <div className="border border-rule p-4 bg-paper-raised flex gap-3 items-center">
           <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Task title"
-            className="w-full border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
-          />
-          <input
-            type="date"
-            value={due}
-            onChange={(e) => setDue(e.target.value)}
-            className="border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
+            value={categoryName}
+            onChange={(e) => setCategoryName(e.target.value)}
+            placeholder="Category name, e.g. Work, Personal"
+            className="flex-1 border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
           />
           <button
-            onClick={addTask}
-            disabled={!title.trim() || saving}
-            className="bg-ink text-paper text-sm font-medium px-4 py-2 hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            onClick={addCategory}
+            disabled={!categoryName.trim() || savingCategory}
+            className="bg-ink text-paper text-sm font-medium px-4 py-2 hover:bg-accent disabled:opacity-40 whitespace-nowrap"
           >
-            {saving ? "Adding…" : "Add to Google Tasks"}
+            {savingCategory ? "Creating…" : "Create"}
           </button>
         </div>
       )}
 
-      {error && (
+      {(error || formError) && (
         <div className="border border-red-600/30 bg-red-600/5 p-4 text-sm text-red-700 dark:text-red-400">
-          {error}
+          {error ?? formError}
         </div>
       )}
 
-      {syncState === "syncing" && tasks.length === 0 && (
+      {syncState === "syncing" && taskLists.length === 0 && (
         <p className="text-sm text-ink-soft">Loading your tasks…</p>
       )}
 
-      {!error && syncState !== "syncing" && tasks.length === 0 && (
+      {syncState !== "syncing" && taskLists.length === 0 && (
         <div className="border border-dashed border-rule p-10 text-center text-sm text-ink-soft">
-          No tasks found in your Google Tasks lists.
+          No task categories found.
         </div>
       )}
 
-      {taskLists.map((list) => {
-        const listTasks = tasks.filter((t) => t.taskListId === list.id);
-        if (listTasks.length === 0) return null;
-        return (
-          <div key={list.id}>
-            <h2 className="text-xs uppercase tracking-widest text-ink-soft mb-2 border-b border-rule pb-1">
-              {list.title}
-            </h2>
-            <ul className="divide-y divide-rule">
-              {listTasks.map((task) => {
-                const pending = pendingIds.has(task.id);
-                return (
-                  <li key={task.id} className="py-3 flex items-start gap-3">
-                    <button
-                      onClick={() => toggleTask(task.id, list.id, task.status)}
-                      disabled={pending}
-                      className={`mt-0.5 w-4 h-4 border shrink-0 transition-colors ${
-                        task.status === "completed"
-                          ? "bg-ink border-ink"
-                          : "border-ink-soft hover:border-ink"
-                      } ${pending ? "opacity-40" : ""}`}
-                    />
-                    <div>
-                      <p
-                        className={`text-sm ${
-                          task.status === "completed" ? "line-through text-ink-soft" : ""
-                        }`}
-                      >
-                        {task.title || "(Untitled task)"}
-                      </p>
-                      {task.due && (
-                        <p className="text-xs text-ink-soft mt-0.5">
-                          Due {new Date(task.due).toLocaleDateString()}
-                        </p>
-                      )}
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        );
-      })}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
+        {taskLists.map((list) => {
+          const listTasks = tasks.filter((t) => t.taskListId === list.id);
+          const isAdding = addingToList === list.id;
+          return (
+            <div key={list.id} className="border border-rule">
+              <div className="flex items-center justify-between px-4 py-2.5 border-b border-rule bg-paper-raised">
+                <h2 className="text-xs uppercase tracking-widest">{list.title}</h2>
+                <button
+                  onClick={() => {
+                    setAddingToList(isAdding ? null : list.id);
+                    setNewTaskTitle("");
+                  }}
+                  className="text-ink-soft hover:text-accent text-sm leading-none"
+                  aria-label="Add task"
+                >
+                  +
+                </button>
+              </div>
+
+              {isAdding && (
+                <div className="p-3 border-b border-rule flex gap-2">
+                  <input
+                    autoFocus
+                    value={newTaskTitle}
+                    onChange={(e) => setNewTaskTitle(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && addTask(list.id)}
+                    placeholder="Task title"
+                    className="flex-1 border border-rule bg-transparent px-2.5 py-1.5 text-sm outline-none focus:border-accent"
+                  />
+                  <button
+                    onClick={() => addTask(list.id)}
+                    disabled={!newTaskTitle.trim() || saving}
+                    className="text-xs uppercase tracking-widest bg-ink text-paper px-3 disabled:opacity-40"
+                  >
+                    Add
+                  </button>
+                </div>
+              )}
+
+              {listTasks.length === 0 ? (
+                <p className="text-xs text-ink-soft px-4 py-6 text-center">No tasks yet.</p>
+              ) : (
+                <ul className="divide-y divide-rule px-4">
+                  {listTasks.map((task) => {
+                    const pending = pendingIds.has(task.id);
+                    return (
+                      <li key={task.id} className="py-3 flex items-start gap-3">
+                        <button
+                          onClick={() => toggleTask(task.id, list.id, task.status)}
+                          disabled={pending}
+                          className={`mt-0.5 w-4 h-4 border shrink-0 transition-colors ${
+                            task.status === "completed"
+                              ? "bg-ink border-ink"
+                              : "border-ink-soft hover:border-ink"
+                          } ${pending ? "opacity-40" : ""}`}
+                        />
+                        <div>
+                          <p
+                            className={`text-sm ${
+                              task.status === "completed" ? "line-through text-ink-soft" : ""
+                            }`}
+                          >
+                            {task.title || "(Untitled task)"}
+                          </p>
+                          {task.due && (
+                            <p className="text-xs text-ink-soft mt-0.5">
+                              Due {new Date(task.due).toLocaleDateString()}
+                            </p>
+                          )}
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
