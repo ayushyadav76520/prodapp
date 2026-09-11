@@ -8,22 +8,6 @@ export interface SkillChallenge {
   completedDates: string[]; // array of "YYYY-MM-DD" strings the user checked in
 }
 
-const STORAGE_KEY = "skill-challenges";
-
-export function loadSkills(): SkillChallenge[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-export function saveSkills(skills: SkillChallenge[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(skills));
-}
-
 function todayKey(): string {
   return new Date().toISOString().slice(0, 10);
 }

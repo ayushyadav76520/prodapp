@@ -57,8 +57,21 @@ export default function CalendarPage() {
       )
       .sort((a, b) => a.date.getTime() - b.date.getTime());
 
+    // Some Google accounts have the same holiday/festival calendar
+    // subscribed more than once, which causes the same event to appear
+    // in multiple calendars. Dedupe by title + exact start time so each
+    // real event still shows once, without hiding genuinely distinct
+    // events that happen to share a title.
+    const seen = new Set<string>();
+    const deduped = withDates.filter(({ event, date }) => {
+      const key = `${event.summary ?? ""}|${date.toISOString()}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
     const byDay = new Map<string, { date: Date; events: GoogleEvent[] }>();
-    for (const { event, date } of withDates) {
+    for (const { event, date } of deduped) {
       const key = date.toDateString();
       if (!byDay.has(key)) byDay.set(key, { date, events: [] });
       byDay.get(key)!.events.push(event);

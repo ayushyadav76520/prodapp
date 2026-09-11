@@ -124,4 +124,78 @@ export async function listTasks(
   return (data.items ?? []).map((t) => ({ ...t, taskListId }));
 }
 
+export async function createTaskList(
+  accessToken: string,
+  title: string
+): Promise<GoogleTaskList> {
+  const res = await fetch(`${TASKS_BASE}/users/@me/lists`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ title }),
+  });
+  if (!res.ok) throw new GoogleApiError(await res.text(), res.status);
+  return res.json();
+}
+
+export async function insertTask(
+  accessToken: string,
+  taskListId: string,
+  task: Partial<GoogleTask>
+): Promise<GoogleTask> {
+  const res = await fetch(
+    `${TASKS_BASE}/lists/${encodeURIComponent(taskListId)}/tasks`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(task),
+    }
+  );
+  if (!res.ok) throw new GoogleApiError(await res.text(), res.status);
+  return res.json();
+}
+
+export async function patchTask(
+  accessToken: string,
+  taskListId: string,
+  taskId: string,
+  patch: Partial<GoogleTask>
+): Promise<GoogleTask> {
+  const res = await fetch(
+    `${TASKS_BASE}/lists/${encodeURIComponent(taskListId)}/tasks/${encodeURIComponent(taskId)}`,
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(patch),
+    }
+  );
+  if (!res.ok) throw new GoogleApiError(await res.text(), res.status);
+  return res.json();
+}
+
+export async function deleteTask(
+  accessToken: string,
+  taskListId: string,
+  taskId: string
+): Promise<void> {
+  const res = await fetch(
+    `${TASKS_BASE}/lists/${encodeURIComponent(taskListId)}/tasks/${encodeURIComponent(taskId)}`,
+    {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${accessToken}` },
+    }
+  );
+  if (!res.ok && res.status !== 404) {
+    throw new GoogleApiError(await res.text(), res.status);
+  }
+}
+
 export { GoogleApiError };

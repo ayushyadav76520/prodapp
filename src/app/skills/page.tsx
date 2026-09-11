@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useSession, signIn } from "next-auth/react";
 import {
   SkillChallenge,
-  loadSkills,
-  saveSkills,
   daysElapsed,
   daysRemaining,
   progressPercent,
@@ -12,49 +11,115 @@ import {
   isCheckedInToday,
   toggleTodayCheckIn,
 } from "@/lib/skills";
+import { SyncStatus } from "@/components/SyncStatus";
 
 const DURATIONS: (30 | 60 | 90)[] = [30, 60, 90];
 
 export default function SkillsPage() {
+  const { status: sessionStatus } = useSession();
   const [skills, setSkills] = useState<SkillChallenge[]>([]);
+  const [syncState, setSyncState] = useState<"idle" | "syncing" | "error">("idle");
+  const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
   const [duration, setDuration] = useState<30 | 60 | 90>(30);
-  const [loaded, setLoaded] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const refresh = useCallback(async () => {
+    if (sessionStatus !== "authenticated") return;
+    setSyncState("syncing");
+    setError(null);
+    try {
+      const res = await fetch("/api/skills");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed to load skills");
+      setSkills(data.skills ?? []);
+      setSyncState("idle");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unknown sync error");
+      setSyncState("error");
+    }
+  }, [sessionStatus]);
 
   useEffect(() => {
-    setSkills(loadSkills());
-    setLoaded(true);
-  }, []);
+    refresh();
+  }, [refresh]);
 
-  useEffect(() => {
-    if (loaded) saveSkills(skills);
-  }, [skills, loaded]);
-
-  const addSkill = () => {
-    if (!name.trim()) return;
-    const newSkill: SkillChallenge = {
-      id: crypto.randomUUID(),
-      name: name.trim(),
-      durationDays: duration,
-      startDate: new Date().toISOString(),
-      completedDates: [],
-    };
-    setSkills((prev) => [newSkill, ...prev]);
-    setName("");
-    setDuration(30);
-    setShowForm(false);
+  const addSkill = async () => {
+    if (!name.trim() || saving) return;
+    setSaving(true);
+    try {
+      const res = await fetch("/api/skills", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: name.trim(), durationDays: duration }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed to create skill");
+      setSkills((prev) => [data.skill, ...prev]);
+      setName("");
+      setDuration(30);
+      setShowForm(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create skill");
+      setSyncState("error");
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const removeSkill = (id: string) => {
-    setSkills((prev) => prev.filter((s) => s.id !== id));
+  const removeSkill = async (id: string) => {
+    const prev = skills;
+    setSkills((cur) => cur.filter((s) => s.id !== id));
+    try {
+      const res = await fetch(`/api/skills/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete");
+    } catch {
+      setSkills(prev); // revert on failure
+      setError("Couldn't delete that skill. Try again.");
+      setSyncState("error");
+    }
   };
 
-  const checkIn = (id: string) => {
-    setSkills((prev) =>
-      prev.map((s) => (s.id === id ? toggleTodayCheckIn(s) : s))
+  const checkIn = async (skill: SkillChallenge) => {
+    const updated = toggleTodayCheckIn(skill);
+    setSkills((cur) => cur.map((s) => (s.id === skill.id ? updated : s)));
+    try {
+      const res = await fetch(`/api/skills/${skill.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          durationDays: updated.durationDays,
+          startDate: updated.startDate,
+          completedDates: updated.completedDates,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to update");
+    } catch {
+      setSkills((cur) => cur.map((s) => (s.id === skill.id ? skill : s))); // revert
+      setError("Couldn't save check-in. Try again.");
+      setSyncState("error");
+    }
+  };
+
+  if (sessionStatus === "unauthenticated") {
+    return (
+      <div className="p-6 max-w-3xl mx-auto">
+        <h1 className="text-2xl font-semibold mb-4">Learn a Skill</h1>
+        <div className="rounded-2xl border border-black/10 dark:border-white/10 p-8 text-center">
+          <p className="text-sm text-black/60 dark:text-white/60 mb-4">
+            Sign in to track skill challenges that sync across all your devices.
+          </p>
+          <button
+            onClick={() => signIn("google")}
+            className="rounded-full bg-violet-600 text-white text-sm font-medium px-4 py-2 hover:bg-violet-700 transition-colors"
+          >
+            Connect Google Account
+          </button>
+        </div>
+      </div>
     );
-  };
+  }
 
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-5">
@@ -62,16 +127,25 @@ export default function SkillsPage() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Learn a Skill</h1>
           <p className="text-sm text-black/50 dark:text-white/50 mt-0.5">
-            30, 60 or 90 day challenges, tracked with daily streaks.
+            30, 60 or 90 day challenges — synced to your Google account.
           </p>
         </div>
-        <button
-          onClick={() => setShowForm((v) => !v)}
-          className="rounded-full bg-violet-600 text-white text-sm font-medium px-4 py-2 hover:bg-violet-700 transition-colors"
-        >
-          {showForm ? "Cancel" : "+ New Challenge"}
-        </button>
+        <div className="flex items-center gap-3">
+          <SyncStatus state={syncState} onRetry={refresh} />
+          <button
+            onClick={() => setShowForm((v) => !v)}
+            className="rounded-full bg-violet-600 text-white text-sm font-medium px-4 py-2 hover:bg-violet-700 transition-colors"
+          >
+            {showForm ? "Cancel" : "+ New Challenge"}
+          </button>
+        </div>
       </header>
+
+      {error && (
+        <div className="rounded-2xl border border-red-500/30 bg-red-500/5 p-4 text-sm text-red-600 dark:text-red-400">
+          {error}
+        </div>
+      )}
 
       {showForm && (
         <div className="rounded-2xl border border-black/10 dark:border-white/10 p-5 space-y-4">
@@ -108,15 +182,19 @@ export default function SkillsPage() {
           </div>
           <button
             onClick={addSkill}
-            disabled={!name.trim()}
+            disabled={!name.trim() || saving}
             className="rounded-full bg-violet-600 text-white text-sm font-medium px-4 py-2 hover:bg-violet-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
-            Start Challenge
+            {saving ? "Starting…" : "Start Challenge"}
           </button>
         </div>
       )}
 
-      {loaded && skills.length === 0 && !showForm && (
+      {syncState === "syncing" && skills.length === 0 && (
+        <p className="text-sm text-black/50 dark:text-white/50">Loading your skills…</p>
+      )}
+
+      {syncState !== "syncing" && skills.length === 0 && !showForm && (
         <div className="rounded-2xl border border-dashed border-black/15 dark:border-white/15 p-10 text-center text-sm text-black/50 dark:text-white/50">
           No active skill challenges yet. Start one above.
         </div>
@@ -164,7 +242,7 @@ export default function SkillsPage() {
                   </span>
                 </div>
                 <button
-                  onClick={() => checkIn(skill.id)}
+                  onClick={() => checkIn(skill)}
                   className={`rounded-full text-sm font-medium px-4 py-1.5 transition-colors ${
                     checkedToday
                       ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
