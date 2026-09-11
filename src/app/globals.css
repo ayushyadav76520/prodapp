@@ -3,26 +3,37 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Warm paper palette, light mode */
+  --paper: #f4f1ea;
+  --paper-raised: #fbf9f4;
+  --ink: #211d16;
+  --ink-soft: #6b6355;
+  --rule: rgba(33, 29, 22, 0.12);
+  --accent: #b5502f;
+}
+
+.dark {
+  /* Warm ink palette, dark mode — not pure black, keeps the editorial feel */
+  --paper: #17140f;
+  --paper-raised: #1e1a13;
+  --ink: #ece7d9;
+  --ink-soft: #a89e8a;
+  --rule: rgba(236, 231, 217, 0.12);
+  --accent: #e08a5f;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-rule: var(--rule);
+  --color-accent: var(--accent);
+  --font-serif: var(--font-source-serif);
+  --font-sans: var(--font-inter);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
 }

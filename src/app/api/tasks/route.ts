@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { listTaskLists, listTasks, GoogleApiError } from "@/lib/google-api";
+import { listTaskLists, listTasks, insertTask, GoogleApiError } from "@/lib/google-api";
 
 export async function GET() {
   const session = await auth();
@@ -43,5 +43,44 @@ export async function GET() {
       { error: "Failed to fetch tasks" },
       { status: 500 }
     );
+  }
+}
+
+// Creates a new task. Defaults to the user's first (default) Google Tasks
+// list unless a taskListId is specified — writes go straight to Google.
+export async function POST(req: NextRequest) {
+  const session = await auth();
+
+  if (!session?.accessToken) {
+    return NextResponse.json({ error: "Not signed in" }, { status: 401 });
+  }
+
+  const { title, due, taskListId } = await req.json();
+  if (!title) {
+    return NextResponse.json({ error: "Missing task title" }, { status: 400 });
+  }
+
+  try {
+    let listId = taskListId;
+    if (!listId) {
+      const lists = await listTaskLists(session.accessToken);
+      listId = lists[0]?.id;
+      if (!listId) {
+        return NextResponse.json({ error: "No task list found" }, { status: 400 });
+      }
+    }
+
+    const created = await insertTask(session.accessToken, listId, {
+      title,
+      ...(due ? { due } : {}),
+    });
+
+    return NextResponse.json({ task: { ...created, taskListId: listId } });
+  } catch (err) {
+    if (err instanceof GoogleApiError) {
+      return NextResponse.json({ error: err.message }, { status: err.status });
+    }
+    console.error(err);
+    return NextResponse.json({ error: "Failed to create task" }, { status: 500 });
   }
 }

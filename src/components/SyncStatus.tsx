@@ -10,17 +10,17 @@ export function SyncStatus({
   onRetry?: () => void;
 }) {
   const config = {
-    idle: { color: "bg-emerald-500", label: "Synced" },
+    idle: { color: "bg-emerald-600", label: "Synced" },
     syncing: { color: "bg-amber-500 animate-pulse", label: "Syncing…" },
-    error: { color: "bg-red-500", label: "Sync error — tap to retry" },
+    error: { color: "bg-red-600", label: "Sync error — retry" },
   }[state];
 
   return (
     <button
       onClick={state === "error" ? onRetry : undefined}
-      className="flex items-center gap-2 text-xs font-medium text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white"
+      className="flex items-center gap-2 text-[11px] uppercase tracking-widest text-ink-soft hover:text-ink transition-colors"
     >
-      <span className={`w-2 h-2 rounded-full ${config.color}`} />
+      <span className={`w-1.5 h-1.5 rounded-full ${config.color}`} />
       {config.label}
     </button>
   );

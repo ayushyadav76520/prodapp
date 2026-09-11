@@ -124,6 +124,26 @@ export async function listTasks(
   return (data.items ?? []).map((t) => ({ ...t, taskListId }));
 }
 
+export async function insertEvent(
+  accessToken: string,
+  calendarId: string,
+  event: { summary: string; start: { dateTime?: string; date?: string }; end: { dateTime?: string; date?: string } }
+): Promise<GoogleEvent> {
+  const res = await fetch(
+    `${CALENDAR_BASE}/calendars/${encodeURIComponent(calendarId)}/events`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(event),
+    }
+  );
+  if (!res.ok) throw new GoogleApiError(await res.text(), res.status);
+  return res.json();
+}
+
 export async function createTaskList(
   accessToken: string,
   title: string

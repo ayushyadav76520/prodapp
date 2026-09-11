@@ -5,12 +5,12 @@ import { usePathname } from "next/navigation";
 import { useTheme } from "./ThemeProvider";
 
 const NAV_ITEMS = [
-  { href: "/", label: "Home", icon: "🏠" },
-  { href: "/calendar", label: "Calendar", icon: "📅" },
-  { href: "/tasks", label: "Tasks", icon: "✅" },
-  { href: "/skills", label: "Skills", icon: "🎯" },
-  { href: "/widgets", label: "Widgets", icon: "🧩" },
-  { href: "/settings", label: "Settings", icon: "⚙️" },
+  { href: "/", label: "Home" },
+  { href: "/calendar", label: "Calendar" },
+  { href: "/tasks", label: "Tasks" },
+  { href: "/skills", label: "Skills" },
+  { href: "/widgets", label: "Widgets" },
+  { href: "/settings", label: "Settings" },
 ];
 
 export function NavBar() {
@@ -19,39 +19,42 @@ export function NavBar() {
 
   return (
     <>
-      {/* Desktop side rail */}
-      <aside className="hidden md:flex md:flex-col md:w-56 md:shrink-0 md:border-r md:border-black/10 dark:md:border-white/10 md:py-6 md:px-3 md:gap-1">
-        <div className="px-3 pb-4 flex items-center justify-between">
-          <span className="text-lg font-semibold tracking-tight">Productivity</span>
+      {/* Desktop masthead sidebar */}
+      <aside className="hidden md:flex md:flex-col md:w-60 md:shrink-0 md:border-r md:border-rule md:py-8 md:px-6">
+        <div className="mb-10">
+          <p className="font-serif text-3xl font-semibold tracking-tight text-ink lowercase">
+            conflict
+          </p>
           <button
             onClick={toggle}
             aria-label="Toggle theme"
-            className="text-sm rounded-full w-8 h-8 flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/10"
+            className="mt-3 text-xs uppercase tracking-widest text-ink-soft hover:text-accent transition-colors"
           >
-            {theme === "light" ? "🌙" : "☀️"}
+            {theme === "light" ? "☾ Dark mode" : "☀ Light mode"}
           </button>
         </div>
-        {NAV_ITEMS.map((item) => {
-          const active = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-full text-sm font-medium transition-colors ${
-                active
-                  ? "bg-violet-100 text-violet-900 dark:bg-violet-500/20 dark:text-violet-200"
-                  : "text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10"
-              }`}
-            >
-              <span>{item.icon}</span>
-              {item.label}
-            </Link>
-          );
-        })}
+        <nav className="flex flex-col gap-1">
+          {NAV_ITEMS.map((item) => {
+            const active = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`text-sm uppercase tracking-widest py-2 border-l-2 pl-3 transition-colors ${
+                  active
+                    ? "border-accent text-ink font-medium"
+                    : "border-transparent text-ink-soft hover:text-ink hover:border-rule"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
       </aside>
 
       {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-20 border-t border-black/10 dark:border-white/10 bg-white/90 dark:bg-neutral-950/90 backdrop-blur">
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-20 border-t border-rule bg-paper-raised/95 backdrop-blur">
         <ul className="flex justify-between px-1">
           {NAV_ITEMS.map((item) => {
             const active = pathname === item.href;
@@ -59,13 +62,10 @@ export function NavBar() {
               <li key={item.href} className="flex-1">
                 <Link
                   href={item.href}
-                  className={`flex flex-col items-center gap-0.5 py-2 text-[11px] font-medium ${
-                    active
-                      ? "text-violet-600 dark:text-violet-300"
-                      : "text-black/50 dark:text-white/50"
+                  className={`flex flex-col items-center gap-0.5 py-2.5 text-[10px] uppercase tracking-wide font-medium ${
+                    active ? "text-accent" : "text-ink-soft"
                   }`}
                 >
-                  <span className="text-lg leading-none">{item.icon}</span>
                   {item.label}
                 </Link>
               </li>

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { listCalendars, listEvents, GoogleApiError } from "@/lib/google-api";
+import { listCalendars, listEvents, insertEvent, GoogleApiError } from "@/lib/google-api";
 
 export async function GET(req: NextRequest) {
   const session = await auth();
@@ -55,9 +55,49 @@ export async function GET(req: NextRequest) {
       );
     }
     console.error(err);
-    return NextResponse.json(
-      { error: "Failed to fetch calendar data" },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      error: "Failed to fetch calendar data",
+    }, { status: 500 });
+  }
+}
+
+// Creates a new event on the user's primary Google Calendar.
+// This is the "add from our app" side of the two-way sync — writes go
+// straight to Google, there's no local-only event storage.
+export async function POST(req: NextRequest) {
+  const session = await auth();
+
+  if (!session?.accessToken) {
+    return NextResponse.json({ error: "Not signed in" }, { status: 401 });
+  }
+
+  const body = await req.json();
+  const { summary, startDateTime, endDateTime, allDay } = body;
+
+  if (!summary || !startDateTime) {
+    return NextResponse.json({ error: "Missing title or start time" }, { status: 400 });
+  }
+
+  try {
+    const event = allDay
+      ? {
+          summary,
+          start: { date: startDateTime.slice(0, 10) },
+          end: { date: (endDateTime ?? startDateTime).slice(0, 10) },
+        }
+      : {
+          summary,
+          start: { dateTime: startDateTime },
+          end: { dateTime: endDateTime ?? startDateTime },
+        };
+
+    const created = await insertEvent(session.accessToken, "primary", event);
+    return NextResponse.json({ event: created });
+  } catch (err) {
+    if (err instanceof GoogleApiError) {
+      return NextResponse.json({ error: err.message }, { status: err.status });
+    }
+    console.error(err);
+    return NextResponse.json({ error: "Failed to create event" }, { status: 500 });
   }
 }
