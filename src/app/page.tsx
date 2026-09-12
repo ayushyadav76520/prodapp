@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useSession, signIn } from "next-auth/react";
 import { SyncStatus } from "@/components/SyncStatus";
-import { useCalendarData, useTasksData } from "@/lib/use-google-data";
+import { IconSettings } from "@/components/icons";
+import { useCalendarData, useTasksData, useSkillsData } from "@/lib/use-google-data";
 
 function getGreeting(name?: string) {
   const hour = new Date().getHours();
@@ -16,6 +18,7 @@ export default function HomePage() {
   const { data: session, status } = useSession();
   const { events, syncState: calSync, error: calError, refresh: refreshEvents } = useCalendarData();
   const { tasks, syncState: taskSync, error: taskError, refresh: refreshTasks } = useTasksData();
+  const { skills, syncState: skillSync } = useSkillsData();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -55,7 +58,13 @@ export default function HomePage() {
       <div className="flex items-center justify-between border-b border-rule pb-3 mb-10 text-[11px] uppercase tracking-widest text-ink-soft">
         <span>{dateStr}</span>
         {status === "authenticated" && <SyncStatus state={overallSync} onRetry={retry} />}
-        <span>Edition: Private</span>
+        <Link
+          href="/settings"
+          className="flex items-center gap-1.5 font-bold text-ink hover:text-accent transition-colors"
+        >
+          <IconSettings className="w-4 h-4" />
+          Settings
+        </Link>
       </div>
 
       <div className="grid md:grid-cols-[1fr_320px] gap-10 items-start">
@@ -70,11 +79,11 @@ export default function HomePage() {
           <h1 className="font-serif text-4xl md:text-6xl font-semibold leading-[1.05] tracking-tight">
             {getGreeting(session?.user?.name?.split(" ")[0])}
           </h1>
-          <p className="text-sm text-ink-soft mt-6 max-w-md leading-relaxed">
-            {status === "authenticated"
-              ? "Your calendar, tasks and skill streaks below are pulled live from your Google account — nothing here is invented."
-              : "Sign in once, and this page keeps itself current — real events, real tasks, no fake placeholders, ever."}
-          </p>
+          {status === "unauthenticated" && (
+            <p className="text-sm text-ink-soft mt-6 max-w-md leading-relaxed">
+              Sign in once, and this page keeps itself current — real events, real tasks, no fake placeholders, ever.
+            </p>
+          )}
 
           {status === "unauthenticated" && (
             <button
@@ -114,23 +123,40 @@ export default function HomePage() {
             <p className="text-[10px] uppercase tracking-widest text-ink-soft px-4 pt-4">
               Today&apos;s Scorecard
             </p>
-            <div className="grid grid-cols-2 divide-x divide-rule border-t border-rule mt-3">
-              <div className="p-4">
-                <p className="font-serif text-3xl font-semibold">
+            <div className="grid grid-cols-3 divide-x divide-rule border-t border-rule mt-3">
+              <Link
+                href="/calendar"
+                className="p-4 hover:bg-accent/10 transition-colors"
+              >
+                <p className="font-serif text-2xl md:text-3xl font-semibold">
                   {calSync === "syncing" ? "…" : todaysEventCount}
                 </p>
-                <p className="text-[10px] uppercase tracking-widest text-ink-soft mt-1">
+                <p className="text-[9px] uppercase tracking-widest text-ink-soft mt-1">
                   Events Today
                 </p>
-              </div>
-              <div className="p-4">
-                <p className="font-serif text-3xl font-semibold">
+              </Link>
+              <Link
+                href="/tasks"
+                className="p-4 hover:bg-accent/10 transition-colors"
+              >
+                <p className="font-serif text-2xl md:text-3xl font-semibold">
                   {taskSync === "syncing" ? "…" : openTaskCount}
                 </p>
-                <p className="text-[10px] uppercase tracking-widest text-ink-soft mt-1">
+                <p className="text-[9px] uppercase tracking-widest text-ink-soft mt-1">
                   Open Tasks
                 </p>
-              </div>
+              </Link>
+              <Link
+                href="/skills"
+                className="p-4 hover:bg-accent/10 transition-colors"
+              >
+                <p className="font-serif text-2xl md:text-3xl font-semibold">
+                  {skillSync === "syncing" ? "…" : skills.length}
+                </p>
+                <p className="text-[9px] uppercase tracking-widest text-ink-soft mt-1">
+                  Total Skills
+                </p>
+              </Link>
             </div>
           </div>
         )}

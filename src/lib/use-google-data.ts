@@ -67,3 +67,34 @@ export function useTasksData() {
 
   return { taskLists, tasks, syncState, error, refresh };
 }
+
+export function useSkillsData() {
+  const { status: sessionStatus } = useSession();
+  const [skills, setSkills] = useState<
+    { id: string; name: string; durationDays: number; startDate: string; completedDates: string[] }[]
+  >([]);
+  const [syncState, setSyncState] = useState<SyncState>("idle");
+  const [error, setError] = useState<string | null>(null);
+
+  const refresh = useCallback(async () => {
+    if (sessionStatus !== "authenticated") return;
+    setSyncState("syncing");
+    setError(null);
+    try {
+      const res = await fetch("/api/skills");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed to load skills");
+      setSkills(data.skills ?? []);
+      setSyncState("idle");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unknown sync error");
+      setSyncState("error");
+    }
+  }, [sessionStatus]);
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
+  return { skills, syncState, error, refresh };
+}

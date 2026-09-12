@@ -12,12 +12,15 @@ import {
   toggleTodayCheckIn,
 } from "@/lib/skills";
 import { SyncStatus } from "@/components/SyncStatus";
-import { IconTrash } from "@/components/icons";
+import { IconTrash, IconShare } from "@/components/icons";
+import { FocusSession } from "@/components/FocusSession";
+import { generateShareCard, shareOrDownload } from "@/lib/shareCard";
 
 const DURATIONS = [30, 60, 90] as const;
 
 export default function SkillsPage() {
   const { status: sessionStatus } = useSession();
+  const [tab, setTab] = useState<"session" | "challenge">("challenge");
   const [skills, setSkills] = useState<SkillChallenge[]>([]);
   const [syncState, setSyncState] = useState<"idle" | "syncing" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
@@ -109,13 +112,31 @@ export default function SkillsPage() {
     }
   };
 
+  const shareSkill = async (skill: SkillChallenge) => {
+    const pct = progressPercent(skill);
+    const blob = await generateShareCard({
+      eyebrow: "ZenSpace Challenge",
+      title: skill.name,
+      statLine: `Day ${daysElapsed(skill) + 1} of ${skill.durationDays} · ${currentStreak(skill)} day streak`,
+      progressPercent: pct,
+      footer: "conflict-calendar",
+    });
+    if (blob) {
+      await shareOrDownload(
+        blob,
+        `${skill.name.replace(/\s+/g, "-").toLowerCase()}-progress.png`,
+        `${skill.name}: ${pct.toFixed(2)}% complete on my ZenSpace challenge!`
+      );
+    }
+  };
+
   if (sessionStatus === "unauthenticated") {
     return (
       <div className="max-w-3xl mx-auto px-6 py-10">
-        <h1 className="font-serif text-3xl font-semibold mb-4">Learn a Skill</h1>
+        <h1 className="font-serif text-3xl font-semibold mb-4">ZenSpace</h1>
         <div className="border border-rule p-10 text-center">
           <p className="text-sm text-ink-soft mb-4">
-            Sign in to track skill challenges that sync across all your devices.
+            Sign in to track challenges and focus sessions that sync across your devices.
           </p>
           <button
             onClick={() => signIn("google")}
@@ -136,167 +157,196 @@ export default function SkillsPage() {
             Section Four
           </p>
           <h1 className="font-serif text-3xl md:text-4xl font-semibold tracking-tight">
-            Learn a Skill
+            ZenSpace
           </h1>
         </div>
-        <SyncStatus state={syncState} onRetry={refresh} />
+        {tab === "challenge" && <SyncStatus state={syncState} onRetry={refresh} />}
       </header>
 
-      <div className="flex justify-end">
-        <button
-          onClick={() => setShowForm((v) => !v)}
-          className="text-xs uppercase tracking-widest border border-rule px-3 py-1.5 hover:border-ink transition-colors"
-        >
-          {showForm ? "Cancel" : "+ New Challenge"}
-        </button>
+      <div className="flex gap-4 text-xs uppercase tracking-widest border-b border-rule">
+        {(["session", "challenge"] as const).map((t) => (
+          <button
+            key={t}
+            onClick={() => setTab(t)}
+            className={`pb-2 border-b-2 transition-colors ${
+              tab === t ? "border-accent text-ink font-medium" : "border-transparent text-ink-soft hover:text-ink"
+            }`}
+          >
+            {t === "session" ? "Session" : "Challenge"}
+          </button>
+        ))}
       </div>
 
-      {error && (
-        <div className="border border-red-600/30 bg-red-600/5 p-4 text-sm text-red-700 dark:text-red-400">
-          {error}
-        </div>
-      )}
+      {tab === "session" && <FocusSession />}
 
-      {showForm && (
-        <div className="border border-rule p-5 space-y-4 bg-paper-raised">
-          <div>
-            <label className="text-xs uppercase tracking-widest text-ink-soft">
-              What skill are you learning?
-            </label>
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Guitar, Spanish, Cooking"
-              className="mt-1.5 w-full border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
-            />
+      {tab === "challenge" && (
+        <>
+          <div className="flex justify-end">
+            <button
+              onClick={() => setShowForm((v) => !v)}
+              className="text-xs uppercase tracking-widest border border-rule px-3 py-1.5 hover:border-ink transition-colors"
+            >
+              {showForm ? "Cancel" : "+ New Challenge"}
+            </button>
           </div>
-          <div>
-            <label className="text-xs uppercase tracking-widest text-ink-soft">
-              Challenge length
-            </label>
-            <div className="flex gap-2 mt-2 flex-wrap">
-              {DURATIONS.map((d) => (
-                <button
-                  key={d}
-                  onClick={() => {
-                    setDuration(d);
-                    setUseCustom(false);
-                  }}
-                  className={`px-4 py-1.5 text-sm font-medium border transition-colors ${
-                    !useCustom && duration === d
-                      ? "bg-ink text-paper border-ink"
-                      : "border-rule text-ink-soft hover:border-ink"
-                  }`}
-                >
-                  {d} days
-                </button>
-              ))}
+
+          {error && (
+            <div className="border border-red-600/30 bg-red-600/5 p-4 text-sm text-red-700 dark:text-red-400">
+              {error}
+            </div>
+          )}
+
+          {showForm && (
+            <div className="border border-rule p-5 space-y-4 bg-paper-raised">
+              <div>
+                <label className="text-xs uppercase tracking-widest text-ink-soft">
+                  What skill are you learning?
+                </label>
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Guitar, Spanish, Cooking"
+                  className="mt-1.5 w-full border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
+                />
+              </div>
+              <div>
+                <label className="text-xs uppercase tracking-widest text-ink-soft">
+                  Challenge length
+                </label>
+                <div className="flex gap-2 mt-2 flex-wrap">
+                  {DURATIONS.map((d) => (
+                    <button
+                      key={d}
+                      onClick={() => {
+                        setDuration(d);
+                        setUseCustom(false);
+                      }}
+                      className={`px-4 py-1.5 text-sm font-medium border transition-colors ${
+                        !useCustom && duration === d
+                          ? "bg-ink text-paper border-ink"
+                          : "border-rule text-ink-soft hover:border-ink"
+                      }`}
+                    >
+                      {d} days
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => setUseCustom(true)}
+                    className={`px-4 py-1.5 text-sm font-medium border transition-colors ${
+                      useCustom
+                        ? "bg-ink text-paper border-ink"
+                        : "border-rule text-ink-soft hover:border-ink"
+                    }`}
+                  >
+                    Custom
+                  </button>
+                </div>
+                {useCustom && (
+                  <input
+                    type="number"
+                    min={1}
+                    max={3650}
+                    value={customDays}
+                    onChange={(e) => setCustomDays(e.target.value)}
+                    placeholder="Number of days"
+                    className="mt-2 w-40 border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
+                  />
+                )}
+              </div>
               <button
-                onClick={() => setUseCustom(true)}
-                className={`px-4 py-1.5 text-sm font-medium border transition-colors ${
-                  useCustom
-                    ? "bg-ink text-paper border-ink"
-                    : "border-rule text-ink-soft hover:border-ink"
-                }`}
+                onClick={addSkill}
+                disabled={!name.trim() || saving || (useCustom && !customDays)}
+                className="bg-ink text-paper text-sm font-medium px-4 py-2 hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
-                Custom
+                {saving ? "Starting…" : "Start Challenge"}
               </button>
             </div>
-            {useCustom && (
-              <input
-                type="number"
-                min={1}
-                max={3650}
-                value={customDays}
-                onChange={(e) => setCustomDays(e.target.value)}
-                placeholder="Number of days"
-                className="mt-2 w-40 border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
-              />
-            )}
-          </div>
-          <button
-            onClick={addSkill}
-            disabled={!name.trim() || saving || (useCustom && !customDays)}
-            className="bg-ink text-paper text-sm font-medium px-4 py-2 hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-          >
-            {saving ? "Starting…" : "Start Challenge"}
-          </button>
-        </div>
-      )}
+          )}
 
-      {syncState === "syncing" && skills.length === 0 && (
-        <p className="text-sm text-ink-soft">Loading your skills…</p>
-      )}
+          {syncState === "syncing" && skills.length === 0 && (
+            <p className="text-sm text-ink-soft">Loading your skills…</p>
+          )}
 
-      {syncState !== "syncing" && skills.length === 0 && !showForm && (
-        <div className="border border-dashed border-rule p-10 text-center text-sm text-ink-soft">
-          No active skill challenges yet. Start one above.
-        </div>
-      )}
-
-      <div className="space-y-4">
-        {skills.map((skill) => {
-          const streak = currentStreak(skill);
-          const checkedToday = isCheckedInToday(skill);
-          const pct = progressPercent(skill);
-          return (
-            <div key={skill.id} className="border border-rule p-5">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="font-medium text-sm">{skill.name}</p>
-                  <p className="text-xs text-ink-soft mt-0.5">
-                    Day {daysElapsed(skill) + 1} of {skill.durationDays} ·{" "}
-                    {daysRemaining(skill)} days left
-                  </p>
-                </div>
-                <button
-                  onClick={() => removeSkill(skill.id, skill.name)}
-                  className="text-ink-soft/60 hover:text-red-600 transition-colors"
-                  aria-label="Delete skill"
-                >
-                  <IconTrash className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              <div className="mt-3">
-                <div className="flex items-center justify-between text-[10px] uppercase tracking-widest text-ink-soft mb-1.5">
-                  <span>Progress</span>
-                  <span className="tabular-nums">{pct}%</span>
-                </div>
-                <div className="h-2 bg-rule rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-accent rounded-full transition-all"
-                    style={{
-                      width: `${Math.max(pct, 2)}%`,
-                      boxShadow: "0 0 8px var(--accent)",
-                    }}
-                  />
-                </div>
-              </div>
-
-              <div className="mt-4 flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-sm">
-                  <span>🔥</span>
-                  <span className="font-serif font-semibold text-lg">{streak}</span>
-                  <span className="text-ink-soft text-xs uppercase tracking-widest">
-                    day streak
-                  </span>
-                </div>
-                <button
-                  onClick={() => checkIn(skill)}
-                  className={`text-xs uppercase tracking-widest px-4 py-1.5 transition-colors ${
-                    checkedToday
-                      ? "border border-emerald-600/40 text-emerald-700 dark:text-emerald-400"
-                      : "bg-ink text-paper hover:bg-accent"
-                  }`}
-                >
-                  {checkedToday ? "✓ Done today" : "Check in"}
-                </button>
-              </div>
+          {syncState !== "syncing" && skills.length === 0 && !showForm && (
+            <div className="border border-dashed border-rule p-10 text-center text-sm text-ink-soft">
+              No active skill challenges yet. Start one above.
             </div>
-          );
-        })}
-      </div>
+          )}
+
+          <div className="space-y-4">
+            {skills.map((skill) => {
+              const streak = currentStreak(skill);
+              const checkedToday = isCheckedInToday(skill);
+              const pct = progressPercent(skill);
+              return (
+                <div key={skill.id} className="border border-rule p-5">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="font-medium text-sm">{skill.name}</p>
+                      <p className="text-xs text-ink-soft mt-0.5">
+                        Day {daysElapsed(skill) + 1} of {skill.durationDays} ·{" "}
+                        {daysRemaining(skill)} days left
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => shareSkill(skill)}
+                        className="text-ink-soft/60 hover:text-accent transition-colors"
+                        aria-label="Share progress"
+                      >
+                        <IconShare className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => removeSkill(skill.id, skill.name)}
+                        className="text-ink-soft/60 hover:text-red-600 transition-colors"
+                        aria-label="Delete skill"
+                      >
+                        <IconTrash className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="mt-3">
+                    <div className="flex items-center justify-between text-[10px] uppercase tracking-widest text-ink-soft mb-1.5">
+                      <span>Progress</span>
+                      <span className="tabular-nums">{pct.toFixed(2)}%</span>
+                    </div>
+                    <div className="h-2 bg-rule rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-accent rounded-full transition-all"
+                        style={{
+                          width: `${Math.max(pct, 2)}%`,
+                          boxShadow: "0 0 8px var(--accent)",
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 text-sm">
+                      <span>🔥</span>
+                      <span className="font-serif font-semibold text-lg">{streak}</span>
+                      <span className="text-ink-soft text-xs uppercase tracking-widest">
+                        day streak
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => checkIn(skill)}
+                      className={`text-xs uppercase tracking-widest px-4 py-1.5 transition-colors ${
+                        checkedToday
+                          ? "border border-emerald-600/40 text-emerald-700 dark:text-emerald-400"
+                          : "bg-ink text-paper hover:bg-accent"
+                      }`}
+                    >
+                      {checkedToday ? "✓ Done today" : "Check in"}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
     </div>
   );
 }

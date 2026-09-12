@@ -8,15 +8,13 @@ import {
   IconCalendar,
   IconTasks,
   IconSkills,
-  IconSettings,
 } from "./icons";
 
 const NAV_ITEMS = [
   { href: "/", label: "Home", Icon: IconHome },
   { href: "/calendar", label: "Calendar", Icon: IconCalendar },
   { href: "/tasks", label: "Tasks", Icon: IconTasks },
-  { href: "/skills", label: "Skills", Icon: IconSkills },
-  { href: "/settings", label: "Settings", Icon: IconSettings },
+  { href: "/skills", label: "ZenSpace", Icon: IconSkills },
 ];
 
 export function NavBar() {
@@ -69,12 +67,12 @@ export function NavBar() {
               <li key={item.href} className="flex-1">
                 <Link
                   href={item.href}
-                  className={`flex flex-col items-center gap-1 py-3.5 transition-colors ${
+                  className={`flex flex-col items-center gap-1.5 py-5 transition-colors ${
                     active ? "text-accent" : "text-paper/60"
                   }`}
                 >
-                  <item.Icon className="w-5 h-5" />
-                  <span className="text-[9px] uppercase tracking-wide font-medium whitespace-nowrap">
+                  <item.Icon className="w-7 h-7" />
+                  <span className="text-[10px] uppercase tracking-wide font-medium whitespace-nowrap">
                     {item.label}
                   </span>
                 </Link>

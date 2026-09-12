@@ -25,11 +25,11 @@ export function daysRemaining(skill: SkillChallenge): number {
 
 // Progress reflects how many days you've actually completed out of the
 // total challenge length — not how much calendar time has simply passed.
+// Returned to 2 decimal places so small challenges show meaningful detail
+// (e.g. 2.55%) instead of rounding away to 0% or 3%.
 export function progressPercent(skill: SkillChallenge): number {
-  return Math.min(
-    100,
-    Math.round((skill.completedDates.length / skill.durationDays) * 100)
-  );
+  const raw = (skill.completedDates.length / skill.durationDays) * 100;
+  return Math.min(100, Math.round(raw * 100) / 100);
 }
 
 // Current streak = consecutive days (ending today or yesterday) checked in.
