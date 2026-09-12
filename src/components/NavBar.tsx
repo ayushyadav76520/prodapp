@@ -3,14 +3,22 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "./ThemeProvider";
+import {
+  IconHome,
+  IconCalendar,
+  IconTasks,
+  IconSkills,
+  IconWidgets,
+  IconSettings,
+} from "./icons";
 
 const NAV_ITEMS = [
-  { href: "/", label: "Home" },
-  { href: "/calendar", label: "Calendar" },
-  { href: "/tasks", label: "Tasks" },
-  { href: "/skills", label: "Skills" },
-  { href: "/widgets", label: "Widgets" },
-  { href: "/settings", label: "Settings" },
+  { href: "/", label: "Home", Icon: IconHome },
+  { href: "/calendar", label: "Calendar", Icon: IconCalendar },
+  { href: "/tasks", label: "Tasks", Icon: IconTasks },
+  { href: "/skills", label: "Skills", Icon: IconSkills },
+  { href: "/widgets", label: "Widgets", Icon: IconWidgets },
+  { href: "/settings", label: "Settings", Icon: IconSettings },
 ];
 
 export function NavBar() {
@@ -40,12 +48,13 @@ export function NavBar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-sm uppercase tracking-widest py-2 border-l-2 pl-3 transition-colors ${
+                className={`flex items-center gap-2.5 text-sm uppercase tracking-widest py-2 border-l-2 pl-3 transition-colors ${
                   active
                     ? "border-accent text-ink font-medium"
                     : "border-transparent text-ink-soft hover:text-ink hover:border-rule"
                 }`}
               >
+                <item.Icon className="w-4 h-4 shrink-0" />
                 {item.label}
               </Link>
             );
@@ -53,20 +62,23 @@ export function NavBar() {
         </nav>
       </aside>
 
-      {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-20 border-t border-rule bg-paper-raised/95 backdrop-blur">
-        <ul className="flex justify-between px-1">
+      {/* Mobile floating pill nav */}
+      <nav className="md:hidden fixed bottom-4 inset-x-4 z-20">
+        <ul className="flex items-center justify-between bg-ink text-paper rounded-full px-2 py-2.5 shadow-lg">
           {NAV_ITEMS.map((item) => {
             const active = pathname === item.href;
             return (
               <li key={item.href} className="flex-1">
                 <Link
                   href={item.href}
-                  className={`flex flex-col items-center gap-0.5 py-2.5 text-[10px] uppercase tracking-wide font-medium ${
-                    active ? "text-accent" : "text-ink-soft"
+                  className={`flex flex-col items-center gap-1 py-1.5 rounded-full transition-colors ${
+                    active ? "text-accent" : "text-paper/60"
                   }`}
                 >
-                  {item.label}
+                  <item.Icon className="w-5 h-5" />
+                  <span className="text-[9px] uppercase tracking-wide font-medium whitespace-nowrap">
+                    {item.label}
+                  </span>
                 </Link>
               </li>
             );

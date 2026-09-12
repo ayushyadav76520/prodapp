@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { useTasksData } from "@/lib/use-google-data";
 import { SyncStatus } from "@/components/SyncStatus";
+import { IconTrash } from "@/components/icons";
 
 export default function TasksPage() {
   const { status: sessionStatus } = useSession();
@@ -97,6 +98,7 @@ export default function TasksPage() {
   };
 
   const deleteTaskItem = async (taskId: string, taskListId: string) => {
+    if (!confirm("Delete this task? This cannot be undone.")) return;
     setPendingIds((prev) => new Set(prev).add(taskId));
     try {
       const res = await fetch(`/api/tasks/${taskId}?taskListId=${taskListId}`, {
@@ -210,10 +212,10 @@ export default function TasksPage() {
                   </button>
                   <button
                     onClick={() => deleteCategory(list.id, list.title)}
-                    className="text-ink-soft/50 hover:text-red-600 text-xs leading-none"
+                    className="text-ink-soft/60 hover:text-red-600 transition-colors"
                     aria-label="Delete category"
                   >
-                    ✕
+                    <IconTrash className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
@@ -272,10 +274,10 @@ export default function TasksPage() {
                         <button
                           onClick={() => deleteTaskItem(task.id, list.id)}
                           disabled={pending}
-                          className="text-ink-soft/40 hover:text-red-600 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="text-ink-soft/50 hover:text-red-600 transition-colors shrink-0 mt-0.5"
                           aria-label="Delete task"
                         >
-                          ✕
+                          <IconTrash className="w-3.5 h-3.5" />
                         </button>
                       </li>
                     );

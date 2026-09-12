@@ -34,7 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <ThemeProvider>
             <div className="flex flex-1 min-h-screen">
               <NavBar />
-              <main className="flex-1 pb-16 md:pb-0 overflow-y-auto">
+              <main className="flex-1 pb-28 md:pb-0 overflow-y-auto">
                 {children}
               </main>
             </div>

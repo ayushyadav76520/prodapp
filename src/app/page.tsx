@@ -1,13 +1,28 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { SyncStatus } from "@/components/SyncStatus";
 import { useCalendarData, useTasksData } from "@/lib/use-google-data";
+
+function getGreeting(name?: string) {
+  const hour = new Date().getHours();
+  const time =
+    hour < 5 ? "Good night" : hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : hour < 21 ? "Good evening" : "Good night";
+  return name ? `${time}, ${name}.` : `${time}.`;
+}
 
 export default function HomePage() {
   const { data: session, status } = useSession();
   const { events, syncState: calSync, error: calError, refresh: refreshEvents } = useCalendarData();
   const { tasks, syncState: taskSync, error: taskError, refresh: refreshTasks } = useTasksData();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // Trigger the entrance animation just after first paint.
+    const t = setTimeout(() => setMounted(true), 30);
+    return () => clearTimeout(t);
+  }, []);
 
   const overallSync: "idle" | "syncing" | "error" =
     session?.error === "RefreshAccessTokenError" || calSync === "error" || taskSync === "error"
@@ -44,14 +59,16 @@ export default function HomePage() {
       </div>
 
       <div className="grid md:grid-cols-[1fr_320px] gap-10 items-start">
-        <div>
+        <div
+          className={`transition-all duration-700 ease-out ${
+            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+          }`}
+        >
           <p className="text-[11px] uppercase tracking-[0.2em] text-accent font-medium mb-3">
             Front Page
           </p>
           <h1 className="font-serif text-4xl md:text-6xl font-semibold leading-[1.05] tracking-tight">
-            {session?.user?.name
-              ? `Good to see you, ${session.user.name.split(" ")[0]}.`
-              : "Your day, in order."}
+            {getGreeting(session?.user?.name?.split(" ")[0])}
           </h1>
           <p className="font-serif italic text-2xl md:text-3xl text-ink-soft mt-4 leading-snug">
             Everything Google knows, shown honestly.
@@ -120,6 +137,18 @@ export default function HomePage() {
             </div>
           </div>
         )}
+      </div>
+
+      <div
+        className={`mt-12 border border-rule bg-paper-raised p-6 md:p-8 transition-all duration-700 delay-150 ease-out ${
+          mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+        }`}
+      >
+        <p className="font-serif italic text-lg md:text-xl leading-relaxed text-ink">
+          &ldquo;One day, you&apos;ll realize that every dream you had died
+          because you chose comfort over effort, and there will be no one to
+          blame but yourself. That regret will haunt you forever.&rdquo;
+        </p>
       </div>
     </div>
   );

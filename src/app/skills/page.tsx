@@ -12,6 +12,7 @@ import {
   toggleTodayCheckIn,
 } from "@/lib/skills";
 import { SyncStatus } from "@/components/SyncStatus";
+import { IconTrash } from "@/components/icons";
 
 const DURATIONS: (30 | 60 | 90)[] = [30, 60, 90];
 
@@ -68,7 +69,8 @@ export default function SkillsPage() {
     }
   };
 
-  const removeSkill = async (id: string) => {
+  const removeSkill = async (id: string, name: string) => {
+    if (!confirm(`Delete skill "${name}"? This cannot be undone.`)) return;
     const prev = skills;
     setSkills((cur) => cur.filter((s) => s.id !== id));
     try {
@@ -219,18 +221,24 @@ export default function SkillsPage() {
                   </p>
                 </div>
                 <button
-                  onClick={() => removeSkill(skill.id)}
-                  className="text-[10px] uppercase tracking-widest text-ink-soft/60 hover:text-red-600"
+                  onClick={() => removeSkill(skill.id, skill.name)}
+                  className="text-ink-soft/60 hover:text-red-600 transition-colors"
+                  aria-label="Delete skill"
                 >
-                  Remove
+                  <IconTrash className="w-3.5 h-3.5" />
                 </button>
               </div>
 
-              <div className="mt-3 h-1.5 bg-rule overflow-hidden">
-                <div
-                  className="h-full bg-accent transition-all"
-                  style={{ width: `${pct}%` }}
-                />
+              <div className="mt-3 flex items-center gap-2">
+                <div className="flex-1 h-1.5 bg-rule overflow-hidden">
+                  <div
+                    className="h-full bg-accent transition-all"
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+                <span className="text-[10px] text-ink-soft tabular-nums w-8 text-right">
+                  {pct}%
+                </span>
               </div>
 
               <div className="mt-4 flex items-center justify-between">

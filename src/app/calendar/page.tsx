@@ -5,6 +5,7 @@ import { useSession, signIn } from "next-auth/react";
 import { useCalendarData } from "@/lib/use-google-data";
 import { SyncStatus } from "@/components/SyncStatus";
 import { MonthCalendarGrid } from "@/components/MonthCalendarGrid";
+import { IconTrash } from "@/components/icons";
 import type { GoogleEvent } from "@/lib/google-api";
 
 function getEventDate(event: GoogleEvent): Date | null {
@@ -313,10 +314,10 @@ export default function CalendarPage() {
                       <button
                         onClick={() => deleteEventItem(event.id, event.calendarId)}
                         disabled={deletingId === event.id}
-                        className="text-ink-soft/40 hover:text-red-600 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="text-ink-soft/50 hover:text-red-600 transition-colors shrink-0"
                         aria-label="Delete event"
                       >
-                        ✕
+                        <IconTrash className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </li>
