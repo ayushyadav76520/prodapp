@@ -58,21 +58,21 @@ export function NavBar() {
         </nav>
       </aside>
 
-      {/* Mobile bottom nav — full-width, square edges */}
+      {/* Mobile bottom nav — full-width, square edges, always dark regardless of theme */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 z-20">
-        <ul className="flex items-stretch justify-between bg-ink text-paper px-1">
+        <ul className="flex items-stretch justify-between bg-nav-bg text-nav-fg px-1">
           {NAV_ITEMS.map((item) => {
             const active = pathname === item.href;
             return (
               <li key={item.href} className="flex-1">
                 <Link
                   href={item.href}
-                  className={`flex flex-col items-center gap-1.5 py-5 transition-colors ${
-                    active ? "text-accent" : "text-paper/60"
+                  className={`flex flex-col items-center gap-1 py-3.5 transition-colors ${
+                    active ? "text-accent" : "text-nav-fg/60"
                   }`}
                 >
-                  <item.Icon className="w-7 h-7" />
-                  <span className="text-[10px] uppercase tracking-wide font-medium whitespace-nowrap">
+                  <item.Icon className="w-6 h-6" />
+                  <span className="text-[9px] uppercase tracking-wide font-medium whitespace-nowrap">
                     {item.label}
                   </span>
                 </Link>

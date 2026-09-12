@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import {
   IconPlay,
   IconPause,
@@ -9,7 +9,6 @@ import {
   IconDownload,
   IconShare,
 } from "@/components/icons";
-import { addFocusSessionRecord, focusSessionStats } from "@/lib/focusSessions";
 import { generateShareCard, downloadBlob, shareOrDownload } from "@/lib/shareCard";
 
 const QUOTES = [
@@ -20,7 +19,14 @@ const QUOTES = [
   "Done is better than perfect. Start.",
 ];
 
-type Phase = "setup" | "running" | "paused" | "completed";
+interface FocusSessionRecord {
+  id: string;
+  title: string;
+  durationMinutes: number;
+  completedAt: string;
+}
+
+type Phase = "setup" | "focusing" | "paused" | "break" | "completed";
 
 function formatTime(totalSeconds: number) {
   const m = Math.floor(totalSeconds / 60);
@@ -34,25 +40,50 @@ export function FocusSession() {
   const [durationMin, setDurationMin] = useState(25);
   const [totalSeconds, setTotalSeconds] = useState(25 * 60);
   const [remainingSeconds, setRemainingSeconds] = useState(25 * 60);
+  const [breakRemaining, setBreakRemaining] = useState(5 * 60);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [breakBanner, setBreakBanner] = useState(false);
-  const [stats, setStats] = useState({ totalSessions: 0, totalMinutes: 0 });
   const [quote] = useState(() => QUOTES[Math.floor(Math.random() * QUOTES.length)]);
+  const [lastSavedMinutes, setLastSavedMinutes] = useState(0);
+  const [history, setHistory] = useState<FocusSessionRecord[]>([]);
+  const [historySync, setHistorySync] = useState<"idle" | "syncing" | "error">("idle");
   const lastBreakMarkRef = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const refreshHistory = useCallback(async () => {
+    setHistorySync("syncing");
+    try {
+      const res = await fetch("/api/focus-sessions");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed to load history");
+      setHistory(data.sessions ?? []);
+      setHistorySync("idle");
+    } catch {
+      setHistorySync("error");
+    }
+  }, []);
+
   useEffect(() => {
-    setStats(focusSessionStats());
+    refreshHistory();
+  }, [refreshHistory]);
+
+  // Focus countdown — only ticks while actively focusing (paused/break freeze it).
+  useEffect(() => {
+    if (phase !== "focusing") return;
+    const interval = setInterval(() => {
+      setRemainingSeconds((prev) => (prev <= 1 ? 0 : prev - 1));
+    }, 1000);
+    return () => clearInterval(interval);
   }, [phase]);
 
-  // Countdown tick
+  // Break countdown — auto-resumes focus when it hits zero.
   useEffect(() => {
-    if (phase !== "running") return;
+    if (phase !== "break") return;
     const interval = setInterval(() => {
-      setRemainingSeconds((prev) => {
+      setBreakRemaining((prev) => {
         if (prev <= 1) {
-          clearInterval(interval);
-          return 0;
+          setPhase("focusing");
+          return 5 * 60;
         }
         return prev - 1;
       });
@@ -60,27 +91,45 @@ export function FocusSession() {
     return () => clearInterval(interval);
   }, [phase]);
 
-  // Completion + break-suggestion checks
+  const saveSession = useCallback(
+    async (minutes: number) => {
+      if (minutes <= 0) return;
+      try {
+        await fetch("/api/focus-sessions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: title.trim() || "Focus Session",
+            durationMinutes: minutes,
+          }),
+        });
+        refreshHistory();
+      } catch {
+        // best-effort; history refresh will just show what's already saved
+      }
+    },
+    [title, refreshHistory]
+  );
+
+  // Full completion (timer ran out naturally)
   useEffect(() => {
-    if (phase !== "running") return;
-    if (remainingSeconds === 0) {
-      const record = {
-        id: crypto.randomUUID(),
-        title: title.trim() || "Focus Session",
-        durationMinutes: Math.round(totalSeconds / 60),
-        completedAt: new Date().toISOString(),
-      };
-      addFocusSessionRecord(record);
-      setPhase("completed");
-      return;
-    }
+    if (phase !== "focusing" || remainingSeconds !== 0) return;
+    const minutes = Math.round(totalSeconds / 60);
+    setLastSavedMinutes(minutes);
+    saveSession(minutes);
+    setPhase("completed");
+  }, [remainingSeconds, phase, totalSeconds, saveSession]);
+
+  // Automatic break suggestion every 45 minutes of continuous focus
+  useEffect(() => {
+    if (phase !== "focusing") return;
     const elapsed = totalSeconds - remainingSeconds;
     const blocksPassed = Math.floor(elapsed / (45 * 60));
     if (blocksPassed > lastBreakMarkRef.current) {
       lastBreakMarkRef.current = blocksPassed;
       setBreakBanner(true);
     }
-  }, [remainingSeconds, phase, totalSeconds, title]);
+  }, [remainingSeconds, phase, totalSeconds]);
 
   useEffect(() => {
     const onFsChange = () => setIsFullscreen(!!document.fullscreenElement);
@@ -94,14 +143,25 @@ export function FocusSession() {
     setRemainingSeconds(secs);
     lastBreakMarkRef.current = 0;
     setBreakBanner(false);
-    setPhase("running");
+    setPhase("focusing");
   };
 
-  const pauseResume = () => setPhase((p) => (p === "running" ? "paused" : "running"));
+  const pauseResume = () => setPhase((p) => (p === "focusing" ? "paused" : "focusing"));
 
-  const addMinute = () => {
-    setRemainingSeconds((r) => r + 60);
-    setTotalSeconds((t) => t + 60);
+  const takeBreak = () => {
+    setBreakRemaining(5 * 60);
+    setBreakBanner(false);
+    setPhase("break");
+  };
+
+  const extendBreak = () => setBreakRemaining((r) => r + 60);
+
+  const endSessionEarly = () => {
+    const focusedSeconds = totalSeconds - remainingSeconds;
+    const minutes = Math.round(focusedSeconds / 60);
+    setLastSavedMinutes(minutes);
+    if (minutes > 0) saveSession(minutes);
+    setPhase("completed");
   };
 
   const toggleFullscreen = async () => {
@@ -119,11 +179,27 @@ export function FocusSession() {
     setBreakBanner(false);
   };
 
+  const shareRecord = async (rec: FocusSessionRecord) => {
+    const blob = await generateShareCard({
+      eyebrow: "Focus Session",
+      title: rec.title,
+      statLine: `${rec.durationMinutes} minutes focused · ${new Date(rec.completedAt).toLocaleDateString()}`,
+      footer: "conflict-calendar",
+    });
+    if (blob) {
+      await shareOrDownload(
+        blob,
+        `${rec.title.replace(/\s+/g, "-").toLowerCase()}-session.png`,
+        `I completed a ${rec.durationMinutes}-minute focus session: ${rec.title}`
+      );
+    }
+  };
+
   const handleDownload = async () => {
     const blob = await generateShareCard({
       eyebrow: "Focus Session",
       title: title.trim() || "Focus Session",
-      statLine: `${Math.round(totalSeconds / 60)} minutes focused`,
+      statLine: `${lastSavedMinutes} minutes focused`,
       footer: "conflict-calendar",
     });
     if (blob) downloadBlob(blob, "focus-session.png");
@@ -133,14 +209,14 @@ export function FocusSession() {
     const blob = await generateShareCard({
       eyebrow: "Focus Session",
       title: title.trim() || "Focus Session",
-      statLine: `${Math.round(totalSeconds / 60)} minutes focused`,
+      statLine: `${lastSavedMinutes} minutes focused`,
       footer: "conflict-calendar",
     });
     if (blob) {
       await shareOrDownload(
         blob,
         "focus-session.png",
-        `I just completed a ${Math.round(totalSeconds / 60)}-minute focus session!`
+        `I just completed a ${lastSavedMinutes}-minute focus session!`
       );
     }
   };
@@ -150,61 +226,82 @@ export function FocusSession() {
   const elapsedFraction = totalSeconds > 0 ? (totalSeconds - remainingSeconds) / totalSeconds : 0;
   const dashOffset = circumference * (1 - elapsedFraction);
 
+  const totalHistoryMinutes = history.reduce((sum, s) => sum + s.durationMinutes, 0);
+
   if (phase === "setup") {
     return (
-      <div className="border border-rule p-6 space-y-5">
-        <div>
-          <label className="text-xs uppercase tracking-widest text-ink-soft">
-            Session title (optional)
-          </label>
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="e.g. Deep Work, Reading, Assignment"
-            className="mt-1.5 w-full border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
-          />
-        </div>
-        <div>
-          <label className="text-xs uppercase tracking-widest text-ink-soft">
-            Duration (minutes)
-          </label>
-          <div className="flex gap-2 mt-2 flex-wrap items-center">
-            {[25, 45, 60].map((d) => (
-              <button
-                key={d}
-                onClick={() => setDurationMin(d)}
-                className={`px-4 py-1.5 text-sm font-medium border transition-colors ${
-                  durationMin === d
-                    ? "bg-ink text-paper border-ink"
-                    : "border-rule text-ink-soft hover:border-ink"
-                }`}
-              >
-                {d} min
-              </button>
-            ))}
+      <div className="space-y-6">
+        <div className="border border-rule p-6 space-y-5">
+          <div>
+            <label className="text-xs uppercase tracking-widest text-ink-soft">
+              Session title
+            </label>
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="e.g. Deep Work, Reading, Assignment"
+              className="mt-1.5 w-full border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
+            />
+          </div>
+          <div>
+            <label className="text-xs uppercase tracking-widest text-ink-soft">
+              Duration (minutes) — set whatever you need
+            </label>
             <input
               type="number"
               min={1}
               max={480}
               value={durationMin}
               onChange={(e) => setDurationMin(Number(e.target.value) || 1)}
-              className="w-24 border border-rule bg-transparent px-3 py-1.5 text-sm outline-none focus:border-accent"
+              className="mt-1.5 w-32 border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
             />
           </div>
+          <button
+            onClick={start}
+            className="bg-ink text-paper text-sm font-medium px-5 py-2.5 hover:bg-accent transition-colors"
+          >
+            Start Session
+          </button>
         </div>
-        <button
-          onClick={start}
-          className="bg-ink text-paper text-sm font-medium px-5 py-2.5 hover:bg-accent transition-colors"
-        >
-          Start Session
-        </button>
 
-        {stats.totalSessions > 0 && (
-          <p className="text-xs text-ink-soft pt-2 border-t border-rule">
-            {stats.totalSessions} session{stats.totalSessions !== 1 ? "s" : ""} completed ·{" "}
-            {stats.totalMinutes} minutes total focus time
-          </p>
-        )}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs uppercase tracking-widest text-ink-soft">History</p>
+            {historySync === "syncing" && (
+              <span className="text-[10px] text-ink-soft">Syncing…</span>
+            )}
+          </div>
+          {history.length === 0 ? (
+            <p className="text-sm text-ink-soft border border-dashed border-rule p-6 text-center">
+              No sessions yet — your history syncs across devices via your Google account.
+            </p>
+          ) : (
+            <>
+              <p className="text-xs text-ink-soft mb-3">
+                {history.length} session{history.length !== 1 ? "s" : ""} · {totalHistoryMinutes} minutes total
+              </p>
+              <ul className="divide-y divide-rule border border-rule">
+                {history.map((rec) => (
+                  <li key={rec.id} className="flex items-center justify-between px-4 py-3">
+                    <div>
+                      <p className="text-sm font-medium">{rec.title}</p>
+                      <p className="text-xs text-ink-soft mt-0.5">
+                        {rec.durationMinutes} min · {new Date(rec.completedAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => shareRecord(rec)}
+                      className="text-ink-soft/60 hover:text-accent transition-colors"
+                      aria-label="Share this session"
+                    >
+                      <IconShare className="w-4 h-4" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
       </div>
     );
   }
@@ -219,7 +316,7 @@ export function FocusSession() {
           {title.trim() || "Focus Session"}
         </p>
         <p className="text-sm text-ink-soft">
-          You focused for {Math.round(totalSeconds / 60)} minutes.
+          You focused for {lastSavedMinutes} minute{lastSavedMinutes !== 1 ? "s" : ""}.
         </p>
         <div className="flex justify-center gap-3">
           <button
@@ -245,7 +342,7 @@ export function FocusSession() {
     );
   }
 
-  // running or paused
+  // focusing, paused, or break
   return (
     <div
       ref={containerRef}
@@ -253,15 +350,23 @@ export function FocusSession() {
         isFullscreen ? "bg-paper justify-center h-screen" : "bg-paper-raised"
       }`}
     >
-      {breakBanner && (
-        <div className="w-full border border-accent/40 bg-accent/10 p-3 text-sm text-center flex items-center justify-between gap-3">
-          <span>Time for a short coffee break or a walk?</span>
-          <button
-            onClick={() => setBreakBanner(false)}
-            className="text-xs uppercase tracking-widest text-ink-soft hover:text-ink shrink-0"
-          >
-            Dismiss
-          </button>
+      {breakBanner && phase === "focusing" && (
+        <div className="w-full border border-accent/40 bg-accent/10 p-3 text-sm flex items-center justify-between gap-3">
+          <span>Time for a coffee break or a short walk?</span>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={takeBreak}
+              className="text-xs uppercase tracking-widest bg-ink text-paper px-3 py-1"
+            >
+              Take a break
+            </button>
+            <button
+              onClick={() => setBreakBanner(false)}
+              className="text-xs uppercase tracking-widest text-ink-soft hover:text-ink"
+            >
+              Dismiss
+            </button>
+          </div>
         </div>
       )}
 
@@ -269,58 +374,94 @@ export function FocusSession() {
         {title.trim() || "Focus Session"}
       </p>
 
-      <div className="relative w-64 h-64 md:w-72 md:h-72">
-        <svg viewBox="0 0 260 260" className="w-full h-full -rotate-90">
-          <circle cx="130" cy="130" r={radius} fill="none" stroke="var(--rule)" strokeWidth="10" />
-          <circle
-            cx="130"
-            cy="130"
-            r={radius}
-            fill="none"
-            stroke="var(--accent)"
-            strokeWidth="10"
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            strokeDashoffset={dashOffset}
-            style={{ transition: "stroke-dashoffset 1s linear" }}
-          />
-        </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <p className="font-serif text-5xl font-semibold tabular-nums">
-            {formatTime(remainingSeconds)}
-          </p>
-          <p className="text-[10px] uppercase tracking-widest text-ink-soft mt-2">
-            {phase === "paused" ? "Paused" : "Focusing"}
-          </p>
-        </div>
-      </div>
+      {phase === "break" ? (
+        <>
+          <div className="relative w-64 h-64 md:w-72 md:h-72 flex flex-col items-center justify-center">
+            <p className="font-serif text-5xl font-semibold tabular-nums">
+              {formatTime(breakRemaining)}
+            </p>
+            <p className="text-[10px] uppercase tracking-widest text-ink-soft mt-2">
+              On a break
+            </p>
+          </div>
+          <div className="flex items-center gap-3 flex-wrap justify-center">
+            <button
+              onClick={extendBreak}
+              className="border border-rule px-4 py-2 text-xs uppercase tracking-widest hover:border-ink transition-colors"
+            >
+              +1 Minute Break
+            </button>
+            <button
+              onClick={() => setPhase("focusing")}
+              className="flex items-center gap-2 bg-ink text-paper px-4 py-2 text-xs uppercase tracking-widest hover:bg-accent transition-colors"
+            >
+              <IconPlay className="w-4 h-4" /> Resume Focus
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="relative w-64 h-64 md:w-72 md:h-72">
+            <svg viewBox="0 0 260 260" className="w-full h-full -rotate-90">
+              <circle cx="130" cy="130" r={radius} fill="none" stroke="var(--rule)" strokeWidth="10" />
+              <circle
+                cx="130"
+                cy="130"
+                r={radius}
+                fill="none"
+                stroke="var(--accent)"
+                strokeWidth="10"
+                strokeLinecap="round"
+                strokeDasharray={circumference}
+                strokeDashoffset={dashOffset}
+                style={{ transition: "stroke-dashoffset 1s linear" }}
+              />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <p className="font-serif text-5xl font-semibold tabular-nums">
+                {formatTime(remainingSeconds)}
+              </p>
+              <p className="text-[10px] uppercase tracking-widest text-ink-soft mt-2">
+                {phase === "paused" ? "Paused" : "Focusing"}
+              </p>
+            </div>
+          </div>
 
-      <p className="font-serif italic text-sm md:text-base text-ink-soft text-center max-w-sm">
-        &ldquo;{quote}&rdquo;
-      </p>
+          <p className="font-serif italic text-sm md:text-base text-ink-soft text-center max-w-sm">
+            &ldquo;{quote}&rdquo;
+          </p>
 
-      <div className="flex items-center gap-3 flex-wrap justify-center">
-        <button
-          onClick={pauseResume}
-          className="flex items-center gap-2 bg-ink text-paper px-4 py-2 text-xs uppercase tracking-widest hover:bg-accent transition-colors"
-        >
-          {phase === "running" ? <IconPause className="w-4 h-4" /> : <IconPlay className="w-4 h-4" />}
-          {phase === "running" ? "Pause" : "Resume"}
-        </button>
-        <button
-          onClick={addMinute}
-          className="border border-rule px-4 py-2 text-xs uppercase tracking-widest hover:border-ink transition-colors"
-        >
-          +1 Minute
-        </button>
-        <button
-          onClick={toggleFullscreen}
-          className="flex items-center gap-2 border border-rule px-4 py-2 text-xs uppercase tracking-widest hover:border-ink transition-colors"
-        >
-          {isFullscreen ? <IconCollapse className="w-4 h-4" /> : <IconExpand className="w-4 h-4" />}
-          {isFullscreen ? "Exit" : "Fullscreen"}
-        </button>
-      </div>
+          <div className="flex items-center gap-3 flex-wrap justify-center">
+            <button
+              onClick={pauseResume}
+              className="flex items-center gap-2 bg-ink text-paper px-4 py-2 text-xs uppercase tracking-widest hover:bg-accent transition-colors"
+            >
+              {phase === "focusing" ? <IconPause className="w-4 h-4" /> : <IconPlay className="w-4 h-4" />}
+              {phase === "focusing" ? "Pause" : "Resume"}
+            </button>
+            <button
+              onClick={takeBreak}
+              className="border border-rule px-4 py-2 text-xs uppercase tracking-widest hover:border-ink transition-colors"
+            >
+              Break (5 min)
+            </button>
+            <button
+              onClick={toggleFullscreen}
+              className="flex items-center gap-2 border border-rule px-4 py-2 text-xs uppercase tracking-widest hover:border-ink transition-colors"
+            >
+              {isFullscreen ? <IconCollapse className="w-4 h-4" /> : <IconExpand className="w-4 h-4" />}
+              {isFullscreen ? "Exit" : "Fullscreen"}
+            </button>
+          </div>
+        </>
+      )}
+
+      <button
+        onClick={endSessionEarly}
+        className="text-xs uppercase tracking-widest text-red-700 dark:text-red-400 hover:underline"
+      >
+        End Session
+      </button>
     </div>
   );
 }

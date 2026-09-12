@@ -10,6 +10,9 @@
   --ink-soft: #6b6355;
   --rule: rgba(33, 29, 22, 0.12);
   --accent: #b5502f;
+  /* Nav bar stays a fixed dark tone regardless of light/dark mode. */
+  --nav-bg: #17140f;
+  --nav-fg: #ece7d9;
 }
 
 .dark {
@@ -20,6 +23,8 @@
   --ink-soft: #a89e8a;
   --rule: rgba(236, 231, 217, 0.12);
   --accent: #e08a5f;
+  --nav-bg: #0d0b08;
+  --nav-fg: #ece7d9;
 }
 
 @theme inline {
@@ -29,6 +34,8 @@
   --color-ink-soft: var(--ink-soft);
   --color-rule: var(--rule);
   --color-accent: var(--accent);
+  --color-nav-bg: var(--nav-bg);
+  --color-nav-fg: var(--nav-fg);
   --font-serif: var(--font-source-serif);
   --font-sans: var(--font-inter);
 }

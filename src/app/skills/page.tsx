@@ -12,7 +12,7 @@ import {
   toggleTodayCheckIn,
 } from "@/lib/skills";
 import { SyncStatus } from "@/components/SyncStatus";
-import { IconTrash, IconShare } from "@/components/icons";
+import { IconTrash, IconShare, IconFocus, IconTrophy } from "@/components/icons";
 import { FocusSession } from "@/components/FocusSession";
 import { generateShareCard, shareOrDownload } from "@/lib/shareCard";
 
@@ -163,18 +163,22 @@ export default function SkillsPage() {
         {tab === "challenge" && <SyncStatus state={syncState} onRetry={refresh} />}
       </header>
 
-      <div className="flex gap-4 text-xs uppercase tracking-widest border-b border-rule">
-        {(["session", "challenge"] as const).map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`pb-2 border-b-2 transition-colors ${
-              tab === t ? "border-accent text-ink font-medium" : "border-transparent text-ink-soft hover:text-ink"
-            }`}
-          >
-            {t === "session" ? "Session" : "Challenge"}
-          </button>
-        ))}
+      <div className="flex gap-6 text-base border-b border-rule">
+        {(["session", "challenge"] as const).map((t) => {
+          const Icon = t === "session" ? IconFocus : IconTrophy;
+          return (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className={`flex items-center gap-2 pb-3 border-b-2 font-bold transition-colors ${
+                tab === t ? "border-accent text-ink" : "border-transparent text-ink-soft hover:text-ink"
+              }`}
+            >
+              <Icon className="w-5 h-5" />
+              {t === "session" ? "Session" : "Challenge"}
+            </button>
+          );
+        })}
       </div>
 
       {tab === "session" && <FocusSession />}
