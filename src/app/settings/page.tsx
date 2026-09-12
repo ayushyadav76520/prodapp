@@ -1,11 +1,43 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTheme } from "@/components/ThemeProvider";
 import { useSession, signIn, signOut } from "next-auth/react";
+import {
+  notificationsSupported,
+  notificationsEnabled,
+  enableNotifications,
+  disableNotifications,
+} from "@/lib/notifications";
 
 export default function SettingsPage() {
   const { theme, toggle } = useTheme();
   const { data: session, status } = useSession();
+  const [notifOn, setNotifOn] = useState(false);
+  const [supported, setSupported] = useState(true);
+  const [notifError, setNotifError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setSupported(notificationsSupported());
+    setNotifOn(notificationsEnabled());
+  }, []);
+
+  const handleToggleNotifications = async () => {
+    setNotifError(null);
+    if (notifOn) {
+      disableNotifications();
+      setNotifOn(false);
+      return;
+    }
+    const granted = await enableNotifications();
+    if (granted) {
+      setNotifOn(true);
+    } else {
+      setNotifError(
+        "Permission denied. Enable notifications for this site in your browser settings, then try again."
+      );
+    }
+  };
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-10 space-y-6">
@@ -27,6 +59,35 @@ export default function SettingsPage() {
         >
           {theme === "light" ? "Switch to Dark" : "Switch to Light"}
         </button>
+      </div>
+
+      <div className="border border-rule p-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium">Notifications</p>
+            <p className="text-xs text-ink-soft mt-0.5 max-w-sm">
+              Upcoming events, overdue tasks, and streak-break warnings — while
+              the app is open in a tab or installed window.
+            </p>
+          </div>
+          {supported ? (
+            <button
+              onClick={handleToggleNotifications}
+              className={`text-xs uppercase tracking-widest px-3 py-1.5 whitespace-nowrap transition-colors ${
+                notifOn
+                  ? "border border-emerald-600/40 text-emerald-700 dark:text-emerald-400"
+                  : "bg-ink text-paper hover:bg-accent"
+              }`}
+            >
+              {notifOn ? "✓ Enabled" : "Enable"}
+            </button>
+          ) : (
+            <span className="text-xs text-ink-soft">Not supported</span>
+          )}
+        </div>
+        {notifError && (
+          <p className="text-xs text-red-700 dark:text-red-400 mt-3">{notifError}</p>
+        )}
       </div>
 
       <div className="border border-rule p-5">
