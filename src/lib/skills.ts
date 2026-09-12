@@ -3,7 +3,7 @@
 export interface SkillChallenge {
   id: string;
   name: string;
-  durationDays: 30 | 60 | 90;
+  durationDays: number;
   startDate: string; // ISO date string
   completedDates: string[]; // array of "YYYY-MM-DD" strings the user checked in
 }
@@ -23,8 +23,13 @@ export function daysRemaining(skill: SkillChallenge): number {
   return Math.max(0, skill.durationDays - daysElapsed(skill));
 }
 
+// Progress reflects how many days you've actually completed out of the
+// total challenge length — not how much calendar time has simply passed.
 export function progressPercent(skill: SkillChallenge): number {
-  return Math.min(100, Math.round((daysElapsed(skill) / skill.durationDays) * 100));
+  return Math.min(
+    100,
+    Math.round((skill.completedDates.length / skill.durationDays) * 100)
+  );
 }
 
 // Current streak = consecutive days (ending today or yesterday) checked in.

@@ -17,7 +17,7 @@ export async function getOrCreateSkillsList(
 const NOTES_PREFIX = "SKILL_META::";
 
 export interface SkillMeta {
-  durationDays: 30 | 60 | 90;
+  durationDays: number;
   startDate: string;
   completedDates: string[];
 }

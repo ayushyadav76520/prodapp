@@ -197,8 +197,8 @@ export default function TasksPage() {
           const isAdding = addingToList === list.id;
           return (
             <div key={list.id} className="border border-rule">
-              <div className="flex items-center justify-between px-4 py-2.5 border-b border-rule bg-paper-raised">
-                <h2 className="text-xs uppercase tracking-widest">{list.title}</h2>
+              <div className="flex items-center justify-between px-4 py-2.5 border-b border-rule bg-accent/10">
+                <h2 className="text-xs uppercase tracking-widest font-bold text-ink">{list.title}</h2>
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => {

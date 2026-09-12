@@ -36,7 +36,7 @@ function dateHeading(d: Date) {
 export default function CalendarPage() {
   const { status: sessionStatus } = useSession();
   const { events, syncState, error, refresh } = useCalendarData();
-  const [view, setView] = useState<"Day" | "Week" | "Month">("Week");
+  const [view, setView] = useState<"Day" | "Week" | "Month">("Month");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState("");
@@ -285,7 +285,7 @@ export default function CalendarPage() {
         </div>
       )}
 
-      <div className="grid md:grid-cols-[1fr_300px] gap-8 items-start">
+      <div className="grid md:grid-cols-[1fr_260px] gap-8 items-start">
         <div className="space-y-6 order-2 md:order-1">
           {syncState === "syncing" && events.length === 0 && (
             <p className="text-sm text-ink-soft">Loading your events…</p>

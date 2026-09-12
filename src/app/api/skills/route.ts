@@ -48,7 +48,8 @@ export async function POST(req: NextRequest) {
   }
 
   const { name, durationDays } = await req.json();
-  if (!name || ![30, 60, 90].includes(durationDays)) {
+  const days = Number(durationDays);
+  if (!name || !Number.isInteger(days) || days < 1 || days > 3650) {
     return NextResponse.json({ error: "Invalid skill data" }, { status: 400 });
   }
 
@@ -57,14 +58,14 @@ export async function POST(req: NextRequest) {
     const startDate = new Date().toISOString();
     const task = await insertTask(session.accessToken, taskListId, {
       title: name,
-      notes: encodeSkillNotes({ durationDays, startDate, completedDates: [] }),
+      notes: encodeSkillNotes({ durationDays: days, startDate, completedDates: [] }),
     });
 
     return NextResponse.json({
       skill: {
         id: task.id,
         name: task.title,
-        durationDays,
+        durationDays: days,
         startDate,
         completedDates: [],
       },

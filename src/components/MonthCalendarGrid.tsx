@@ -43,7 +43,7 @@ export function MonthCalendarGrid({
 
   return (
     <div className="border border-rule bg-paper-raised">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-rule">
+      <div className="flex items-center justify-between px-3 py-2 border-b border-rule">
         <button
           onClick={() => setCursor(new Date(year, month - 1, 1))}
           className="text-ink-soft hover:text-ink text-sm px-1"
@@ -51,7 +51,7 @@ export function MonthCalendarGrid({
         >
           ‹
         </button>
-        <p className="font-serif text-sm font-semibold tracking-wide">
+        <p className="font-serif text-xs font-semibold tracking-wide">
           {cursor.toLocaleDateString(undefined, { month: "long", year: "numeric" }).toUpperCase()}
         </p>
         <button
@@ -63,15 +63,15 @@ export function MonthCalendarGrid({
         </button>
       </div>
 
-      <div className="grid grid-cols-7 text-center px-2 pt-3">
+      <div className="grid grid-cols-7 text-center px-1.5 pt-2">
         {WEEKDAYS.map((d, i) => (
-          <div key={i} className="text-[10px] uppercase tracking-widest text-ink-soft py-1">
+          <div key={i} className="text-[9px] uppercase tracking-widest text-ink-soft py-0.5">
             {d}
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 px-2 pb-3">
+      <div className="grid grid-cols-7 px-1.5 pb-2">
         {cells.map((date, i) => {
           if (!date) return <div key={i} className="aspect-square" />;
           const hasEvent = eventDays.has(date.toDateString());
@@ -83,7 +83,7 @@ export function MonthCalendarGrid({
               onClick={() => {
                 onSelectDate(date);
               }}
-              className={`aspect-square flex flex-col items-center justify-center text-xs relative transition-colors ${
+              className={`aspect-square flex flex-col items-center justify-center text-[11px] relative transition-colors ${
                 isSelected
                   ? "bg-ink text-paper"
                   : isToday
@@ -94,7 +94,7 @@ export function MonthCalendarGrid({
               <span>{date.getDate()}</span>
               {hasEvent && (
                 <span
-                  className={`absolute bottom-1 w-1 h-1 rounded-full ${
+                  className={`absolute bottom-0.5 w-1 h-1 rounded-full ${
                     isSelected ? "bg-paper" : "bg-accent"
                   }`}
                 />

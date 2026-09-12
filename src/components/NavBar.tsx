@@ -8,7 +8,6 @@ import {
   IconCalendar,
   IconTasks,
   IconSkills,
-  IconWidgets,
   IconSettings,
 } from "./icons";
 
@@ -17,7 +16,6 @@ const NAV_ITEMS = [
   { href: "/calendar", label: "Calendar", Icon: IconCalendar },
   { href: "/tasks", label: "Tasks", Icon: IconTasks },
   { href: "/skills", label: "Skills", Icon: IconSkills },
-  { href: "/widgets", label: "Widgets", Icon: IconWidgets },
   { href: "/settings", label: "Settings", Icon: IconSettings },
 ];
 
@@ -62,16 +60,16 @@ export function NavBar() {
         </nav>
       </aside>
 
-      {/* Mobile floating pill nav */}
-      <nav className="md:hidden fixed bottom-4 inset-x-4 z-20">
-        <ul className="flex items-center justify-between bg-ink text-paper rounded-full px-2 py-2.5 shadow-lg">
+      {/* Mobile bottom nav — full-width, square edges */}
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-20">
+        <ul className="flex items-stretch justify-between bg-ink text-paper px-1">
           {NAV_ITEMS.map((item) => {
             const active = pathname === item.href;
             return (
               <li key={item.href} className="flex-1">
                 <Link
                   href={item.href}
-                  className={`flex flex-col items-center gap-1 py-1.5 rounded-full transition-colors ${
+                  className={`flex flex-col items-center gap-1 py-3.5 transition-colors ${
                     active ? "text-accent" : "text-paper/60"
                   }`}
                 >

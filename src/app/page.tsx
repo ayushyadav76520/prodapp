@@ -70,9 +70,6 @@ export default function HomePage() {
           <h1 className="font-serif text-4xl md:text-6xl font-semibold leading-[1.05] tracking-tight">
             {getGreeting(session?.user?.name?.split(" ")[0])}
           </h1>
-          <p className="font-serif italic text-2xl md:text-3xl text-ink-soft mt-4 leading-snug">
-            Everything Google knows, shown honestly.
-          </p>
           <p className="text-sm text-ink-soft mt-6 max-w-md leading-relaxed">
             {status === "authenticated"
               ? "Your calendar, tasks and skill streaks below are pulled live from your Google account — nothing here is invented."

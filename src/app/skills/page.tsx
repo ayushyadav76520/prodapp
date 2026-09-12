@@ -14,7 +14,7 @@ import {
 import { SyncStatus } from "@/components/SyncStatus";
 import { IconTrash } from "@/components/icons";
 
-const DURATIONS: (30 | 60 | 90)[] = [30, 60, 90];
+const DURATIONS = [30, 60, 90] as const;
 
 export default function SkillsPage() {
   const { status: sessionStatus } = useSession();
@@ -23,7 +23,9 @@ export default function SkillsPage() {
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
-  const [duration, setDuration] = useState<30 | 60 | 90>(30);
+  const [duration, setDuration] = useState<number>(30);
+  const [customDays, setCustomDays] = useState("");
+  const [useCustom, setUseCustom] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const refresh = useCallback(async () => {
@@ -47,19 +49,22 @@ export default function SkillsPage() {
   }, [refresh]);
 
   const addSkill = async () => {
-    if (!name.trim() || saving) return;
+    const finalDuration = useCustom ? Number(customDays) : duration;
+    if (!name.trim() || saving || !finalDuration || finalDuration < 1) return;
     setSaving(true);
     try {
       const res = await fetch("/api/skills", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), durationDays: duration }),
+        body: JSON.stringify({ name: name.trim(), durationDays: finalDuration }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Failed to create skill");
       setSkills((prev) => [data.skill, ...prev]);
       setName("");
       setDuration(30);
+      setCustomDays("");
+      setUseCustom(false);
       setShowForm(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create skill");
@@ -169,13 +174,16 @@ export default function SkillsPage() {
             <label className="text-xs uppercase tracking-widest text-ink-soft">
               Challenge length
             </label>
-            <div className="flex gap-2 mt-2">
+            <div className="flex gap-2 mt-2 flex-wrap">
               {DURATIONS.map((d) => (
                 <button
                   key={d}
-                  onClick={() => setDuration(d)}
+                  onClick={() => {
+                    setDuration(d);
+                    setUseCustom(false);
+                  }}
                   className={`px-4 py-1.5 text-sm font-medium border transition-colors ${
-                    duration === d
+                    !useCustom && duration === d
                       ? "bg-ink text-paper border-ink"
                       : "border-rule text-ink-soft hover:border-ink"
                   }`}
@@ -183,11 +191,32 @@ export default function SkillsPage() {
                   {d} days
                 </button>
               ))}
+              <button
+                onClick={() => setUseCustom(true)}
+                className={`px-4 py-1.5 text-sm font-medium border transition-colors ${
+                  useCustom
+                    ? "bg-ink text-paper border-ink"
+                    : "border-rule text-ink-soft hover:border-ink"
+                }`}
+              >
+                Custom
+              </button>
             </div>
+            {useCustom && (
+              <input
+                type="number"
+                min={1}
+                max={3650}
+                value={customDays}
+                onChange={(e) => setCustomDays(e.target.value)}
+                placeholder="Number of days"
+                className="mt-2 w-40 border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
+              />
+            )}
           </div>
           <button
             onClick={addSkill}
-            disabled={!name.trim() || saving}
+            disabled={!name.trim() || saving || (useCustom && !customDays)}
             className="bg-ink text-paper text-sm font-medium px-4 py-2 hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             {saving ? "Starting…" : "Start Challenge"}
@@ -229,16 +258,20 @@ export default function SkillsPage() {
                 </button>
               </div>
 
-              <div className="mt-3 flex items-center gap-2">
-                <div className="flex-1 h-1.5 bg-rule overflow-hidden">
+              <div className="mt-3">
+                <div className="flex items-center justify-between text-[10px] uppercase tracking-widest text-ink-soft mb-1.5">
+                  <span>Progress</span>
+                  <span className="tabular-nums">{pct}%</span>
+                </div>
+                <div className="h-2 bg-rule rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-accent transition-all"
-                    style={{ width: `${pct}%` }}
+                    className="h-full bg-accent rounded-full transition-all"
+                    style={{
+                      width: `${Math.max(pct, 2)}%`,
+                      boxShadow: "0 0 8px var(--accent)",
+                    }}
                   />
                 </div>
-                <span className="text-[10px] text-ink-soft tabular-nums w-8 text-right">
-                  {pct}%
-                </span>
               </div>
 
               <div className="mt-4 flex items-center justify-between">
