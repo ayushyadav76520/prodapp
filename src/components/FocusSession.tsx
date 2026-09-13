@@ -268,7 +268,7 @@ export function FocusSession() {
 
   if (phase === "setup") {
     return (
-      <div className="focus-setup-shell rounded-3xl border-2 border-rule bg-paper-raised p-2.5 md:p-3">
+      <div className="focus-setup-shell">
         <div className="grid gap-2.5 lg:h-[min(470px,calc(100vh-250px))] lg:grid-cols-[minmax(0,1.02fr)_minmax(300px,0.78fr)]">
           <section className="min-h-0 rounded-2xl border-2 border-rule bg-paper p-3 md:p-3.5">
             <div className="flex items-start justify-between gap-4">

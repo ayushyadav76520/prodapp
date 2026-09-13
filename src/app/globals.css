@@ -1049,7 +1049,7 @@ body {
 .focus-skills-shell {
   height: 100dvh;
   max-height: 100dvh;
-  overflow: hidden;
+  overflow-y: auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
