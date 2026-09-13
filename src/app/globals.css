@@ -1045,7 +1045,7 @@ body {
   flex: 1 1 auto;
   min-height: 0;
   border-radius: 1.5rem;
-  padding: clamp(.8rem, 1.7vw, 1.35rem);
+  padding: clamp(.55rem, 1.1vw, .9rem);
   background: #0f0e0c;
   color: #f3efe6;
   overflow: hidden;
@@ -1056,8 +1056,8 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  min-height: 3.6rem;
-  margin-bottom: .85rem;
+  min-height: 2.4rem;
+  margin-bottom: .5rem;
 }
 
 .focus-session-mobile-header .focus-profile-mini {
@@ -1088,38 +1088,38 @@ body {
 .focus-session-dashboard {
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(240px, .78fr) minmax(320px, 1.22fr);
+  grid-template-columns: minmax(220px, .78fr) minmax(280px, 1.22fr);
   align-items: center;
-  gap: clamp(1rem, 2.2vw, 2rem);
-  padding: clamp(.4rem, 1vw, .75rem) clamp(.2rem, 1vw, .5rem) 0;
+  gap: clamp(.7rem, 1.6vw, 1.4rem);
+  padding: 0;
 }
 
 .focus-session-dashboard-copy {
   min-width: 0;
-  max-width: 420px;
+  max-width: 380px;
 }
 
 .focus-session-dashboard-copy h1 {
-  margin: .3rem 0 0;
+  margin: .2rem 0 0;
   font-family: var(--font-source-serif);
-  font-size: clamp(1.8rem, 3vw, 2.9rem);
-  line-height: .96;
-  letter-spacing: -.04em;
+  font-size: clamp(1.4rem, 2.4vw, 2.2rem);
+  line-height: .98;
+  letter-spacing: -.03em;
   overflow-wrap: anywhere;
 }
 
 .focus-session-dashboard-copy .focus-mode-subtitle {
-  margin-top: .5rem;
-  font-size: clamp(.82rem, 1vw, .95rem);
+  margin-top: .35rem;
+  font-size: clamp(.78rem, .9vw, .88rem);
   color: var(--ink-soft);
 }
 
 .focus-session-dashboard-actions {
-  margin-top: .9rem;
+  margin-top: .65rem;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: .5rem;
-  max-width: 460px;
+  gap: .4rem;
+  max-width: 420px;
 }
 
 .focus-session-dashboard-visual {
@@ -1131,19 +1131,19 @@ body {
 }
 
 .focus-session-dashboard-date {
-  margin-bottom: .4rem;
-  font-size: .58rem;
+  margin-bottom: .3rem;
+  font-size: .54rem;
   font-weight: 700;
-  letter-spacing: .24em;
+  letter-spacing: .2em;
   color: rgba(243,239,230,.68);
   text-align: center;
 }
 
 .focus-session-dashboard-art {
-  width: min(70%, 300px);
-  max-width: 300px;
-  border-radius: 1.4rem;
-  padding: .2rem;
+  width: min(58%, 220px);
+  max-width: 220px;
+  border-radius: 1.2rem;
+  padding: .15rem;
   background: #11100e;
 }
 
@@ -1153,30 +1153,30 @@ body {
 }
 
 .focus-session-dashboard-visual .focus-visual-label {
-  margin-top: .5rem;
-  font-size: .58rem;
+  margin-top: .35rem;
+  font-size: .54rem;
   font-weight: 600;
-  letter-spacing: .36em;
+  letter-spacing: .3em;
   text-transform: uppercase;
   color: rgba(243,239,230,.58);
 }
 
 .focus-session-dashboard-visual .focus-countdown {
-  margin-top: .2rem;
-  font-size: clamp(2rem, 3.4vw, 3.2rem);
+  margin-top: .12rem;
+  font-size: clamp(1.5rem, 2.6vw, 2.3rem);
   font-weight: 300;
-  line-height: .95;
+  line-height: .96;
   font-variant-numeric: tabular-nums;
   color: #f39a3d;
 }
 
 .focus-session-dashboard-visual .focus-progress-wrap {
-  width: min(100%, 380px);
-  margin-top: .5rem;
+  width: min(100%, 320px);
+  margin-top: .35rem;
 }
 
 .focus-session-dashboard-visual .focus-progress-track {
-  height: .5rem;
+  height: .4rem;
   overflow: hidden;
   border-radius: 999px;
   background: rgba(255,255,255,.12);
@@ -1192,20 +1192,34 @@ body {
 .focus-session-dashboard-visual .focus-progress-meta {
   display: flex;
   justify-content: space-between;
-  gap: .6rem;
-  margin-top: .32rem;
-  font-size: .56rem;
+  gap: .5rem;
+  margin-top: .25rem;
+  font-size: .52rem;
   color: rgba(243,239,230,.5);
 }
 
 .focus-session-dashboard .focus-quote {
-  margin-top: .85rem;
-  max-width: 420px;
+  margin-top: .55rem;
+  max-width: 380px;
   color: var(--ink-soft);
+  font-size: .82rem;
 }
 
 .focus-session-dashboard .focus-end-button {
-  margin-top: .5rem;
+  margin-top: .35rem;
+}
+
+.focus-session-dashboard-actions .focus-control-button {
+  min-height: 2.3rem;
+  padding: .45rem .5rem;
+  font-size: .62rem;
+  border-radius: .7rem;
+  gap: .35rem;
+}
+
+.focus-session-dashboard-actions .focus-control-button svg {
+  width: .85rem;
+  height: .85rem;
 }
 
 @media (max-width: 1100px) and (min-width: 768px) {

@@ -185,7 +185,11 @@ export default function SkillsPage() {
         })}
       </div>
 
-      {tab === "session" && <FocusSession />}
+      {tab === "session" && (
+        <div className="mt-4">
+          <FocusSession />
+        </div>
+      )}
 
       {tab === "challenge" && (
         <>
