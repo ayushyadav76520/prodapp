@@ -137,9 +137,19 @@ export function IconDownload({ className = "" }: { className?: string }) {
 
 export function IconProfile({ className = "" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className={className}>
-      <circle cx="12" cy="8" r="3.25" />
-      <path d="M5.5 20c.7-3.45 2.85-5.3 6.5-5.3s5.8 1.85 6.5 5.3" strokeLinecap="round" />
+    <svg viewBox="0 0 64 64" fill="none" shapeRendering="crispEdges" className={className} aria-hidden="true">
+      {/* Pixel-art avatar inspired by the reference: framed head, warm hair, simple dark face, muted shirt. */}
+      <rect x="7" y="7" width="50" height="50" rx="10" fill="#efe6cf" stroke="currentColor" strokeWidth="2" />
+      <rect x="18" y="14" width="28" height="8" fill="#d78a35" />
+      <rect x="14" y="20" width="36" height="21" fill="#e7a64d" />
+      <rect x="18" y="24" width="7" height="6" fill="#3e342a" />
+      <rect x="39" y="24" width="7" height="6" fill="#3e342a" />
+      <rect x="25" y="32" width="14" height="5" fill="#c16e3a" />
+      <rect x="18" y="40" width="28" height="11" fill="#6f7274" />
+      <rect x="22" y="39" width="20" height="4" fill="#8b8f91" />
+      <rect x="14" y="44" width="6" height="7" fill="#4b4d4f" />
+      <rect x="44" y="44" width="6" height="7" fill="#4b4d4f" />
+      <rect x="25" y="43" width="14" height="8" fill="#74787a" />
     </svg>
   );
 }

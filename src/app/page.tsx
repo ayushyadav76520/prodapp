@@ -133,8 +133,8 @@ export default function HomePage() {
       <section className={`rounded-[2rem] border border-rule bg-paper-raised p-6 md:p-7 transition-all duration-700 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"}`}>
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-4 min-w-0">
-            <div className="w-16 h-16 md:w-[4.5rem] md:h-[4.5rem] rounded-2xl bg-ink text-paper flex items-center justify-center shrink-0 shadow-sm">
-              <IconProfile className="w-8 h-8 md:w-9 md:h-9" />
+            <div className="w-16 h-16 md:w-[4.5rem] md:h-[4.5rem] rounded-2xl bg-[#efe6cf] text-ink flex items-center justify-center shrink-0 border border-rule shadow-sm overflow-hidden">
+              <IconProfile className="w-14 h-14 md:w-[4rem] md:h-[4rem]" />
             </div>
             <div className="min-w-0">
               <p className="text-[11px] uppercase tracking-[0.18em] text-accent font-semibold">Your profile</p>

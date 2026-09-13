@@ -40,16 +40,7 @@ export async function generateShareCard(opts: ShareCardOptions): Promise<Blob | 
 
     const avatarX = margin + 68;
     const avatarY = y + 69;
-    const avatarR = 42;
-    ctx.beginPath();
-    ctx.arc(avatarX, avatarY, avatarR, 0, Math.PI * 2);
-    ctx.fillStyle = "#e08a5f";
-    ctx.fill();
-    ctx.fillStyle = "#17140f";
-    ctx.font = "700 30px Arial, sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(initials(opts.userName), avatarX, avatarY + 1);
+    drawPixelAvatar(ctx, avatarX, avatarY, 84);
 
     ctx.textAlign = "left";
     ctx.fillStyle = "#ece7d9";
@@ -112,6 +103,32 @@ export async function generateShareCard(opts: ShareCardOptions): Promise<Blob | 
   ctx.fillText(opts.footer, margin, HEIGHT - 60);
 
   return new Promise((resolve) => canvas.toBlob((blob) => resolve(blob), "image/png"));
+}
+
+function drawPixelAvatar(ctx: CanvasRenderingContext2D, centerX: number, centerY: number, size: number) {
+  const x = centerX - size / 2;
+  const y = centerY - size / 2;
+  const u = size / 64;
+  const rect = (rx: number, ry: number, rw: number, rh: number, fill: string) => {
+    ctx.fillStyle = fill;
+    ctx.fillRect(x + rx * u, y + ry * u, rw * u, rh * u);
+  };
+
+  rect(7, 7, 50, 50, "#efe6cf");
+  rect(18, 14, 28, 8, "#d78a35");
+  rect(14, 20, 36, 21, "#e7a64d");
+  rect(18, 24, 7, 6, "#3e342a");
+  rect(39, 24, 7, 6, "#3e342a");
+  rect(25, 32, 14, 5, "#c16e3a");
+  rect(18, 40, 28, 11, "#6f7274");
+  rect(22, 39, 20, 4, "#8b8f91");
+  rect(14, 44, 6, 7, "#4b4d4f");
+  rect(44, 44, 6, 7, "#4b4d4f");
+  rect(25, 43, 14, 8, "#74787a");
+
+  ctx.strokeStyle = "rgba(236,231,217,0.7)";
+  ctx.lineWidth = 2 * u;
+  ctx.strokeRect(x + 7 * u, y + 7 * u, 50 * u, 50 * u);
 }
 
 function initials(name: string) {
