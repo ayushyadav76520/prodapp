@@ -425,3 +425,406 @@ body {
   .focus-active-shell:fullscreen .focus-fullscreen-content > p.font-serif { order: 7; }
   .focus-active-shell:fullscreen .focus-fullscreen-content > button:last-child { order: 8; }
 }
+
+/* Focus Session v6: reference-matched fullscreen dashboard. Explicit layout classes avoid nth-child overlap. */
+.focus-session-frame {
+  min-width: 0;
+}
+
+.focus-active-shell:fullscreen {
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  background: #0f0e0c;
+  color: #f3efe6;
+}
+
+.focus-active-shell:fullscreen .focus-session-frame {
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  background: #0f0e0c;
+}
+
+.focus-active-shell:fullscreen .focus-fullscreen-stage {
+  width: 100%;
+  height: 100%;
+}
+
+.focus-active-shell:fullscreen .focus-fullscreen-panel {
+  width: 100%;
+  height: 100%;
+  padding: clamp(1.5rem, 3vw, 3rem) clamp(2rem, 4.2vw, 5rem);
+  background:
+    radial-gradient(circle at 75% 45%, rgba(242, 143, 54, 0.035), transparent 25%),
+    #0f0e0c;
+}
+
+.focus-fullscreen-topbar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3.5rem;
+}
+
+.focus-profile-mini {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  min-width: 0;
+}
+
+.focus-profile-avatar {
+  display: grid;
+  place-items: center;
+  width: 3.1rem;
+  height: 3.1rem;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.20);
+  border-radius: 999px;
+  background: #e8dfca;
+  color: #201d18;
+}
+
+.focus-profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.focus-profile-name {
+  color: #f3efe6;
+  font-size: .95rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+
+.focus-profile-level {
+  margin-top: .15rem;
+  color: rgba(243,239,230,.50);
+  font-size: .72rem;
+  letter-spacing: .04em;
+}
+
+.focus-fullscreen-date {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(243,239,230,.78);
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .22em;
+  white-space: nowrap;
+}
+
+.focus-fullscreen-icon-button {
+  display: grid;
+  place-items: center;
+  width: 2.9rem;
+  height: 2.9rem;
+  border: 1px solid rgba(255,255,255,.20);
+  border-radius: .85rem;
+  color: #f3efe6;
+  transition: border-color .2s ease, background .2s ease;
+}
+
+.focus-fullscreen-icon-button:hover {
+  border-color: #f39a3d;
+  background: rgba(243,154,61,.08);
+}
+
+.focus-fullscreen-grid {
+  width: min(1400px, 100%);
+  height: calc(100% - 3.5rem);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, .92fr) minmax(420px, 1.08fr);
+  gap: clamp(2rem, 7vw, 7rem);
+  align-items: center;
+}
+
+.focus-fullscreen-copy {
+  min-width: 0;
+  padding-left: clamp(0rem, 1vw, 1rem);
+}
+
+.focus-mode-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: .8rem;
+  color: #f39a3d;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .34em;
+}
+
+.focus-mode-eyebrow span {
+  display: inline-block;
+  width: 2rem;
+  height: 1px;
+  background: currentColor;
+}
+
+.focus-fullscreen-copy h1 {
+  max-width: 700px;
+  margin-top: .7rem;
+  color: #f5f1e9;
+  font-family: var(--font-inter), sans-serif;
+  font-size: clamp(3.5rem, 6.5vw, 7rem);
+  font-weight: 800;
+  line-height: .94;
+  letter-spacing: -.055em;
+  overflow-wrap: anywhere;
+}
+
+.focus-mode-subtitle {
+  margin-top: 1.15rem;
+  color: rgba(243,239,230,.54);
+  font-size: clamp(1rem, 1.5vw, 1.35rem);
+  letter-spacing: .01em;
+}
+
+.focus-fullscreen-action-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .7rem;
+  width: min(100%, 700px);
+  margin-top: 3rem;
+}
+
+.focus-control-button {
+  min-height: 3.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .55rem;
+  padding: .75rem 1rem;
+  border-radius: .95rem;
+  font-size: .75rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  white-space: nowrap;
+  transition: transform .2s ease, border-color .2s ease, background .2s ease;
+}
+
+.focus-control-button:hover {
+  transform: translateY(-1px);
+}
+
+.focus-control-button-primary {
+  border: 1px solid #f39a3d;
+  background: #f39a3d;
+  color: #17120d;
+}
+
+.focus-control-button-primary:hover {
+  background: #ffab52;
+  border-color: #ffab52;
+}
+
+.focus-control-button-secondary {
+  border: 1px solid rgba(255,255,255,.19);
+  background: rgba(255,255,255,.015);
+  color: #f3efe6;
+}
+
+.focus-control-button-secondary:hover {
+  border-color: rgba(243,154,61,.72);
+  background: rgba(243,154,61,.06);
+}
+
+.focus-quote {
+  max-width: 680px;
+  margin-top: 3.5rem;
+  color: rgba(243,239,230,.62);
+  font-family: var(--font-source-serif), serif;
+  font-size: 1rem;
+  font-style: italic;
+  line-height: 1.55;
+}
+
+.focus-end-button {
+  margin-top: 1.6rem;
+  color: #ff8c78;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+
+.focus-end-button:hover {
+  text-decoration: underline;
+  text-underline-offset: .25rem;
+}
+
+.focus-fullscreen-visual {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.focus-fullscreen-art {
+  width: min(100%, 560px);
+  max-height: 55vh;
+}
+
+.focus-fullscreen-art > .focus-study-illustration {
+  width: 100%;
+  max-width: 560px;
+}
+
+.focus-visual-label {
+  margin-top: .75rem;
+  color: rgba(243,239,230,.60);
+  font-size: .66rem;
+  font-weight: 700;
+  letter-spacing: .43em;
+}
+
+.focus-countdown {
+  margin-top: .45rem;
+  color: #f39a3d;
+  font-size: clamp(3.4rem, 6vw, 5.5rem);
+  font-weight: 300;
+  line-height: .92;
+  letter-spacing: -.045em;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 30px rgba(243,154,61,.08);
+}
+
+.focus-progress-wrap {
+  width: min(100%, 660px);
+  margin-top: 1.05rem;
+}
+
+.focus-progress-track {
+  width: 100%;
+  height: .7rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255,255,255,.11);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.025);
+}
+
+.focus-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #f39a3d;
+  box-shadow: 0 0 18px rgba(243,154,61,.20);
+  transition: width 1s linear;
+}
+
+.focus-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: .45rem;
+  color: rgba(243,239,230,.45);
+  font-size: .62rem;
+  letter-spacing: .08em;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 1100px) and (min-width: 768px) {
+  .focus-active-shell:fullscreen .focus-fullscreen-panel {
+    padding-inline: 2rem;
+  }
+
+  .focus-fullscreen-grid {
+    grid-template-columns: minmax(0, .95fr) minmax(350px, 1.05fr);
+    gap: 2.5rem;
+  }
+
+  .focus-fullscreen-copy h1 {
+    font-size: clamp(3rem, 6vw, 5.2rem);
+  }
+
+  .focus-fullscreen-action-row {
+    margin-top: 2rem;
+  }
+
+  .focus-quote {
+    margin-top: 2rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .focus-active-shell:fullscreen {
+    overflow-y: auto;
+  }
+
+  .focus-active-shell:fullscreen .focus-session-frame {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-panel {
+    height: auto;
+    min-height: 100dvh;
+    padding: 1rem;
+  }
+
+  .focus-fullscreen-topbar {
+    min-height: 3rem;
+  }
+
+  .focus-profile-avatar {
+    width: 2.6rem;
+    height: 2.6rem;
+  }
+
+  .focus-fullscreen-date {
+    display: none;
+  }
+
+  .focus-fullscreen-grid {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: stretch;
+    padding-top: 2.2rem;
+  }
+
+  .focus-fullscreen-copy {
+    order: 2;
+  }
+
+  .focus-fullscreen-visual {
+    order: 1;
+  }
+
+  .focus-fullscreen-art {
+    width: min(82vw, 390px);
+  }
+
+  .focus-fullscreen-copy h1 {
+    font-size: clamp(3rem, 15vw, 5rem);
+  }
+
+  .focus-fullscreen-action-row {
+    margin-top: 2rem;
+    grid-template-columns: 1fr;
+  }
+
+  .focus-control-button {
+    min-height: 3.2rem;
+  }
+
+  .focus-quote {
+    margin-top: 2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .focus-control-button,
+  .focus-progress-fill {
+    transition: none;
+  }
+}
