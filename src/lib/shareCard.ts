@@ -35,21 +35,21 @@ export async function generateShareCard(opts: ShareCardOptions): Promise<Blob | 
   // Large profile header — intentionally much more visible than the old footer avatar.
   if (opts.userName) {
     ctx.fillStyle = "rgba(236,231,217,0.08)";
-    roundRect(ctx, margin, y, WIDTH - margin * 2, 138, 34);
+    roundRect(ctx, margin, y, WIDTH - margin * 2, 164, 36);
     ctx.fill();
 
     const avatarX = margin + 68;
-    const avatarY = y + 69;
-    drawPixelAvatar(ctx, avatarX, avatarY, 84);
+    const avatarY = y + 82;
+    drawPixelAvatar(ctx, avatarX, avatarY, 102);
 
     ctx.textAlign = "left";
     ctx.fillStyle = "#ece7d9";
-    ctx.font = "700 34px Georgia, serif";
-    ctx.fillText(opts.userName, margin + 132, y + 60);
+    ctx.font = "700 40px Georgia, serif";
+    ctx.fillText(opts.userName, margin + 150, y + 70);
     ctx.fillStyle = "#a89e8a";
-    ctx.font = "600 23px Arial, sans-serif";
-    ctx.fillText(typeof opts.level === "number" ? `LEVEL ${opts.level}` : "CONFLICT-CALENDAR", margin + 132, y + 98);
-    y += 185;
+    ctx.font = "600 27px Arial, sans-serif";
+    ctx.fillText(typeof opts.level === "number" ? `LEVEL ${opts.level}` : "CONFLICT-CALENDAR", margin + 150, y + 114);
+    y += 210;
   }
 
   ctx.fillStyle = "#e08a5f";

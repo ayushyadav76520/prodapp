@@ -306,10 +306,10 @@ export default function SkillsPage() {
                       </button>
                       <button
                         onClick={() => removeSkill(skill.id, skill.name)}
-                        className="w-11 h-11 rounded-full border border-rule text-ink-soft flex items-center justify-center hover:border-red-600 hover:text-red-600 transition-colors"
+                        className="w-12 h-12 rounded-full border border-rule text-ink-soft flex items-center justify-center hover:border-red-600 hover:text-red-600 transition-colors"
                         aria-label="Delete skill"
                       >
-                        <IconTrash className="w-5 h-5" />
+                        <IconTrash className="w-6 h-6" />
                       </button>
                     </div>
                   </div>

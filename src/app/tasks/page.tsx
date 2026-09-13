@@ -2,13 +2,15 @@
 
 import { useState } from "react";
 import { useSession, signIn } from "next-auth/react";
-import { useTasksData } from "@/lib/use-google-data";
+import { useLevel, useTasksData } from "@/lib/use-google-data";
 import { SyncStatus } from "@/components/SyncStatus";
-import { IconTrash } from "@/components/icons";
+import { IconShare, IconTrash } from "@/components/icons";
+import { generateShareCard, shareOrDownload } from "@/lib/shareCard";
 
 export default function TasksPage() {
-  const { status: sessionStatus } = useSession();
+  const { status: sessionStatus, data: session } = useSession();
   const { tasks, taskLists, syncState, error, refresh } = useTasksData();
+  const { level } = useLevel();
   const [addingToList, setAddingToList] = useState<string | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [saving, setSaving] = useState(false);
@@ -94,6 +96,28 @@ export default function TasksPage() {
       refresh();
     } catch {
       setFormError("Couldn't delete that category. Try again.");
+    }
+  };
+
+  const shareCategory = async (listId: string, listTitle: string) => {
+    const listTasks = tasks.filter((t) => t.taskListId === listId);
+    const completed = listTasks.filter((t) => t.status === "completed").length;
+    const percent = listTasks.length ? (completed / listTasks.length) * 100 : 0;
+    const blob = await generateShareCard({
+      eyebrow: "Task Category",
+      title: listTitle,
+      statLine: `${listTasks.length} task${listTasks.length === 1 ? "" : "s"} · ${completed} completed`,
+      progressPercent: percent,
+      footer: "conflict-calendar",
+      userName: session?.user?.name ?? undefined,
+      level,
+    });
+    if (blob) {
+      await shareOrDownload(
+        blob,
+        `${listTitle.replace(/\s+/g, "-").toLowerCase()}-tasks.png`,
+        `My ${listTitle} task category: ${completed} of ${listTasks.length} tasks completed.`
+      );
     }
   };
 
@@ -199,23 +223,30 @@ export default function TasksPage() {
             <div key={list.id} className="border border-rule">
               <div className="flex items-center justify-between px-4 py-2.5 border-b border-rule bg-accent/10">
                 <h2 className="text-xs uppercase tracking-widest font-bold text-ink">{list.title}</h2>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5">
                   <button
                     onClick={() => {
                       setAddingToList(isAdding ? null : list.id);
                       setNewTaskTitle("");
                     }}
-                    className="text-ink-soft hover:text-accent text-sm leading-none"
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-ink-soft hover:text-accent hover:bg-paper transition-colors text-2xl leading-none"
                     aria-label="Add task"
                   >
                     +
                   </button>
                   <button
+                    onClick={() => shareCategory(list.id, list.title)}
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-ink-soft hover:text-accent hover:bg-paper transition-colors"
+                    aria-label="Share category"
+                  >
+                    <IconShare className="w-5 h-5" />
+                  </button>
+                  <button
                     onClick={() => deleteCategory(list.id, list.title)}
-                    className="text-ink-soft/60 hover:text-red-600 transition-colors"
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-ink-soft/70 hover:text-red-600 hover:bg-paper transition-colors"
                     aria-label="Delete category"
                   >
-                    <IconTrash className="w-3.5 h-3.5" />
+                    <IconTrash className="w-5 h-5" />
                   </button>
                 </div>
               </div>
@@ -277,7 +308,7 @@ export default function TasksPage() {
                           className="text-ink-soft/50 hover:text-red-600 transition-colors shrink-0 mt-0.5"
                           aria-label="Delete task"
                         >
-                          <IconTrash className="w-3.5 h-3.5" />
+                          <IconTrash className="w-5 h-5" />
                         </button>
                       </li>
                     );
