@@ -1048,7 +1048,7 @@ body {
   padding: clamp(.55rem, 1.1vw, .9rem);
   background: #0f0e0c;
   color: #f3efe6;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .focus-session-mobile-header {
@@ -1512,33 +1512,42 @@ body {
   .focus-session-dashboard-visual {
     max-height: 100%;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
 
   .focus-session-dashboard-date {
     margin-bottom: .35rem;
     font-size: .54rem;
     letter-spacing: .22em;
+    flex: 0 0 auto;
   }
 
   .focus-session-dashboard-art {
-    width: min(100%, 365px);
+    width: min(28vh, 100%, 365px);
     max-width: 365px;
+    flex: 0 1 auto;
   }
 
   .focus-session-dashboard-visual .focus-visual-label {
     margin-top: .35rem;
     font-size: .54rem;
+    flex: 0 0 auto;
   }
 
   .focus-session-dashboard-visual .focus-countdown {
     margin-top: .16rem;
-    font-size: clamp(2.9rem, 5vw, 4.7rem);
+    font-size: clamp(1.8rem, 4.4vh, 4.7rem);
     line-height: .88;
+    flex: 0 0 auto;
   }
 
   .focus-session-dashboard-visual .focus-progress-wrap {
     margin-top: .48rem;
     width: min(100%, 510px);
+    flex: 0 0 auto;
   }
 
   .focus-session-dashboard-visual .focus-progress-track {
@@ -1548,6 +1557,54 @@ body {
   .focus-session-dashboard-visual .focus-progress-meta {
     margin-top: .3rem;
     font-size: .52rem;
+  }
+}
+
+/* ZenSpace session polish v8: keep the timer card inside the visible
+   viewport on shorter/laptop windows instead of letting the countdown
+   run past the fold. */
+@media (min-width: 768px) and (max-height: 900px) {
+  .focus-session-dashboard-art {
+    width: min(22vh, 100%, 260px);
+  }
+
+  .focus-session-dashboard-visual .focus-countdown {
+    font-size: clamp(1.6rem, 3.6vh, 3.6rem);
+    margin-top: .1rem;
+  }
+
+  .focus-session-dashboard-visual .focus-visual-label {
+    margin-top: .2rem;
+  }
+
+  .focus-session-dashboard-visual .focus-progress-wrap {
+    margin-top: .3rem;
+  }
+
+  .focus-session-dashboard-copy h1 {
+    font-size: clamp(2rem, 3.4vw, 3.4rem);
+  }
+
+  .focus-session-dashboard-actions {
+    margin-top: .6rem;
+  }
+
+  .focus-session-dashboard .focus-quote {
+    margin-top: .5rem;
+  }
+}
+
+@media (min-width: 768px) and (max-height: 720px) {
+  .focus-session-dashboard-art {
+    width: min(18vh, 100%, 200px);
+  }
+
+  .focus-session-dashboard-visual .focus-countdown {
+    font-size: clamp(1.4rem, 2.8vh, 2.8rem);
+  }
+
+  .focus-session-dashboard-copy h1 {
+    font-size: clamp(1.7rem, 2.8vw, 2.6rem);
   }
 }
 
