@@ -44,11 +44,11 @@ function formatClock(date: Date) {
 }
 
 
-function FocusIllustration({ compact = false }: { compact?: boolean }) {
+function FocusIllustration({ compact = false, lampOn = true }: { compact?: boolean; lampOn?: boolean }) {
   return (
     <div
-      className={`focus-illustration ${compact ? "focus-illustration-compact" : ""}`}
-      aria-label="Animated focus study illustration"
+      className={`focus-illustration ${compact ? "focus-illustration-compact" : ""} ${lampOn ? "is-lamp-on" : "is-lamp-off"}`}
+      aria-label={lampOn ? "Animated focus study illustration with lamp on" : "Animated break illustration with lamp off"}
       role="img"
     >
       <svg viewBox="0 0 620 500" className="h-full w-full" aria-hidden="true">
@@ -64,11 +64,16 @@ function FocusIllustration({ compact = false }: { compact?: boolean }) {
             <stop offset="100%" stopColor="#7b746b" />
           </linearGradient>
           <linearGradient id="lampShade" x1="0" x2="1" y1="0" y2="1">
-            <stop offset="0%" stopColor="#f0ece2" stopOpacity=".28" />
-            <stop offset="100%" stopColor="#7f796f" stopOpacity=".06" />
+            <stop offset="0%" stopColor="#fff8d8" stopOpacity=".76" />
+            <stop offset="100%" stopColor="#e5b85b" stopOpacity=".04" />
           </linearGradient>
-          <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="8" />
+          <radialGradient id="lampGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#fff9dd" stopOpacity=".95" />
+            <stop offset="45%" stopColor="#ffd976" stopOpacity=".42" />
+            <stop offset="100%" stopColor="#f4bd50" stopOpacity="0" />
+          </radialGradient>
+          <filter id="softGlow" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="10" />
           </filter>
         </defs>
 
@@ -91,8 +96,9 @@ function FocusIllustration({ compact = false }: { compact?: boolean }) {
         <g className="focus-lamp">
           <path d="M140 370V175L194 123" fill="none" stroke="#201e1b" strokeWidth="10" strokeLinecap="round" />
           <path d="M190 121L241 142L207 192L157 169Z" fill="#3a3732" stroke="#171614" strokeWidth="6" />
-          <path d="M198 167L174 212" stroke="#eee9de" strokeWidth="15" strokeLinecap="round" opacity=".78" />
-          <path d="M191 185L236 250" stroke="url(#lampShade)" strokeWidth="26" strokeLinecap="round" opacity=".26" filter="url(#softGlow)" />
+          <path className="focus-lamp-beam" d="M194 177L224 190L356 342L169 342Z" fill="url(#lampShade)" />
+          <ellipse className="focus-lamp-glow" cx="195" cy="181" rx="54" ry="54" fill="url(#lampGlow)" filter="url(#softGlow)" />
+          <path className="focus-lamp-bulb" d="M198 167L174 212" stroke="#fff7ce" strokeWidth="15" strokeLinecap="round" />
         </g>
 
         <g className="focus-desk-shadow">
@@ -179,7 +185,7 @@ export function FocusSession() {
   const { level } = useLevel();
   const [phase, setPhase] = useState<Phase>("setup");
   const [title, setTitle] = useState("");
-  const [durationMin, setDurationMin] = useState(25);
+  const [durationMin, setDurationMin] = useState<number | "">("");
   const [totalSeconds, setTotalSeconds] = useState(25 * 60);
   const [remainingSeconds, setRemainingSeconds] = useState(25 * 60);
   const [breakRemaining, setBreakRemaining] = useState(5 * 60);
@@ -279,7 +285,8 @@ export function FocusSession() {
   }, []);
 
   const start = () => {
-    const secs = Math.max(1, durationMin) * 60;
+    const minutes = Math.max(1, Number(durationMin) || 1);
+    const secs = minutes * 60;
     setTotalSeconds(secs);
     setRemainingSeconds(secs);
     setSessionStartedAt(new Date());
@@ -321,7 +328,7 @@ export function FocusSession() {
   const reset = () => {
     setPhase("setup");
     setTitle("");
-    setDurationMin(25);
+    setDurationMin("");
     setBreakRemaining(5 * 60);
     setBreakTotalSeconds(5 * 60);
     setSessionStartedAt(null);
@@ -428,8 +435,12 @@ export function FocusSession() {
                   min={1}
                   max={480}
                   value={durationMin}
-                  onChange={(e) => setDurationMin(Number(e.target.value) || 1)}
-                  className="mt-1.5 w-full rounded-xl border-2 border-rule bg-transparent px-3.5 py-2.5 text-lg font-semibold outline-none transition focus:border-accent"
+                  onChange={(e) => {
+                    const raw = e.target.value;
+                    setDurationMin(raw === "" ? "" : Math.min(480, Math.max(1, Number(raw))));
+                  }}
+                  placeholder="Minutes"
+                  className="mt-1.5 w-full rounded-xl border-2 border-rule bg-transparent px-3.5 py-2.5 text-lg font-semibold outline-none transition focus:border-accent placeholder:text-ink-soft/55"
                 />
               </div>
             </div>
@@ -446,7 +457,8 @@ export function FocusSession() {
 
             <button
               onClick={start}
-              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-ink px-5 py-3 text-sm font-semibold text-paper transition hover:bg-accent"
+              disabled={!durationMin}
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-ink px-5 py-3 text-sm font-semibold text-paper transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-45"
             >
               <IconPlay className="h-4 w-4" /> Start Session
             </button>
@@ -542,7 +554,7 @@ export function FocusSession() {
         </div>
 
         <div
-          className={`grid gap-2 lg:min-h-[min(500px,calc(100vh-190px))] ${
+          className={`grid gap-2 ${
             isFullscreen
               ? "lg:grid-cols-1 lg:min-h-[calc(100vh-92px)]"
               : "lg:grid-cols-[minmax(210px,0.46fr)_minmax(430px,1.54fr)]"
@@ -569,7 +581,7 @@ export function FocusSession() {
 
               <div className="mt-3">
                 <div className="focus-art-frame mx-auto max-w-[min(80%,340px)] rounded-full border border-white/15 bg-black/20 p-1">
-                  <FocusIllustration />
+                  <FocusIllustration lampOn={phase === "focusing"} />
                 </div>
                 <p className="mt-2 text-[10px] uppercase tracking-[0.45em] text-white/60">{isBreak ? "Break" : "Focus Session"}</p>
               </div>

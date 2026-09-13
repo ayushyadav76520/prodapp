@@ -176,6 +176,25 @@ body {
 .focus-illustration .focus-particles circle { fill: #e6dfd2; }
 .focus-illustration .focus-particles { animation: focus-particles-float 7s ease-in-out infinite; }
 .focus-illustration .focus-lamp { animation: focus-lamp-sway 6.5s ease-in-out infinite; transform-origin: 140px 370px; }
+.focus-illustration .focus-lamp-beam,
+.focus-illustration .focus-lamp-glow,
+.focus-illustration .focus-lamp-bulb {
+  opacity: 0;
+  transition: opacity 700ms ease, filter 700ms ease;
+}
+
+/* The lamp is a real state cue: active only while the timer is focusing. */
+.focus-illustration.is-lamp-on .focus-lamp-beam { opacity: .56; animation: focus-lamp-beam 3.8s ease-in-out infinite; }
+.focus-illustration.is-lamp-on .focus-lamp-glow { opacity: .82; animation: focus-lamp-glow 3.8s ease-in-out infinite; }
+.focus-illustration.is-lamp-on .focus-lamp-bulb { opacity: 1; filter: drop-shadow(0 0 7px rgba(255, 222, 122, .85)); }
+
+/* Break and paused states become still and deliberately dim. */
+.focus-illustration.is-lamp-off .focus-person,
+.focus-illustration.is-lamp-off .focus-head,
+.focus-illustration.is-lamp-off .focus-arm-front,
+.focus-illustration.is-lamp-off .focus-pencil,
+.focus-illustration.is-lamp-off .focus-paper { animation-play-state: paused; }
+.focus-illustration.is-lamp-off .focus-particles { opacity: .18; transition: opacity 700ms ease; }
 .focus-illustration .focus-person { animation: focus-person-breathe 4.6s ease-in-out infinite; transform-origin: 390px 300px; }
 .focus-illustration .focus-head { animation: focus-head-breathe 4.6s ease-in-out infinite; transform-origin: 384px 162px; }
 .focus-illustration .focus-arm-front { animation: focus-write-arm 2.2s ease-in-out infinite; transform-origin: 374px 275px; }
@@ -190,6 +209,8 @@ body {
 @keyframes focus-ring-pulse { 0%,100%{opacity:.42;transform:scale(.99)} 50%{opacity:.82;transform:scale(1.018)} }
 @keyframes focus-particles-float { 0%,100%{transform:translate3d(0,0,0);opacity:.42} 50%{transform:translate3d(0,-7px,0);opacity:.85} }
 @keyframes focus-lamp-sway { 0%,100%{transform:rotate(0)} 50%{transform:rotate(-1deg)} }
+@keyframes focus-lamp-beam { 0%,100%{opacity:.45} 50%{opacity:.67} }
+@keyframes focus-lamp-glow { 0%,100%{opacity:.64;transform:scale(.94)} 50%{opacity:.94;transform:scale(1.08)} }
 @keyframes focus-person-breathe { 0%,100%{transform:translateY(2px)} 50%{transform:translateY(-2px)} }
 @keyframes focus-head-breathe { 0%,100%{transform:rotate(0)} 50%{transform:rotate(-1deg)} }
 @keyframes focus-write-arm { 0%,100%{transform:translate(0,0) rotate(0)} 45%{transform:translate(-4px,4px) rotate(-2deg)} 70%{transform:translate(2px,-1px) rotate(1deg)} }
@@ -307,5 +328,94 @@ body {
   .focus-active-shell .focus-illustration {
     max-width: 100%;
     width: 100%;
+  }
+}
+
+/* Focus Session v4: content-sized by default, viewport-aware only where it improves usability. */
+.focus-setup-shell {
+  overflow: visible;
+}
+
+.focus-setup-shell > .grid {
+  align-items: stretch;
+}
+
+.focus-setup-shell section {
+  min-height: 0;
+}
+
+.focus-setup-shell .history-list-scroll {
+  min-height: 96px;
+  max-height: min(360px, calc(100dvh - 330px));
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule) transparent;
+}
+
+.focus-setup-shell .history-list-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.focus-setup-shell .history-list-scroll::-webkit-scrollbar-thumb {
+  background: var(--rule);
+  border-radius: 999px;
+}
+
+@media (min-width: 1024px) {
+  .focus-setup-shell {
+    max-height: none;
+  }
+
+  .focus-setup-shell > .grid {
+    height: auto;
+  }
+
+  .focus-setup-shell section:first-child {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .focus-setup-shell section:first-child > button {
+    margin-top: auto;
+  }
+
+  .focus-setup-shell .history-list-scroll {
+    max-height: min(340px, calc(100dvh - 320px));
+  }
+
+  .focus-active-shell > div {
+    overflow: visible;
+  }
+}
+
+@media (max-width: 1023px) {
+  .focus-setup-shell .history-list-scroll {
+    max-height: min(300px, 42dvh);
+  }
+}
+
+@media (max-width: 767px) {
+  .focus-setup-shell {
+    padding: .5rem;
+  }
+
+  .focus-setup-shell > .grid {
+    gap: .5rem;
+  }
+
+  .focus-setup-shell section {
+    padding: .8rem;
+  }
+
+  .focus-setup-shell h2 {
+    font-size: 1.45rem;
+  }
+
+  .focus-setup-shell .history-list-scroll {
+    max-height: 34dvh;
+  }
+
+  .focus-active-shell .focus-timer-panel {
+    min-height: auto;
   }
 }
