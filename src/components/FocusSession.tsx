@@ -146,45 +146,29 @@ function ProfilePanel({
   name,
   level,
   title,
-  elapsedSeconds,
-  remainingSeconds,
 }: {
   name: string;
   level: number;
   title: string;
-  elapsedSeconds: number;
-  remainingSeconds: number;
 }) {
   return (
-    <aside className="focus-profile-panel order-2 lg:order-1 rounded-3xl border border-rule bg-paper-raised p-6 md:p-7">
-      <div className="focus-profile-card rounded-2xl border border-rule bg-paper px-4 py-4">
+    <aside className="focus-profile-panel rounded-3xl border border-rule bg-paper-raised p-4 md:p-5">
+      <div className="focus-profile-card rounded-2xl border border-rule bg-paper px-3.5 py-3.5">
         <div className="flex items-center gap-3">
-          <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border border-rule bg-[#efe6cf] p-1.5 text-[#211d16]">
+          <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl border border-rule bg-[#efe6cf] p-1 text-[#211d16] shrink-0">
             <IconProfile className="h-full w-full" />
           </div>
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">Profile</p>
-            <p className="mt-1 truncate text-lg font-semibold">{name || "User"}</p>
-            <p className="text-xs uppercase tracking-[0.16em] text-ink-soft">Level {level}</p>
+            <p className="text-[9px] font-semibold uppercase tracking-[0.22em] text-accent">Profile</p>
+            <p className="truncate text-sm font-semibold">{name || "User"}</p>
+            <p className="text-[10px] uppercase tracking-[0.16em] text-ink-soft">Level {level}</p>
           </div>
         </div>
       </div>
 
-      <div className="mt-8 space-y-5">
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">Now focusing</p>
-          <p className="mt-2 font-serif text-3xl font-semibold leading-tight">{title || "Focus Session"}</p>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-2xl border border-rule p-4">
-            <p className="text-[10px] uppercase tracking-[0.18em] text-ink-soft">Elapsed</p>
-            <p className="mt-2 font-serif text-3xl font-semibold tabular-nums">{formatTime(elapsedSeconds)}</p>
-          </div>
-          <div className="rounded-2xl border border-rule p-4">
-            <p className="text-[10px] uppercase tracking-[0.18em] text-ink-soft">Remaining</p>
-            <p className="mt-2 font-serif text-3xl font-semibold tabular-nums">{formatTime(remainingSeconds)}</p>
-          </div>
-        </div>
+      <div className="mt-4">
+        <p className="text-[9px] font-semibold uppercase tracking-[0.22em] text-accent">Now focusing</p>
+        <p className="mt-1 font-serif text-lg font-semibold leading-tight truncate">{title || "Focus Session"}</p>
       </div>
     </aside>
   );
@@ -533,7 +517,6 @@ export function FocusSession() {
   }
 
   const isBreak = phase === "break";
-  const elapsedForPanel = isBreak ? elapsedSeconds : elapsedSeconds;
 
   return (
     <div ref={containerRef} className={`focus-active-shell ${isFullscreen ? "focus-fullscreen" : ""}`}>
@@ -558,21 +541,23 @@ export function FocusSession() {
           </button>
         </div>
 
-        <div className={`grid gap-2.5 lg:min-h-[min(610px,calc(100vh-175px))] lg:grid-cols-[minmax(250px,0.72fr)_minmax(430px,1.28fr)] ${isFullscreen ? "lg:min-h-[calc(100vh-92px)]" : ""}`}>
+        <div
+          className={`grid gap-2.5 lg:min-h-[min(610px,calc(100vh-175px))] ${
+            isFullscreen
+              ? "lg:grid-cols-1 lg:min-h-[calc(100vh-92px)]"
+              : "lg:grid-cols-[minmax(210px,0.46fr)_minmax(430px,1.54fr)]"
+          }`}
+        >
           {!isFullscreen && (
             <div className="flex min-h-0 flex-col gap-2.5">
-              <ProfilePanel
-                name={displayName}
-                level={level}
-                title={title}
-                elapsedSeconds={elapsedForPanel}
-                remainingSeconds={remainingSeconds}
-              />
-              <div className="grid grid-cols-3 gap-2 rounded-3xl border border-rule bg-paper-raised p-2.5">
-                <button onClick={pauseResume} className="rounded-2xl border-2 border-rule px-2.5 py-3 text-[10px] font-semibold uppercase tracking-wider transition hover:border-accent">{phase === "focusing" ? "Pause" : "Resume"}</button>
-                <button onClick={takeBreak} className="rounded-2xl border-2 border-rule px-2.5 py-3 text-[10px] font-semibold uppercase tracking-wider transition hover:border-accent">Break 5m</button>
-                <button onClick={toggleFullscreen} className="rounded-2xl border-2 border-rule px-2.5 py-3 text-[10px] font-semibold uppercase tracking-wider transition hover:border-accent">Full screen</button>
-              </div>
+              <ProfilePanel name={displayName} level={level} title={title} />
+              {!isBreak && (
+                <div className="flex flex-col gap-2 rounded-3xl border border-rule bg-paper-raised p-2.5">
+                  <button onClick={pauseResume} className="rounded-2xl border-2 border-rule px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider transition hover:border-accent">{phase === "focusing" ? "Pause" : "Resume"}</button>
+                  <button onClick={takeBreak} className="rounded-2xl border-2 border-rule px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider transition hover:border-accent">Break 5m</button>
+                  <button onClick={toggleFullscreen} className="rounded-2xl border-2 border-rule px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider transition hover:border-accent">Full screen</button>
+                </div>
+              )}
             </div>
           )}
 
