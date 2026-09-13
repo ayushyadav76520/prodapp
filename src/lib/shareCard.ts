@@ -8,12 +8,15 @@ interface ShareCardOptions {
   footer: string;
   userName?: string;
   level?: number;
+  items?: { title: string; completed: boolean }[];
 }
 
 const WIDTH = 1080;
-const HEIGHT = 1080;
+const BASE_HEIGHT = 1080;
 
 export async function generateShareCard(opts: ShareCardOptions): Promise<Blob | null> {
+  const itemCount = opts.items?.length ?? 0;
+  const HEIGHT = Math.max(BASE_HEIGHT, 930 + itemCount * 64);
   const canvas = document.createElement("canvas");
   canvas.width = WIDTH;
   canvas.height = HEIGHT;
@@ -96,6 +99,44 @@ export async function generateShareCard(opts: ShareCardOptions): Promise<Blob | 
     ctx.fillStyle = "#ece7d9";
     ctx.font = "700 28px Arial, sans-serif";
     ctx.fillText(`${Math.round(opts.progressPercent)}% COMPLETE`, margin, y + 62);
+    y += 108;
+  }
+
+  if (opts.items?.length) {
+    ctx.fillStyle = "#a89e8a";
+    ctx.font = "700 24px Arial, sans-serif";
+    ctx.fillText("TASKS", margin, y);
+    y += 28;
+
+    for (const item of opts.items) {
+      y += 18;
+      const rowH = 54;
+      ctx.fillStyle = "rgba(236,231,217,0.07)";
+      roundRect(ctx, margin, y, WIDTH - margin * 2, rowH, 14);
+      ctx.fill();
+
+      const boxX = margin + 18;
+      const boxY = y + 13;
+      ctx.strokeStyle = item.completed ? "#e08a5f" : "#6b6355";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(boxX, boxY, 25, 25);
+      if (item.completed) {
+        ctx.strokeStyle = "#e08a5f";
+        ctx.beginPath();
+        ctx.moveTo(boxX + 5, boxY + 13);
+        ctx.lineTo(boxX + 11, boxY + 19);
+        ctx.lineTo(boxX + 21, boxY + 7);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = item.completed ? "#8f8879" : "#ece7d9";
+      ctx.font = "600 25px Arial, sans-serif";
+      const maxTitle = WIDTH - margin * 2 - 85;
+      let title = item.title || "(Untitled task)";
+      while (ctx.measureText(title).width > maxTitle && title.length > 4) title = title.slice(0, -4) + "…";
+      ctx.fillText(title, margin + 62, y + 35);
+      y += rowH;
+    }
   }
 
   ctx.fillStyle = "#6b6355";

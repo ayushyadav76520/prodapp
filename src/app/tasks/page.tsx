@@ -111,6 +111,10 @@ export default function TasksPage() {
       footer: "conflict-calendar",
       userName: session?.user?.name ?? undefined,
       level,
+      items: listTasks.map((task) => ({
+        title: task.title || "(Untitled task)",
+        completed: task.status === "completed",
+      })),
     });
     if (blob) {
       await shareOrDownload(
@@ -222,7 +226,7 @@ export default function TasksPage() {
           return (
             <div key={list.id} className="border border-rule">
               <div className="flex items-center justify-between px-4 py-2.5 border-b border-rule bg-accent/10">
-                <h2 className="text-xs uppercase tracking-widest font-bold text-ink">{list.title}</h2>
+                <h2 className="text-xs md:text-sm uppercase tracking-widest font-bold text-ink">{list.title}</h2>
                 <div className="flex items-center gap-2.5">
                   <button
                     onClick={() => {
@@ -243,10 +247,10 @@ export default function TasksPage() {
                   </button>
                   <button
                     onClick={() => deleteCategory(list.id, list.title)}
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-ink-soft/70 hover:text-red-600 hover:bg-paper transition-colors"
+                    className="w-11 h-11 rounded-full flex items-center justify-center text-ink-soft/70 hover:text-red-600 hover:bg-paper transition-colors"
                     aria-label="Delete category"
                   >
-                    <IconTrash className="w-5 h-5" />
+                    <IconTrash className="w-6 h-6" />
                   </button>
                 </div>
               </div>
@@ -308,7 +312,7 @@ export default function TasksPage() {
                           className="text-ink-soft/50 hover:text-red-600 transition-colors shrink-0 mt-0.5"
                           aria-label="Delete task"
                         >
-                          <IconTrash className="w-5 h-5" />
+                          <IconTrash className="w-6 h-6" />
                         </button>
                       </li>
                     );
