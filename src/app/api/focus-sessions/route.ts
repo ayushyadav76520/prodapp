@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { listTasks, insertTask, GoogleApiError } from "@/lib/google-api";
+import { deleteTask, listTasks, insertTask, GoogleApiError } from "@/lib/google-api";
 import {
   getOrCreateFocusList,
   encodeFocusNotes,
@@ -70,5 +70,30 @@ export async function POST(req: NextRequest) {
     }
     console.error(err);
     return NextResponse.json({ error: "Failed to save focus session" }, { status: 500 });
+  }
+}
+
+
+export async function DELETE(req: NextRequest) {
+  const session = await auth();
+  if (!session?.accessToken) {
+    return NextResponse.json({ error: "Not signed in" }, { status: 401 });
+  }
+
+  const id = new URL(req.url).searchParams.get("id");
+  if (!id) {
+    return NextResponse.json({ error: "Missing session id" }, { status: 400 });
+  }
+
+  try {
+    const taskListId = await getOrCreateFocusList(session.accessToken);
+    await deleteTask(session.accessToken, taskListId, id);
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    if (err instanceof GoogleApiError) {
+      return NextResponse.json({ error: err.message }, { status: err.status });
+    }
+    console.error(err);
+    return NextResponse.json({ error: "Failed to delete focus session" }, { status: 500 });
   }
 }

@@ -8,7 +8,7 @@
   --paper-raised: #fbf9f4;
   --ink: #211d16;
   --ink-soft: #6b6355;
-  --rule: rgba(33, 29, 22, 0.12);
+  --rule: rgba(33, 29, 22, 0.22);
   --accent: #b5502f;
   /* Nav bar stays a fixed dark tone regardless of light/dark mode. */
   --nav-bg: #17140f;
@@ -21,7 +21,7 @@
   --paper-raised: #1e1a13;
   --ink: #ece7d9;
   --ink-soft: #a89e8a;
-  --rule: rgba(236, 231, 217, 0.12);
+  --rule: rgba(236, 231, 217, 0.20);
   --accent: #e08a5f;
   --nav-bg: #0d0b08;
   --nav-fg: #ece7d9;
@@ -43,4 +43,43 @@
 body {
   background: var(--paper);
   color: var(--ink);
+}
+
+
+/* Focus Session visual system: highlighted editorial cards + subtle motion from the user's reference image. */
+.focus-art {
+  animation: focus-breathe 4.8s ease-in-out infinite;
+  filter: grayscale(1) contrast(1.02);
+  will-change: transform, filter;
+}
+
+.focus-art-frame {
+  animation: focus-glow 5.5s ease-in-out infinite;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 16px 40px rgba(0,0,0,0.22);
+}
+
+.focus-active-shell:fullscreen {
+  background: var(--paper);
+}
+
+.focus-fullscreen {
+  min-height: 100vh;
+}
+
+@keyframes focus-breathe {
+  0%, 100% { transform: scale(1); filter: grayscale(1) contrast(1.02) brightness(0.98); }
+  50% { transform: scale(1.025); filter: grayscale(1) contrast(1.05) brightness(1.04); }
+}
+
+@keyframes focus-glow {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 16px 40px rgba(0,0,0,0.22); }
+  50% { box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 18px 48px rgba(0,0,0,0.30); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .focus-art, .focus-art-frame { animation: none; }
+}
+
+@media (max-width: 767px) {
+  .focus-art { animation-duration: 6s; }
 }
