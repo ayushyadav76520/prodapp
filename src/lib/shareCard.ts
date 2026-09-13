@@ -5,7 +5,9 @@ interface ShareCardOptions {
   title: string; // big headline, e.g. session title or skill name
   statLine: string; // e.g. "45 minutes focused" or "Day 12 of 90"
   progressPercent?: number; // 0-100, draws a progress bar if provided
-  footer: string; // e.g. "Ayush Yadav · conflict-calendar"
+  footer: string; // e.g. "conflict-calendar"
+  userName?: string; // shows a small avatar (initials) + name near the footer
+  level?: number; // shows "LV {level}" badge near the avatar
 }
 
 const WIDTH = 1080;
@@ -85,6 +87,36 @@ export async function generateShareCard(opts: ShareCardOptions): Promise<Blob | 
   ctx.fillStyle = "#6b6355";
   ctx.font = "400 30px Arial, sans-serif";
   ctx.fillText(opts.footer, marginX, HEIGHT - 90);
+
+  // Profile avatar (initials circle) + level badge, bottom-right area.
+  if (opts.userName) {
+    const initials = opts.userName
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((w) => w[0]?.toUpperCase())
+      .join("");
+    const cx = WIDTH - 150;
+    const cy = HEIGHT - 105;
+    const r = 44;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = "#e08a5f";
+    ctx.fill();
+    ctx.fillStyle = "#17140f";
+    ctx.font = "700 36px Arial, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(initials, cx, cy + 2);
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+
+    if (typeof opts.level === "number") {
+      ctx.fillStyle = "#a89e8a";
+      ctx.font = "600 26px Arial, sans-serif";
+      ctx.fillText(`LV ${opts.level}`, cx - r, cy + r + 34);
+    }
+  }
 
   return new Promise((resolve) => canvas.toBlob((blob) => resolve(blob), "image/png"));
 }

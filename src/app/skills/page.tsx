@@ -15,11 +15,13 @@ import { SyncStatus } from "@/components/SyncStatus";
 import { IconTrash, IconShare, IconFocus, IconTrophy } from "@/components/icons";
 import { FocusSession } from "@/components/FocusSession";
 import { generateShareCard, shareOrDownload } from "@/lib/shareCard";
+import { useLevel } from "@/lib/use-google-data";
 
 const DURATIONS = [30, 60, 90] as const;
 
 export default function SkillsPage() {
-  const { status: sessionStatus } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
+  const { level } = useLevel();
   const [tab, setTab] = useState<"session" | "challenge">("challenge");
   const [skills, setSkills] = useState<SkillChallenge[]>([]);
   const [syncState, setSyncState] = useState<"idle" | "syncing" | "error">("idle");
@@ -120,6 +122,8 @@ export default function SkillsPage() {
       statLine: `Day ${daysElapsed(skill) + 1} of ${skill.durationDays} · ${currentStreak(skill)} day streak`,
       progressPercent: pct,
       footer: "conflict-calendar",
+      userName: session?.user?.name ?? undefined,
+      level,
     });
     if (blob) {
       await shareOrDownload(

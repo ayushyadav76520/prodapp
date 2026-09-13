@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import { useSession } from "next-auth/react";
 import {
   IconPlay,
   IconPause,
@@ -10,6 +11,7 @@ import {
   IconShare,
 } from "@/components/icons";
 import { generateShareCard, downloadBlob, shareOrDownload } from "@/lib/shareCard";
+import { useLevel } from "@/lib/use-google-data";
 
 const QUOTES = [
   "Discipline is choosing between what you want now and what you want most.",
@@ -35,6 +37,8 @@ function formatTime(totalSeconds: number) {
 }
 
 export function FocusSession() {
+  const { data: session } = useSession();
+  const { level } = useLevel();
   const [phase, setPhase] = useState<Phase>("setup");
   const [title, setTitle] = useState("");
   const [durationMin, setDurationMin] = useState(25);
@@ -185,6 +189,8 @@ export function FocusSession() {
       title: rec.title,
       statLine: `${rec.durationMinutes} minutes focused · ${new Date(rec.completedAt).toLocaleDateString()}`,
       footer: "conflict-calendar",
+      userName: session?.user?.name ?? undefined,
+      level,
     });
     if (blob) {
       await shareOrDownload(
@@ -201,6 +207,8 @@ export function FocusSession() {
       title: title.trim() || "Focus Session",
       statLine: `${lastSavedMinutes} minutes focused`,
       footer: "conflict-calendar",
+      userName: session?.user?.name ?? undefined,
+      level,
     });
     if (blob) downloadBlob(blob, "focus-session.png");
   };
@@ -211,6 +219,8 @@ export function FocusSession() {
       title: title.trim() || "Focus Session",
       statLine: `${lastSavedMinutes} minutes focused`,
       footer: "conflict-calendar",
+      userName: session?.user?.name ?? undefined,
+      level,
     });
     if (blob) {
       await shareOrDownload(
