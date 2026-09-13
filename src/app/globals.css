@@ -800,9 +800,12 @@ body {
     height: auto;
     min-height: 100dvh;
     padding: 1rem 1rem 1.35rem;
+    display: flex;
+    flex-direction: column;
   }
 
   .focus-fullscreen-topbar {
+    flex: 0 0 auto;
     min-height: 3rem;
     gap: .65rem;
   }
@@ -850,9 +853,10 @@ body {
     row-gap: .5rem;
     column-gap: .6rem;
     height: auto;
-    min-height: calc(100dvh - 5.8rem);
-    align-content: start;
-    padding-top: .75rem;
+    flex: 1 1 auto;
+    min-height: 0;
+    align-content: center;
+    padding-top: .5rem;
     padding-bottom: .4rem;
   }
 
@@ -987,9 +991,8 @@ body {
   }
 
   .focus-fullscreen-grid {
-    min-height: calc(100dvh - 4.9rem);
-    gap: .9rem;
-    padding-top: .4rem;
+    gap: .7rem;
+    padding-top: .3rem;
     padding-bottom: .25rem;
   }
 
