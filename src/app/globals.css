@@ -800,12 +800,9 @@ body {
     height: auto;
     min-height: 100dvh;
     padding: 1rem 1rem 1.35rem;
-    display: flex;
-    flex-direction: column;
   }
 
   .focus-fullscreen-topbar {
-    flex: 0 0 auto;
     min-height: 3rem;
     gap: .65rem;
   }
@@ -853,10 +850,8 @@ body {
     row-gap: .5rem;
     column-gap: .6rem;
     height: auto;
-    flex: 1 1 auto;
-    min-height: 0;
-    align-content: center;
-    padding-top: .5rem;
+    margin-top: 1.4rem;
+    padding-top: 0;
     padding-bottom: .4rem;
   }
 
