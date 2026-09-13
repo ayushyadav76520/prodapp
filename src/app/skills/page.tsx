@@ -154,8 +154,8 @@ export default function SkillsPage() {
   }
 
   return (
-    <div className={tab === "session" ? "focus-skills-shell mx-auto w-full max-w-[1400px] px-3 sm:px-5 lg:px-8 py-4 sm:py-5" : "max-w-3xl mx-auto px-6 py-10 space-y-6"}>
-      <header className={tab === "session" ? "flex items-start justify-between border-b border-rule pb-3" : "flex items-start justify-between border-b border-rule pb-4"}>
+    <div className="focus-skills-shell mx-auto w-full max-w-[1400px] px-3 sm:px-5 lg:px-8 py-4 sm:py-5">
+      <header className="flex items-start justify-between border-b border-rule pb-3">
         <div>
           <p className="text-[11px] uppercase tracking-[0.2em] text-accent font-medium mb-1">
             Section Four
@@ -167,7 +167,7 @@ export default function SkillsPage() {
         {tab === "challenge" && <SyncStatus state={syncState} onRetry={refresh} />}
       </header>
 
-      <div className={tab === "session" ? "flex gap-5 text-sm border-b border-rule mt-4 mb-4" : "flex gap-6 text-base border-b border-rule mt-2"}>
+      <div className="flex gap-5 text-sm border-b border-rule mt-4 mb-4">
         {(["session", "challenge"] as const).map((t) => {
           const Icon = t === "session" ? IconFocus : IconTrophy;
           return (
@@ -188,7 +188,7 @@ export default function SkillsPage() {
       {tab === "session" && <FocusSession />}
 
       {tab === "challenge" && (
-        <>
+        <div className="max-w-2xl space-y-6">
           <div className="flex justify-end">
             <button
               onClick={() => setShowForm((v) => !v)}
@@ -353,7 +353,7 @@ export default function SkillsPage() {
               );
             })}
           </div>
-        </>
+        </div>
       )}
     </div>
   );
