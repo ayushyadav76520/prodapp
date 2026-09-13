@@ -46,56 +46,98 @@ function formatClock(date: Date) {
 
 function FocusIllustration({ compact = false }: { compact?: boolean }) {
   return (
-    <div className={`focus-illustration ${compact ? "focus-illustration-compact" : ""}`} aria-label="Animated focus study illustration" role="img">
-      <svg viewBox="0 0 560 460" className="h-full w-full" aria-hidden="true">
+    <div
+      className={`focus-illustration ${compact ? "focus-illustration-compact" : ""}`}
+      aria-label="Animated focus study illustration"
+      role="img"
+    >
+      <svg viewBox="0 0 620 500" className="h-full w-full" aria-hidden="true">
         <defs>
-          <radialGradient id="focusGlow" cx="50%" cy="45%" r="58%">
-            <stop offset="0%" stopColor="#d8d3c7" stopOpacity=".95" />
-            <stop offset="62%" stopColor="#8f8a80" stopOpacity=".45" />
-            <stop offset="100%" stopColor="#302e2a" stopOpacity="0" />
+          <radialGradient id="focusHalo" cx="50%" cy="44%" r="54%">
+            <stop offset="0%" stopColor="#f1eee5" stopOpacity=".18" />
+            <stop offset="48%" stopColor="#d8d2c7" stopOpacity=".12" />
+            <stop offset="100%" stopColor="#8d877c" stopOpacity="0" />
           </radialGradient>
-          <linearGradient id="deskLight" x1="0" x2="1">
-            <stop offset="0" stopColor="#d5c8ad" />
-            <stop offset="1" stopColor="#8d8068" />
+          <linearGradient id="deskSurface" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stopColor="#8d8579" />
+            <stop offset="50%" stopColor="#d9d2c6" />
+            <stop offset="100%" stopColor="#7b746b" />
           </linearGradient>
+          <linearGradient id="lampShade" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stopColor="#f0ece2" stopOpacity=".28" />
+            <stop offset="100%" stopColor="#7f796f" stopOpacity=".06" />
+          </linearGradient>
+          <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="8" />
+          </filter>
         </defs>
-        <circle cx="280" cy="215" r="190" fill="url(#focusGlow)" className="focus-orbit focus-orbit-1" />
-        <circle cx="280" cy="215" r="166" className="focus-ring focus-ring-1" />
-        <circle cx="280" cy="215" r="142" className="focus-ring focus-ring-2" />
-        <circle cx="280" cy="215" r="118" className="focus-ring focus-ring-3" />
-        <circle cx="280" cy="215" r="94" className="focus-ring focus-ring-4" />
 
-        <g className="focus-lamp">
-          <path d="M130 315V177L170 137" fill="none" stroke="#26231f" strokeWidth="8" strokeLinecap="round" />
-          <path d="M166 136L205 153L180 188L143 170Z" fill="#3b3832" stroke="#1f1d1a" strokeWidth="5" />
-          <path d="M178 174L158 206" stroke="#f3eee2" strokeWidth="12" strokeLinecap="round" opacity=".7" />
+        <circle cx="310" cy="235" r="203" fill="url(#focusHalo)" className="focus-halo" />
+        <g className="focus-orbit-group">
+          <circle cx="310" cy="235" r="188" className="focus-ring focus-ring-1" />
+          <circle cx="310" cy="235" r="162" className="focus-ring focus-ring-2" />
+          <circle cx="310" cy="235" r="136" className="focus-ring focus-ring-3" />
+          <circle cx="310" cy="235" r="110" className="focus-ring focus-ring-4" />
         </g>
 
-        <g className="focus-person">
-          <circle cx="350" cy="154" r="35" fill="#161513" />
-          <path d="M323 153C331 127 374 122 383 150C371 145 350 145 337 159Z" fill="#080807" />
-          <path d="M330 178C342 190 364 190 376 176L369 207H338Z" fill="#d7d2c8" />
-          <path d="M367 204C405 199 435 222 432 264L417 326H336L344 263C347 238 350 217 367 204Z" fill="#77736d" />
-          <path d="M421 234C452 244 461 276 445 302L423 293L435 268L413 254Z" fill="#77736d" />
-          <path d="M347 263L306 307L328 320L370 282Z" fill="#9a958c" />
-          <path d="M305 306L272 336" stroke="#1b1917" strokeWidth="8" strokeLinecap="round" />
-          <path d="M272 336L291 340" stroke="#1b1917" strokeWidth="7" strokeLinecap="round" />
+        <g className="focus-particles" opacity=".65">
+          <circle cx="140" cy="126" r="3" />
+          <circle cx="468" cy="142" r="2.5" />
+          <circle cx="500" cy="292" r="3" />
+          <circle cx="176" cy="350" r="2.5" />
+          <circle cx="454" cy="356" r="2" />
+        </g>
+
+        <g className="focus-lamp">
+          <path d="M140 370V175L194 123" fill="none" stroke="#201e1b" strokeWidth="10" strokeLinecap="round" />
+          <path d="M190 121L241 142L207 192L157 169Z" fill="#3a3732" stroke="#171614" strokeWidth="6" />
+          <path d="M198 167L174 212" stroke="#eee9de" strokeWidth="15" strokeLinecap="round" opacity=".78" />
+          <path d="M191 185L236 250" stroke="url(#lampShade)" strokeWidth="26" strokeLinecap="round" opacity=".26" filter="url(#softGlow)" />
+        </g>
+
+        <g className="focus-desk-shadow">
+          <ellipse cx="314" cy="397" rx="211" ry="25" fill="#000" opacity=".22" />
         </g>
 
         <g className="focus-desk">
-          <path d="M102 324H438" stroke="url(#deskLight)" strokeWidth="14" strokeLinecap="round" />
-          <path d="M135 338L118 394M410 338L428 394" stroke="#4b4740" strokeWidth="9" strokeLinecap="round" />
-          <rect x="218" y="300" width="100" height="10" rx="5" fill="#37342f" />
-          <path d="M247 300L263 279H304L315 300Z" fill="#2a2824" />
-          <path d="M270 287L286 260" stroke="#25231f" strokeWidth="4" strokeLinecap="round" />
+          <path d="M102 342H480" stroke="url(#deskSurface)" strokeWidth="18" strokeLinecap="round" />
+          <path d="M136 357L118 432M442 357L460 432" stroke="#4b4740" strokeWidth="10" strokeLinecap="round" />
+          <rect x="234" y="305" width="118" height="13" rx="6.5" fill="#302d28" />
+          <path d="M257 305L275 276H324L339 305Z" fill="#25231f" />
+          <rect x="282" y="263" width="42" height="12" rx="6" fill="#d5cdbf" opacity=".18" />
+          <path d="M305 275V303" stroke="#201e1a" strokeWidth="5" strokeLinecap="round" />
+          <rect x="218" y="329" width="205" height="6" rx="3" fill="#f1ece1" opacity=".12" />
+        </g>
+
+        <g className="focus-person">
+          <g className="focus-head">
+            <circle cx="384" cy="162" r="39" fill="#e1dbcf" />
+            <path d="M350 158C354 122 414 115 430 151C415 143 394 144 381 157C373 151 361 153 350 158Z" fill="#11100f" />
+            <path d="M361 170C378 184 401 184 417 171" fill="none" stroke="#a8a196" strokeWidth="4" strokeLinecap="round" opacity=".85" />
+          </g>
+          <path d="M358 193C378 205 409 205 428 191L422 225H364Z" fill="#d7d1c6" />
+          <path d="M413 220C463 216 489 246 483 297L466 337H357L366 276C369 247 385 229 413 220Z" fill="#7a756d" />
+          <path d="M462 244C497 254 513 285 499 317L476 310L483 282L452 265Z" fill="#858078" className="focus-arm-back" />
+          <path d="M374 275L323 316L344 334L398 292Z" fill="#99938a" className="focus-arm-front" />
+          <path d="M323 316L290 347" stroke="#1b1917" strokeWidth="9" strokeLinecap="round" />
+          <path d="M289 347L314 352" stroke="#1b1917" strokeWidth="8" strokeLinecap="round" />
+        </g>
+
+        <g className="focus-paper">
+          <path d="M270 320L387 315L402 341L282 347Z" fill="#eee9df" opacity=".9" />
+          <path d="M291 327L370 323" stroke="#9a9286" strokeWidth="2" opacity=".55" />
+          <path d="M294 334L360 331" stroke="#9a9286" strokeWidth="2" opacity=".45" />
         </g>
 
         <g className="focus-pencil">
-          <path d="M293 311L315 285" stroke="#e3b06d" strokeWidth="5" strokeLinecap="round" />
-          <path d="M315 285L319 281" stroke="#211f1b" strokeWidth="4" strokeLinecap="round" />
+          <path d="M297 338L335 304" stroke="#dfae67" strokeWidth="7" strokeLinecap="round" />
+          <path d="M335 304L341 299" stroke="#26231f" strokeWidth="5" strokeLinecap="round" />
+        </g>
+
+        <g className="focus-breath-dot">
+          <circle cx="438" cy="120" r="4" />
         </g>
       </svg>
-      <span className="sr-only">A person studying at a desk under a lamp</span>
     </div>
   );
 }

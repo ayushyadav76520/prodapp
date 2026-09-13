@@ -146,3 +146,66 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .focus-illustration * { animation: none !important; }
 }
+
+/* Focus illustration v2: coherent layered animation instead of moving the whole drawing. */
+.focus-illustration {
+  position: relative;
+  width: min(100%, 620px);
+  aspect-ratio: 620 / 500;
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: 2rem;
+  background:
+    radial-gradient(circle at 50% 44%, rgba(255,255,255,.08), transparent 45%),
+    linear-gradient(145deg, rgba(255,255,255,.025), rgba(255,255,255,0));
+}
+
+.focus-illustration svg { display:block; width:100%; height:100%; }
+.focus-illustration .focus-halo { animation: focus-halo-breathe 4.8s ease-in-out infinite; transform-origin: 310px 235px; }
+.focus-illustration .focus-orbit-group { animation: focus-orbit-float 8s ease-in-out infinite; transform-origin: 310px 235px; }
+.focus-illustration .focus-ring {
+  fill: none;
+  stroke: rgba(235,231,220,.16);
+  stroke-width: 13;
+  transform-origin: 310px 235px;
+  animation: focus-ring-pulse 4.8s ease-in-out infinite;
+}
+.focus-illustration .focus-ring-2 { animation-delay: -.65s; }
+.focus-illustration .focus-ring-3 { animation-delay: -1.3s; }
+.focus-illustration .focus-ring-4 { animation-delay: -1.95s; }
+.focus-illustration .focus-particles circle { fill: #e6dfd2; }
+.focus-illustration .focus-particles { animation: focus-particles-float 7s ease-in-out infinite; }
+.focus-illustration .focus-lamp { animation: focus-lamp-sway 6.5s ease-in-out infinite; transform-origin: 140px 370px; }
+.focus-illustration .focus-person { animation: focus-person-breathe 4.6s ease-in-out infinite; transform-origin: 390px 300px; }
+.focus-illustration .focus-head { animation: focus-head-breathe 4.6s ease-in-out infinite; transform-origin: 384px 162px; }
+.focus-illustration .focus-arm-front { animation: focus-write-arm 2.2s ease-in-out infinite; transform-origin: 374px 275px; }
+.focus-illustration .focus-pencil { animation: focus-write-pencil 2.2s ease-in-out infinite; transform-origin: 297px 338px; }
+.focus-illustration .focus-paper { animation: focus-paper-shift 2.2s ease-in-out infinite; transform-origin: 337px 333px; }
+.focus-illustration .focus-desk { animation: focus-desk-breathe 4.6s ease-in-out infinite; transform-origin: 300px 340px; }
+.focus-illustration .focus-desk-shadow { animation: focus-shadow-breathe 4.6s ease-in-out infinite; transform-origin: 314px 397px; }
+.focus-illustration .focus-breath-dot { fill:#d9d1c3; animation: focus-dot-pulse 2.4s ease-in-out infinite; }
+
+@keyframes focus-halo-breathe { 0%,100%{opacity:.72;transform:scale(.98)} 50%{opacity:1;transform:scale(1.03)} }
+@keyframes focus-orbit-float { 0%,100%{transform:translateY(2px)} 50%{transform:translateY(-3px)} }
+@keyframes focus-ring-pulse { 0%,100%{opacity:.42;transform:scale(.99)} 50%{opacity:.82;transform:scale(1.018)} }
+@keyframes focus-particles-float { 0%,100%{transform:translate3d(0,0,0);opacity:.42} 50%{transform:translate3d(0,-7px,0);opacity:.85} }
+@keyframes focus-lamp-sway { 0%,100%{transform:rotate(0)} 50%{transform:rotate(-1deg)} }
+@keyframes focus-person-breathe { 0%,100%{transform:translateY(2px)} 50%{transform:translateY(-2px)} }
+@keyframes focus-head-breathe { 0%,100%{transform:rotate(0)} 50%{transform:rotate(-1deg)} }
+@keyframes focus-write-arm { 0%,100%{transform:translate(0,0) rotate(0)} 45%{transform:translate(-4px,4px) rotate(-2deg)} 70%{transform:translate(2px,-1px) rotate(1deg)} }
+@keyframes focus-write-pencil { 0%,100%{transform:translate(0,0) rotate(0)} 45%{transform:translate(-8px,7px) rotate(-5deg)} 70%{transform:translate(3px,-2px) rotate(2deg)} }
+@keyframes focus-paper-shift { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-1px,1px)} }
+@keyframes focus-desk-breathe { 0%,100%{opacity:.93} 50%{opacity:1} }
+@keyframes focus-shadow-breathe { 0%,100%{transform:scaleX(.98);opacity:.19} 50%{transform:scaleX(1.02);opacity:.27} }
+@keyframes focus-dot-pulse { 0%,100%{opacity:.2;transform:scale(.8)} 50%{opacity:1;transform:scale(1.3)} }
+
+.focus-timer-panel .focus-illustration { box-shadow: inset 0 0 0 1px rgba(255,255,255,.03), 0 0 55px rgba(214,203,183,.06); }
+
+@media (max-width: 767px) {
+  .focus-illustration { max-width: 430px; border-radius:1.5rem; }
+  .focus-timer-panel { padding-inline: 1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .focus-illustration * { animation:none !important; }
+}
