@@ -267,3 +267,161 @@ body {
     min-height: auto;
   }
 }
+
+/* Focus Session v5: edge-to-edge fullscreen layout — no header, compact two-column stage. */
+@media (min-width: 768px) {
+  .focus-active-shell:fullscreen .focus-fullscreen-inner {
+    padding: 0;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-panel {
+    width: 100%;
+    max-width: none;
+    min-height: 100vh;
+    border: 0;
+    border-radius: 0;
+    padding: clamp(1.25rem, 3vw, 2.5rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-content {
+    width: min(1180px, 100%);
+    min-height: min(86vh, 760px);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 460px);
+    grid-template-rows: auto auto auto auto auto 1fr auto;
+    column-gap: clamp(2rem, 6vw, 6rem);
+    align-items: center;
+    text-align: left;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-content > p:first-child {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    justify-self: center;
+    margin: 0 0 .25rem;
+    text-align: center;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-art {
+    grid-column: 2;
+    grid-row: 2 / 8;
+    align-self: center;
+    justify-self: center;
+    width: min(100%, 440px);
+    margin: 0;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-art .focus-art-frame {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-art > p {
+    text-align: center;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-content > p:nth-of-type(2) {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: start;
+    margin-top: 0;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-content > p:nth-of-type(3) {
+    grid-column: 1;
+    grid-row: 3;
+    justify-self: start;
+    margin-top: 0;
+    font-size: clamp(2.75rem, 6vw, 5rem);
+    line-height: .95;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-content > .mx-auto.mt-2\.5 {
+    grid-column: 1;
+    grid-row: 4;
+    width: 100%;
+    max-width: 620px;
+    margin: .35rem 0 0;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-action-row {
+    grid-column: 1;
+    grid-row: 5;
+    justify-content: flex-start;
+    align-items: stretch;
+    width: 100%;
+    max-width: 620px;
+    margin: .65rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .65rem;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-action-row button {
+    width: 100%;
+    min-height: 46px;
+    border-radius: .9rem;
+    justify-content: center;
+    white-space: nowrap;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-content > p.font-serif {
+    grid-column: 1;
+    grid-row: 6;
+    justify-self: start;
+    max-width: 620px;
+    margin: .65rem 0 0;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-content > button:last-child {
+    grid-column: 1;
+    grid-row: 7;
+    justify-self: start;
+    margin-top: .5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .focus-active-shell:fullscreen .focus-fullscreen-inner {
+    padding: .5rem;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-panel {
+    min-height: calc(100vh - 1rem);
+    border: 0;
+    border-radius: 1.25rem;
+    padding: 1rem;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-content {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-art {
+    order: 2;
+    width: min(72vw, 360px);
+    margin: .65rem auto 0;
+    align-self: center;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-content > p:nth-of-type(2) { order: 3; }
+  .focus-active-shell:fullscreen .focus-fullscreen-content > p:nth-of-type(3) { order: 4; }
+  .focus-active-shell:fullscreen .focus-fullscreen-content > .mx-auto.mt-2\.5 { order: 5; }
+  .focus-active-shell:fullscreen .focus-fullscreen-action-row {
+    order: 6;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    margin-top: .65rem;
+  }
+  .focus-active-shell:fullscreen .focus-fullscreen-content > p.font-serif { order: 7; }
+  .focus-active-shell:fullscreen .focus-fullscreen-content > button:last-child { order: 8; }
+}

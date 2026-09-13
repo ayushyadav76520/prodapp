@@ -441,15 +441,17 @@ export function FocusSession() {
           </div>
         )}
 
-        <div className={`mb-2 flex items-center justify-between gap-3 rounded-2xl border px-2.5 py-2 md:px-3.5 ${isFullscreen ? "focus-fullscreen-header" : "border-rule"}`}>
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">{isBreak ? "Break time" : "Focus Session"}</p>
-            <p className="mt-1 truncate text-sm font-semibold">{title.trim() || "Focus Session"}</p>
+        {!isFullscreen && (
+          <div className="mb-2 flex items-center justify-between gap-3 rounded-2xl border border-rule px-2.5 py-2 md:px-3.5">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">{isBreak ? "Break time" : "Focus Session"}</p>
+              <p className="mt-1 truncate text-sm font-semibold">{title.trim() || "Focus Session"}</p>
+            </div>
+            <button onClick={toggleFullscreen} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-rule transition hover:border-accent" title="Fullscreen">
+              <IconExpand className="h-4 w-4" />
+            </button>
           </div>
-          <button onClick={toggleFullscreen} className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition ${isFullscreen ? "focus-fullscreen-button" : "border-rule hover:border-accent"}`} title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}>
-            {isFullscreen ? <IconCollapse className="h-4 w-4" /> : <IconExpand className="h-4 w-4" />}
-          </button>
-        </div>
+        )}
 
         <div
           className={`grid gap-2 ${
@@ -471,13 +473,13 @@ export function FocusSession() {
             </div>
           )}
 
-          <section className={`focus-timer-panel order-1 lg:order-2 min-h-0 rounded-3xl border border-white/12 bg-[#11100e] px-3 py-3 text-white md:px-4 md:py-3.5 ${isFullscreen ? "lg:mx-auto lg:w-full lg:max-w-4xl" : ""}`}>
-            <div className="text-center">
+          <section className={`focus-timer-panel order-1 lg:order-2 min-h-0 rounded-3xl border border-white/12 bg-[#11100e] px-3 py-3 text-white md:px-4 md:py-3.5 ${isFullscreen ? "focus-fullscreen-panel" : ""}`}>
+            <div className={`text-center ${isFullscreen ? "focus-fullscreen-content" : ""}`}>
               <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/70">
                 {new Date().toLocaleDateString(undefined, { month: "short", day: "numeric", weekday: "short" }).toUpperCase()} · {new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).toUpperCase()}
               </p>
 
-              <div className="mt-3">
+              <div className="mt-3 focus-fullscreen-art">
                 <div className="focus-art-frame mx-auto max-w-[min(80%,340px)] rounded-full border border-white/15 bg-black/20 p-1">
                   <FocusStudyIllustration running={phase !== "paused"} />
                 </div>
@@ -498,7 +500,7 @@ export function FocusSession() {
                 </div>
               </div>
 
-              <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
+              <div className="mt-3 flex flex-wrap items-center justify-center gap-2 focus-fullscreen-action-row">
                 {isBreak ? (
                   <>
                     <button onClick={extendBreak} className="rounded-xl border border-white/20 px-3 py-2 text-[11px] font-semibold uppercase tracking-widest transition hover:border-white">+1 Minute</button>
