@@ -1087,9 +1087,12 @@ body {
 
 .focus-session-dashboard {
   min-height: 0;
+  height: 100%;
   display: grid;
   grid-template-columns: minmax(220px, .78fr) minmax(280px, 1.22fr);
   align-items: center;
+  align-content: center;
+  justify-content: center;
   gap: clamp(.7rem, 1.6vw, 1.4rem);
   padding: 0;
 }
@@ -1469,6 +1472,8 @@ body {
     gap: clamp(1.35rem, 3vw, 3.25rem);
     padding: 0;
     align-items: center;
+    align-content: center;
+    justify-content: center;
   }
 
   .focus-session-dashboard-copy {
