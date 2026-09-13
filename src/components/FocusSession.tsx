@@ -412,18 +412,6 @@ export function FocusSession() {
           </div>
         )}
 
-        {!isFullscreen && (
-          <div className="mb-2 flex items-center justify-between gap-3 rounded-2xl border border-rule px-2.5 py-2 md:px-3.5">
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">{isBreak ? "Break time" : "Focus Session"}</p>
-              <p className="mt-1 truncate text-sm font-semibold">{title.trim() || "Focus Session"}</p>
-            </div>
-            <button onClick={toggleFullscreen} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-rule transition hover:border-accent" title="Fullscreen">
-              <IconExpand className="h-4 w-4" />
-            </button>
-          </div>
-        )}
-
         <div className={isFullscreen ? "focus-fullscreen-stage" : "focus-session-stage"}>
           {!isFullscreen && (
             <header className="focus-session-mobile-header">

@@ -167,7 +167,7 @@ export default function SkillsPage() {
         {tab === "challenge" && <SyncStatus state={syncState} onRetry={refresh} />}
       </header>
 
-      <div className={tab === "session" ? "flex gap-5 text-sm border-b border-rule mt-4" : "flex gap-6 text-base border-b border-rule mt-2"}>
+      <div className={tab === "session" ? "flex gap-5 text-sm border-b border-rule mt-4 mb-4" : "flex gap-6 text-base border-b border-rule mt-2"}>
         {(["session", "challenge"] as const).map((t) => {
           const Icon = t === "session" ? IconFocus : IconTrophy;
           return (
@@ -185,11 +185,7 @@ export default function SkillsPage() {
         })}
       </div>
 
-      {tab === "session" && (
-        <div className="mt-4">
-          <FocusSession />
-        </div>
-      )}
+      {tab === "session" && <FocusSession />}
 
       {tab === "challenge" && (
         <>
