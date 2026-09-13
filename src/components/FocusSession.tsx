@@ -14,6 +14,7 @@ import {
   IconTrash,
 } from "@/components/icons";
 import { generateShareCard, downloadBlob, shareOrDownload } from "@/lib/shareCard";
+import FocusStudyIllustration from "@/components/FocusStudyIllustration";
 import { useLevel } from "@/lib/use-google-data";
 
 const QUOTES = [
@@ -44,110 +45,7 @@ function formatClock(date: Date) {
 }
 
 
-function FocusIllustration({ compact = false, lampOn = true }: { compact?: boolean; lampOn?: boolean }) {
-  return (
-    <div
-      className={`focus-illustration ${compact ? "focus-illustration-compact" : ""} ${lampOn ? "is-lamp-on" : "is-lamp-off"}`}
-      aria-label={lampOn ? "Animated focus study illustration with lamp on" : "Animated break illustration with lamp off"}
-      role="img"
-    >
-      <svg viewBox="0 0 620 500" className="h-full w-full" aria-hidden="true">
-        <defs>
-          <radialGradient id="focusHalo" cx="50%" cy="44%" r="54%">
-            <stop offset="0%" stopColor="#f1eee5" stopOpacity=".18" />
-            <stop offset="48%" stopColor="#d8d2c7" stopOpacity=".12" />
-            <stop offset="100%" stopColor="#8d877c" stopOpacity="0" />
-          </radialGradient>
-          <linearGradient id="deskSurface" x1="0" x2="1" y1="0" y2="0">
-            <stop offset="0%" stopColor="#8d8579" />
-            <stop offset="50%" stopColor="#d9d2c6" />
-            <stop offset="100%" stopColor="#7b746b" />
-          </linearGradient>
-          <linearGradient id="lampShade" x1="0" x2="1" y1="0" y2="1">
-            <stop offset="0%" stopColor="#fff8d8" stopOpacity=".76" />
-            <stop offset="100%" stopColor="#e5b85b" stopOpacity=".04" />
-          </linearGradient>
-          <radialGradient id="lampGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#fff9dd" stopOpacity=".95" />
-            <stop offset="45%" stopColor="#ffd976" stopOpacity=".42" />
-            <stop offset="100%" stopColor="#f4bd50" stopOpacity="0" />
-          </radialGradient>
-          <filter id="softGlow" x="-60%" y="-60%" width="220%" height="220%">
-            <feGaussianBlur stdDeviation="10" />
-          </filter>
-        </defs>
-
-        <circle cx="310" cy="235" r="203" fill="url(#focusHalo)" className="focus-halo" />
-        <g className="focus-orbit-group">
-          <circle cx="310" cy="235" r="188" className="focus-ring focus-ring-1" />
-          <circle cx="310" cy="235" r="162" className="focus-ring focus-ring-2" />
-          <circle cx="310" cy="235" r="136" className="focus-ring focus-ring-3" />
-          <circle cx="310" cy="235" r="110" className="focus-ring focus-ring-4" />
-        </g>
-
-        <g className="focus-particles" opacity=".65">
-          <circle cx="140" cy="126" r="3" />
-          <circle cx="468" cy="142" r="2.5" />
-          <circle cx="500" cy="292" r="3" />
-          <circle cx="176" cy="350" r="2.5" />
-          <circle cx="454" cy="356" r="2" />
-        </g>
-
-        <g className="focus-lamp">
-          <path d="M140 370V175L194 123" fill="none" stroke="#201e1b" strokeWidth="10" strokeLinecap="round" />
-          <path d="M190 121L241 142L207 192L157 169Z" fill="#3a3732" stroke="#171614" strokeWidth="6" />
-          <path className="focus-lamp-beam" d="M194 177L224 190L356 342L169 342Z" fill="url(#lampShade)" />
-          <ellipse className="focus-lamp-glow" cx="195" cy="181" rx="54" ry="54" fill="url(#lampGlow)" filter="url(#softGlow)" />
-          <path className="focus-lamp-bulb" d="M198 167L174 212" stroke="#fff7ce" strokeWidth="15" strokeLinecap="round" />
-        </g>
-
-        <g className="focus-desk-shadow">
-          <ellipse cx="314" cy="397" rx="211" ry="25" fill="#000" opacity=".22" />
-        </g>
-
-        <g className="focus-desk">
-          <path d="M102 342H480" stroke="url(#deskSurface)" strokeWidth="18" strokeLinecap="round" />
-          <path d="M136 357L118 432M442 357L460 432" stroke="#4b4740" strokeWidth="10" strokeLinecap="round" />
-          <rect x="234" y="305" width="118" height="13" rx="6.5" fill="#302d28" />
-          <path d="M257 305L275 276H324L339 305Z" fill="#25231f" />
-          <rect x="282" y="263" width="42" height="12" rx="6" fill="#d5cdbf" opacity=".18" />
-          <path d="M305 275V303" stroke="#201e1a" strokeWidth="5" strokeLinecap="round" />
-          <rect x="218" y="329" width="205" height="6" rx="3" fill="#f1ece1" opacity=".12" />
-        </g>
-
-        <g className="focus-person">
-          <g className="focus-head">
-            <circle cx="384" cy="162" r="39" fill="#e1dbcf" />
-            <path d="M350 158C354 122 414 115 430 151C415 143 394 144 381 157C373 151 361 153 350 158Z" fill="#11100f" />
-            <path d="M361 170C378 184 401 184 417 171" fill="none" stroke="#a8a196" strokeWidth="4" strokeLinecap="round" opacity=".85" />
-          </g>
-          <path d="M358 193C378 205 409 205 428 191L422 225H364Z" fill="#d7d1c6" />
-          <path d="M413 220C463 216 489 246 483 297L466 337H357L366 276C369 247 385 229 413 220Z" fill="#7a756d" />
-          <path d="M462 244C497 254 513 285 499 317L476 310L483 282L452 265Z" fill="#858078" className="focus-arm-back" />
-          <path d="M374 275L323 316L344 334L398 292Z" fill="#99938a" className="focus-arm-front" />
-          <path d="M323 316L290 347" stroke="#1b1917" strokeWidth="9" strokeLinecap="round" />
-          <path d="M289 347L314 352" stroke="#1b1917" strokeWidth="8" strokeLinecap="round" />
-        </g>
-
-        <g className="focus-paper">
-          <path d="M270 320L387 315L402 341L282 347Z" fill="#eee9df" opacity=".9" />
-          <path d="M291 327L370 323" stroke="#9a9286" strokeWidth="2" opacity=".55" />
-          <path d="M294 334L360 331" stroke="#9a9286" strokeWidth="2" opacity=".45" />
-        </g>
-
-        <g className="focus-pencil">
-          <path d="M297 338L335 304" stroke="#dfae67" strokeWidth="7" strokeLinecap="round" />
-          <path d="M335 304L341 299" stroke="#26231f" strokeWidth="5" strokeLinecap="round" />
-        </g>
-
-        <g className="focus-breath-dot">
-          <circle cx="438" cy="120" r="4" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
+/* Focus study artwork lives in its own component so the session UI only controls placement/state. */
 function ProfilePanel({
   name,
   level,
@@ -504,7 +402,7 @@ export function FocusSession() {
       <section className="rounded-3xl border border-rule bg-paper-raised p-5 md:p-7">
         <div className="grid gap-6 md:grid-cols-[0.75fr_1.25fr] md:items-center">
           <div className="rounded-2xl border border-rule bg-[#11100e] p-5 text-center text-white">
-            <FocusIllustration compact />
+            <FocusStudyIllustration className="max-w-[420px] mx-auto" />
             <p className="mt-4 text-[10px] uppercase tracking-[0.28em] text-white/60">Session Complete</p>
           </div>
           <div>
@@ -581,7 +479,7 @@ export function FocusSession() {
 
               <div className="mt-3">
                 <div className="focus-art-frame mx-auto max-w-[min(80%,340px)] rounded-full border border-white/15 bg-black/20 p-1">
-                  <FocusIllustration lampOn={phase === "focusing"} />
+                  <FocusStudyIllustration running={phase !== "paused"} />
                 </div>
                 <p className="mt-2 text-[10px] uppercase tracking-[0.45em] text-white/60">{isBreak ? "Break" : "Focus Session"}</p>
               </div>
