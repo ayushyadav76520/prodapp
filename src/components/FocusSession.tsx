@@ -416,8 +416,8 @@ export function FocusSession() {
   if (phase === "setup") {
     return (
       <div className="focus-setup-shell rounded-3xl border-2 border-rule bg-paper-raised p-2.5 md:p-3">
-        <div className="grid gap-2.5 lg:min-h-[min(560px,calc(100vh-190px))] lg:grid-cols-[minmax(0,1.02fr)_minmax(300px,0.78fr)]">
-          <section className="rounded-2xl border-2 border-rule bg-paper p-3.5 md:p-4">
+        <div className="grid gap-2.5 lg:h-[min(470px,calc(100vh-250px))] lg:grid-cols-[minmax(0,1.02fr)_minmax(300px,0.78fr)]">
+          <section className="min-h-0 rounded-2xl border-2 border-rule bg-paper p-3 md:p-3.5">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">ZenSpace</p>
@@ -468,7 +468,7 @@ export function FocusSession() {
             </button>
           </section>
 
-          <section className="rounded-2xl border-2 border-rule bg-paper p-3.5 md:p-4">
+          <section className="flex min-h-0 flex-col rounded-2xl border-2 border-rule bg-paper p-3 md:p-3.5">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">History</p>
@@ -479,7 +479,7 @@ export function FocusSession() {
             <p className="mt-1.5 text-xs text-ink-soft">{totalHistoryMinutes} minutes total · synced across devices</p>
             {historySync === "syncing" && <p className="mt-2 text-[10px] uppercase tracking-widest text-ink-soft">Syncing…</p>}
 
-            <div className="mt-3 h-[min(430px,calc(100vh-320px))] min-h-[220px] overflow-y-auto pr-1">
+            <div className="history-list-scroll mt-2 min-h-0 flex-1 overflow-y-auto pr-1">
               {history.length === 0 ? (
                 <p className="rounded-2xl border border-dashed border-rule p-6 text-center text-sm text-ink-soft">No sessions yet.</p>
               ) : (

@@ -257,7 +257,7 @@ body {
 
 @media (min-width: 1024px) {
   .focus-setup-shell {
-    max-height: calc(100vh - 175px);
+    max-height: calc(100vh - 210px);
   }
 
   .focus-setup-shell > .grid {
@@ -266,10 +266,17 @@ body {
 
   .focus-setup-shell section {
     min-height: 0;
+    overflow: hidden;
   }
 
   .focus-setup-shell .history-list-scroll {
-    max-height: calc(100vh - 360px);
+    scrollbar-width: thin;
+  }
+}
+
+@media (max-width: 1023px) and (min-width: 768px) {
+  .focus-setup-shell > .grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
