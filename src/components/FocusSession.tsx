@@ -415,26 +415,26 @@ export function FocusSession() {
 
   if (phase === "setup") {
     return (
-      <div className="focus-setup-shell rounded-3xl border border-rule bg-paper-raised p-3 md:p-4">
-        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(300px,0.82fr)]">
-          <section className="rounded-2xl border-2 border-rule bg-paper p-4 md:p-5">
+      <div className="focus-setup-shell rounded-3xl border-2 border-rule bg-paper-raised p-2.5 md:p-3">
+        <div className="grid gap-2.5 lg:min-h-[min(560px,calc(100vh-190px))] lg:grid-cols-[minmax(0,1.02fr)_minmax(300px,0.78fr)]">
+          <section className="rounded-2xl border-2 border-rule bg-paper p-3.5 md:p-4">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">ZenSpace</p>
-                <h2 className="mt-1 font-serif text-3xl font-semibold tracking-tight">Focus Session</h2>
-                <p className="mt-1 text-sm text-ink-soft">Stay consistent, build a better you.</p>
+                <h2 className="mt-1 font-serif text-2xl font-semibold tracking-tight md:text-[2rem]">Focus Session</h2>
+                <p className="mt-0.5 text-xs text-ink-soft">Stay consistent, build a better you.</p>
               </div>
               <span className="rounded-full border border-rule px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-soft">Ready</span>
             </div>
 
-            <div className="mt-5 grid gap-4 sm:grid-cols-[1.35fr_.65fr]">
+            <div className="mt-3.5 grid gap-3 sm:grid-cols-[1.35fr_.65fr]">
               <div>
                 <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-soft">Session title</label>
                 <input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Study DSA"
-                  className="mt-1.5 w-full rounded-xl border-2 border-rule bg-transparent px-4 py-3 text-sm outline-none transition focus:border-accent"
+                  className="mt-1.5 w-full rounded-xl border-2 border-rule bg-transparent px-3.5 py-2.5 text-sm outline-none transition focus:border-accent"
                 />
               </div>
               <div>
@@ -445,16 +445,16 @@ export function FocusSession() {
                   max={480}
                   value={durationMin}
                   onChange={(e) => setDurationMin(Number(e.target.value) || 1)}
-                  className="mt-1.5 w-full rounded-xl border-2 border-rule bg-transparent px-4 py-3 text-xl font-semibold outline-none transition focus:border-accent"
+                  className="mt-1.5 w-full rounded-xl border-2 border-rule bg-transparent px-3.5 py-2.5 text-lg font-semibold outline-none transition focus:border-accent"
                 />
               </div>
             </div>
 
-            <div className="mt-4 rounded-2xl border-2 border-rule p-4">
+            <div className="mt-3 rounded-2xl border-2 border-rule p-3">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.15em]">Break</p>
-                  <p className="mt-1 text-sm text-ink-soft">Starts at 5 min · +1 min whenever you need.</p>
+                  <p className="mt-1 text-xs text-ink-soft">Starts at 5 min · +1 min whenever you need.</p>
                 </div>
                 <span className="rounded-xl border-2 border-rule px-3 py-1.5 text-sm font-semibold tabular-nums">5:00</span>
               </div>
@@ -462,24 +462,24 @@ export function FocusSession() {
 
             <button
               onClick={start}
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-ink px-5 py-3.5 text-sm font-semibold text-paper transition hover:bg-accent"
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-ink px-5 py-3 text-sm font-semibold text-paper transition hover:bg-accent"
             >
               <IconPlay className="h-4 w-4" /> Start Session
             </button>
           </section>
 
-          <section className="rounded-2xl border-2 border-rule bg-paper p-4 md:p-5">
+          <section className="rounded-2xl border-2 border-rule bg-paper p-3.5 md:p-4">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">History</p>
-                <h3 className="mt-1 font-serif text-2xl font-semibold">Your Sessions</h3>
+                <h3 className="mt-1 font-serif text-xl font-semibold md:text-2xl">Your Sessions</h3>
               </div>
               <span className="rounded-full border border-rule px-2.5 py-1 text-[10px] uppercase tracking-widest text-ink-soft">{history.length}</span>
             </div>
             <p className="mt-1.5 text-xs text-ink-soft">{totalHistoryMinutes} minutes total · synced across devices</p>
             {historySync === "syncing" && <p className="mt-2 text-[10px] uppercase tracking-widest text-ink-soft">Syncing…</p>}
 
-            <div className="mt-3 max-h-[330px] overflow-y-auto pr-1">
+            <div className="mt-3 h-[min(430px,calc(100vh-320px))] min-h-[220px] overflow-y-auto pr-1">
               {history.length === 0 ? (
                 <p className="rounded-2xl border border-dashed border-rule p-6 text-center text-sm text-ink-soft">No sessions yet.</p>
               ) : (
@@ -537,7 +537,7 @@ export function FocusSession() {
 
   return (
     <div ref={containerRef} className={`focus-active-shell ${isFullscreen ? "focus-fullscreen" : ""}`}>
-      <div className="rounded-3xl border border-rule bg-paper-raised p-4 md:p-6">
+      <div className={`rounded-3xl border-2 border-rule p-2.5 md:p-3 ${isFullscreen ? "focus-fullscreen-inner" : "bg-paper-raised"}`}>
         {breakBanner && phase === "focusing" && (
           <div className="mb-4 flex flex-col gap-3 rounded-2xl border border-accent/40 bg-accent/10 p-4 text-sm md:flex-row md:items-center md:justify-between">
             <span>Time for a coffee break or a short walk?</span>
@@ -548,44 +548,51 @@ export function FocusSession() {
           </div>
         )}
 
-        <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-rule px-4 py-3">
+        <div className={`mb-2.5 flex items-center justify-between gap-3 rounded-2xl border px-3 py-2.5 md:px-4 ${isFullscreen ? "focus-fullscreen-header" : "border-rule"}`}>
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">{isBreak ? "Break time" : "Focus Session"}</p>
             <p className="mt-1 truncate text-sm font-semibold">{title.trim() || "Focus Session"}</p>
           </div>
-          <button onClick={toggleFullscreen} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-rule transition hover:border-accent" title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}>
+          <button onClick={toggleFullscreen} className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition ${isFullscreen ? "focus-fullscreen-button" : "border-rule hover:border-accent"}`} title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}>
             {isFullscreen ? <IconCollapse className="h-4 w-4" /> : <IconExpand className="h-4 w-4" />}
           </button>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-[minmax(280px,0.74fr)_minmax(420px,1.26fr)]">
+        <div className={`grid gap-2.5 lg:min-h-[min(610px,calc(100vh-175px))] lg:grid-cols-[minmax(250px,0.72fr)_minmax(430px,1.28fr)] ${isFullscreen ? "lg:min-h-[calc(100vh-92px)]" : ""}`}>
           {!isFullscreen && (
-            <ProfilePanel
-              name={displayName}
-              level={level}
-              title={title}
-              elapsedSeconds={elapsedForPanel}
-              remainingSeconds={remainingSeconds}
-            />
+            <div className="flex min-h-0 flex-col gap-2.5">
+              <ProfilePanel
+                name={displayName}
+                level={level}
+                title={title}
+                elapsedSeconds={elapsedForPanel}
+                remainingSeconds={remainingSeconds}
+              />
+              <div className="grid grid-cols-3 gap-2 rounded-3xl border border-rule bg-paper-raised p-2.5">
+                <button onClick={pauseResume} className="rounded-2xl border-2 border-rule px-2.5 py-3 text-[10px] font-semibold uppercase tracking-wider transition hover:border-accent">{phase === "focusing" ? "Pause" : "Resume"}</button>
+                <button onClick={takeBreak} className="rounded-2xl border-2 border-rule px-2.5 py-3 text-[10px] font-semibold uppercase tracking-wider transition hover:border-accent">Break 5m</button>
+                <button onClick={toggleFullscreen} className="rounded-2xl border-2 border-rule px-2.5 py-3 text-[10px] font-semibold uppercase tracking-wider transition hover:border-accent">Full screen</button>
+              </div>
+            </div>
           )}
 
-          <section className={`focus-timer-panel order-1 lg:order-2 rounded-3xl border border-rule bg-[#11100e] px-5 py-7 text-white md:px-7 md:py-8 ${isFullscreen ? "lg:mx-auto lg:w-full lg:max-w-4xl" : ""}`}>
+          <section className={`focus-timer-panel order-1 lg:order-2 min-h-0 rounded-3xl border border-white/12 bg-[#11100e] px-3.5 py-4 text-white md:px-5 md:py-5 ${isFullscreen ? "lg:mx-auto lg:w-full lg:max-w-6xl" : ""}`}>
             <div className="text-center">
               <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/70">
                 {new Date().toLocaleDateString(undefined, { month: "short", day: "numeric", weekday: "short" }).toUpperCase()} · {new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).toUpperCase()}
               </p>
 
-              <div className="mt-6">
-                <div className="focus-art-frame mx-auto rounded-full border border-white/15 bg-black/20 p-2">
+              <div className="mt-3">
+                <div className="focus-art-frame mx-auto max-w-[min(100%,560px)] rounded-full border border-white/15 bg-black/20 p-1.5">
                   <FocusIllustration />
                 </div>
-                <p className="mt-5 text-xs uppercase tracking-[0.5em] text-white/60">{isBreak ? "Break" : "Focus Session"}</p>
+                <p className="mt-3 text-[10px] uppercase tracking-[0.45em] text-white/60">{isBreak ? "Break" : "Focus Session"}</p>
               </div>
 
-              <p className="mt-7 text-[10px] uppercase tracking-[0.32em] text-white/55">{isBreak ? "Break Remaining" : "Elapsed"}</p>
-              <p className="mt-2 font-sans text-6xl font-light tabular-nums sm:text-7xl">{isBreak ? formatTime(breakRemaining) : formatTime(elapsedSeconds)}</p>
+              <p className="mt-4 text-[10px] uppercase tracking-[0.32em] text-white/55">{isBreak ? "Break Remaining" : "Elapsed"}</p>
+              <p className="mt-1 font-sans text-5xl font-light tabular-nums sm:text-6xl lg:text-[4.5rem]">{isBreak ? formatTime(breakRemaining) : formatTime(elapsedSeconds)}</p>
 
-              <div className="mx-auto mt-7 w-full max-w-2xl">
+              <div className="mx-auto mt-4 w-full max-w-2xl">
                 <div className="h-2 overflow-hidden rounded-full bg-white/12">
                   <div className="h-full rounded-full bg-white transition-[width] duration-1000 ease-linear" style={{ width: `${Math.min(100, Math.max(0, (isBreak ? breakProgress : progress) * 100))}%` }} />
                 </div>
@@ -596,7 +603,7 @@ export function FocusSession() {
                 </div>
               </div>
 
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <div className="mt-5 flex flex-wrap items-center justify-center gap-2.5">
                 {isBreak ? (
                   <>
                     <button onClick={extendBreak} className="rounded-xl border border-white/20 px-4 py-2.5 text-xs font-semibold uppercase tracking-widest transition hover:border-white">+1 Minute</button>
@@ -617,9 +624,9 @@ export function FocusSession() {
                 )}
               </div>
 
-              <p className="mx-auto mt-6 max-w-xl font-serif text-sm italic text-white/62">&ldquo;{quote}&rdquo;</p>
+              <p className="mx-auto mt-4 max-w-xl font-serif text-xs italic text-white/62">&ldquo;{quote}&rdquo;</p>
 
-              <button onClick={endSessionEarly} className="mt-7 text-xs font-semibold uppercase tracking-widest text-red-300 underline-offset-4 hover:underline">End Session & Save Progress</button>
+              <button onClick={endSessionEarly} className="mt-4 text-[11px] font-semibold uppercase tracking-widest text-red-300 underline-offset-4 hover:underline">End Session & Save Progress</button>
             </div>
           </section>
         </div>

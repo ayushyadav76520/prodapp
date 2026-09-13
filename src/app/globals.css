@@ -209,3 +209,96 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .focus-illustration * { animation:none !important; }
 }
+
+/* Focus Session v3: compact viewport-first layout and true dark fullscreen mode. */
+.focus-active-shell {
+  min-width: 0;
+}
+
+.focus-active-shell:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  background: #0f0e0c;
+  color: #f3efe6;
+}
+
+.focus-active-shell:fullscreen .focus-fullscreen-inner {
+  min-height: 100vh;
+  border-color: rgba(255,255,255,.13);
+  border-radius: 0;
+  background: #0f0e0c;
+  color: #f3efe6;
+}
+
+.focus-fullscreen-header {
+  border-color: rgba(255,255,255,.14);
+  background: #151310;
+}
+
+.focus-fullscreen-header p,
+.focus-fullscreen-header button,
+.focus-fullscreen-header .text-ink-soft {
+  color: rgba(243,239,230,.72);
+}
+
+.focus-fullscreen-button {
+  border-color: rgba(255,255,255,.20);
+  color: #f3efe6;
+}
+
+.focus-fullscreen-button:hover {
+  border-color: #e08a5f;
+}
+
+.focus-setup-shell {
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .focus-setup-shell {
+    max-height: calc(100vh - 175px);
+  }
+
+  .focus-setup-shell > .grid {
+    min-height: 0;
+  }
+
+  .focus-setup-shell section {
+    min-height: 0;
+  }
+
+  .focus-setup-shell .history-list-scroll {
+    max-height: calc(100vh - 360px);
+  }
+}
+
+@media (max-width: 1023px) {
+  .focus-active-shell .focus-profile-panel {
+    order: 2;
+  }
+
+  .focus-active-shell .focus-timer-panel {
+    order: 1;
+  }
+}
+
+@media (max-width: 767px) {
+  .focus-active-shell:fullscreen .focus-fullscreen-inner {
+    padding: .75rem;
+  }
+
+  .focus-active-shell:fullscreen .focus-timer-panel {
+    min-height: calc(100vh - 96px);
+    border-radius: 1.75rem;
+  }
+
+  .focus-active-shell .focus-timer-panel {
+    padding: 1rem;
+  }
+
+  .focus-active-shell .focus-illustration {
+    max-width: 100%;
+    width: 100%;
+  }
+}
