@@ -8,22 +8,29 @@ interface TaskLike {
   completed?: string;
 }
 interface SkillLike {
+  startDate?: string;
   completedDates: string[];
 }
 interface FocusRecordLike {
   completedAt: string;
 }
 
-function dateKey(d: Date): string {
+function localDateKey(d: Date): string {
   return d.toDateString();
 }
 
+function isFuture(date: Date): boolean {
+  const now = new Date();
+  return date.getTime() > now.getTime();
+}
+
 /**
- * Returns the set of distinct calendar days (as Date.toDateString() keys)
- * on which the user did *something* — attended/created an event, completed
- * a task, checked in on a skill, or ran a focus session. Each day counts
- * once no matter how many actions happened on it, which is what makes the
- * "+1 level per day" rule work automatically.
+ * One level per calendar day with real activity, never counting future work.
+ *
+ * Calendar events count for the day they occur (including today), while
+ * completed tasks, skill check-ins, and saved focus sessions count from their
+ * actual completion/check-in timestamp. Future events are deliberately ignored
+ * so a calendar full of upcoming/recurring items cannot inflate the level.
  */
 export function computeActiveDates(
   events: EventLike[],
@@ -32,24 +39,72 @@ export function computeActiveDates(
   focusSessions: FocusRecordLike[]
 ): Set<string> {
   const active = new Set<string>();
+  const now = new Date();
 
-  for (const e of events) {
-    const start = e.start?.dateTime ?? e.start?.date;
-    if (start) active.add(dateKey(new Date(start)));
+  // App-specific activity gives us a sensible "started using the app"
+  // boundary. This prevents an existing Google Calendar history from
+  // instantly turning into dozens of levels on first sign-in.
+  const appActivityTimes: number[] = [];
+  for (const s of skills) {
+    const t = new Date(s.startDate ?? "");
+    if (!Number.isNaN(t.getTime()) && t.getTime() <= now.getTime()) appActivityTimes.push(t.getTime());
+    for (const d of s.completedDates) {
+      const t = new Date(`${d}T00:00:00`);
+      if (!Number.isNaN(t.getTime()) && t.getTime() <= now.getTime()) appActivityTimes.push(t.getTime());
+    }
   }
   for (const t of tasks) {
     if (t.status === "completed" && t.completed) {
-      active.add(dateKey(new Date(t.completed)));
-    }
-  }
-  for (const s of skills) {
-    for (const d of s.completedDates) {
-      // completedDates are stored as YYYY-MM-DD; parse as local date.
-      active.add(dateKey(new Date(d + "T00:00:00")));
+      const d = new Date(t.completed);
+      if (!Number.isNaN(d.getTime()) && d.getTime() <= now.getTime()) appActivityTimes.push(d.getTime());
     }
   }
   for (const f of focusSessions) {
-    active.add(dateKey(new Date(f.completedAt)));
+    const d = new Date(f.completedAt);
+    if (!Number.isNaN(d.getTime()) && d.getTime() <= now.getTime()) appActivityTimes.push(d.getTime());
+  }
+
+  const activityStart = appActivityTimes.length ? Math.min(...appActivityTimes) : now.getTime();
+
+  for (const e of events) {
+    const raw = e.start?.dateTime ?? e.start?.date;
+    if (!raw) continue;
+
+    const date = e.start?.date
+      ? new Date(`${e.start.date}T00:00:00`)
+      : new Date(raw);
+    if (
+      !Number.isNaN(date.getTime()) &&
+      date.getTime() <= now.getTime() &&
+      date.getTime() >= activityStart
+    ) {
+      active.add(localDateKey(date));
+    }
+  }
+
+  // Non-calendar app activity always counts on its real completion/check-in day.
+  for (const t of tasks) {
+    if (t.status !== "completed" || !t.completed) continue;
+    const date = new Date(t.completed);
+    if (!Number.isNaN(date.getTime()) && date.getTime() <= now.getTime()) {
+      active.add(localDateKey(date));
+    }
+  }
+
+  for (const s of skills) {
+    for (const d of s.completedDates) {
+      const date = new Date(`${d}T00:00:00`);
+      if (!Number.isNaN(date.getTime()) && date.getTime() <= now.getTime()) {
+        active.add(localDateKey(date));
+      }
+    }
+  }
+
+  for (const f of focusSessions) {
+    const date = new Date(f.completedAt);
+    if (!Number.isNaN(date.getTime()) && date.getTime() <= now.getTime()) {
+      active.add(localDateKey(date));
+    }
   }
 
   return active;

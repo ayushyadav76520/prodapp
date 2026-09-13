@@ -299,17 +299,17 @@ export default function SkillsPage() {
                     <div className="flex items-center gap-3">
                       <button
                         onClick={() => shareSkill(skill)}
-                        className="text-ink-soft/60 hover:text-accent transition-colors"
+                        className="w-11 h-11 rounded-full border border-rule text-ink-soft flex items-center justify-center hover:border-accent hover:text-accent transition-colors"
                         aria-label="Share progress"
                       >
-                        <IconShare className="w-3.5 h-3.5" />
+                        <IconShare className="w-5 h-5" />
                       </button>
                       <button
                         onClick={() => removeSkill(skill.id, skill.name)}
-                        className="text-ink-soft/60 hover:text-red-600 transition-colors"
+                        className="w-11 h-11 rounded-full border border-rule text-ink-soft flex items-center justify-center hover:border-red-600 hover:text-red-600 transition-colors"
                         aria-label="Delete skill"
                       >
-                        <IconTrash className="w-3.5 h-3.5" />
+                        <IconTrash className="w-5 h-5" />
                       </button>
                     </div>
                   </div>

@@ -301,10 +301,10 @@ export function FocusSession() {
                     </div>
                     <button
                       onClick={() => shareRecord(rec)}
-                      className="text-ink-soft/60 hover:text-accent transition-colors"
+                      className="w-11 h-11 rounded-full border border-rule text-ink-soft flex items-center justify-center hover:border-accent hover:text-accent transition-colors"
                       aria-label="Share this session"
                     >
-                      <IconShare className="w-4 h-4" />
+                      <IconShare className="w-5 h-5" />
                     </button>
                   </li>
                 ))}
