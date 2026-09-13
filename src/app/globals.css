@@ -1017,3 +1017,383 @@ body {
     transition: none;
   }
 }
+
+/* Active session (embedded ZenSpace page): remove the old left rail and make the
+   session itself fit the available viewport on laptop + phone. */
+.focus-skills-shell {
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.focus-skills-shell > header,
+.focus-skills-shell > .flex.gap-5 {
+  flex: 0 0 auto;
+}
+
+.focus-skills-shell > .focus-active-shell {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.focus-session-stage {
+  min-width: 0;
+  height: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  border-radius: 1.5rem;
+  padding: clamp(.8rem, 1.7vw, 1.35rem);
+  background: #0f0e0c;
+  color: #f3efe6;
+  overflow: hidden;
+}
+
+.focus-session-mobile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3.6rem;
+  margin-bottom: .85rem;
+}
+
+.focus-session-mobile-header .focus-profile-mini {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.focus-session-mobile-header .focus-profile-avatar {
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: 0 0 auto;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 999px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: #1a1815;
+  color: rgba(243,239,230,.76);
+}
+
+.focus-session-mobile-header .focus-profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.focus-session-dashboard {
+  min-height: calc(100dvh - 220px);
+  display: grid;
+  grid-template-columns: minmax(280px, .86fr) minmax(430px, 1.14fr);
+  align-items: center;
+  gap: clamp(2rem, 5vw, 5.5rem);
+  padding: clamp(.8rem, 2vw, 1.5rem) clamp(.2rem, 1vw, .5rem) 0;
+}
+
+.focus-session-dashboard-copy {
+  min-width: 0;
+  max-width: 560px;
+}
+
+.focus-session-dashboard-copy h1 {
+  margin: .45rem 0 0;
+  font-family: var(--font-source-serif);
+  font-size: clamp(3rem, 5.6vw, 5.6rem);
+  line-height: .92;
+  letter-spacing: -.055em;
+  overflow-wrap: anywhere;
+}
+
+.focus-session-dashboard-copy .focus-mode-subtitle {
+  margin-top: .75rem;
+  font-size: clamp(.95rem, 1.35vw, 1.25rem);
+  color: var(--ink-soft);
+}
+
+.focus-session-dashboard-actions {
+  margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .65rem;
+  max-width: 620px;
+}
+
+.focus-session-dashboard-visual {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.focus-session-dashboard-date {
+  margin-bottom: .65rem;
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .28em;
+  color: rgba(243,239,230,.68);
+  text-align: center;
+}
+
+.focus-session-dashboard-art {
+  width: min(100%, 480px);
+  max-width: 480px;
+  border-radius: 1.6rem;
+  padding: .25rem;
+  background: #11100e;
+}
+
+.focus-session-dashboard-art > .focus-study-illustration {
+  width: 100%;
+  max-width: none;
+}
+
+.focus-session-dashboard-visual .focus-visual-label {
+  margin-top: .72rem;
+  font-size: .62rem;
+  font-weight: 600;
+  letter-spacing: .42em;
+  text-transform: uppercase;
+  color: rgba(243,239,230,.58);
+}
+
+.focus-session-dashboard-visual .focus-countdown {
+  margin-top: .28rem;
+  font-size: clamp(3.4rem, 6vw, 5.8rem);
+  font-weight: 300;
+  line-height: .92;
+  font-variant-numeric: tabular-nums;
+  color: #f39a3d;
+}
+
+.focus-session-dashboard-visual .focus-progress-wrap {
+  width: min(100%, 560px);
+  margin-top: .7rem;
+}
+
+.focus-session-dashboard-visual .focus-progress-track {
+  height: .72rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255,255,255,.12);
+}
+
+.focus-session-dashboard-visual .focus-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #f39a3d;
+  transition: width 1s linear;
+}
+
+.focus-session-dashboard-visual .focus-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: .75rem;
+  margin-top: .42rem;
+  font-size: .58rem;
+  color: rgba(243,239,230,.5);
+}
+
+.focus-session-dashboard .focus-quote {
+  margin-top: 1.55rem;
+  max-width: 560px;
+  color: var(--ink-soft);
+}
+
+.focus-session-dashboard .focus-end-button {
+  margin-top: .85rem;
+}
+
+@media (max-width: 1100px) and (min-width: 768px) {
+  .focus-skills-shell {
+    padding-inline: 1rem;
+  }
+
+  .focus-session-dashboard {
+    grid-template-columns: minmax(250px, .8fr) minmax(360px, 1fr);
+    gap: 2rem;
+    min-height: calc(100dvh - 205px);
+  }
+
+  .focus-session-dashboard-copy h1 {
+    font-size: clamp(2.8rem, 5.5vw, 4.6rem);
+  }
+
+  .focus-session-dashboard-art {
+    width: min(100%, 390px);
+  }
+}
+
+@media (max-width: 767px) {
+  .focus-skills-shell {
+    height: calc(100dvh - 64px);
+    max-height: calc(100dvh - 64px);
+    padding-inline: .75rem;
+    padding-top: .75rem;
+    padding-bottom: .25rem;
+  }
+
+  .focus-skills-shell > header h1 {
+    font-size: 2rem;
+  }
+
+  .focus-skills-shell > header {
+    padding-bottom: .65rem;
+  }
+
+  .focus-skills-shell > .flex.gap-5 {
+    gap: 1.25rem;
+  }
+
+  .focus-session-stage {
+    height: 100%;
+    flex: 1 1 auto;
+    padding: .65rem;
+    border-radius: 1.2rem;
+  }
+
+  .focus-session-dashboard {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: .85rem;
+    padding-top: .25rem;
+  }
+
+  .focus-session-mobile-header {
+    min-height: 3rem;
+    margin-bottom: .25rem;
+  }
+
+  .focus-session-mobile-header .focus-profile-avatar {
+    width: 2.45rem;
+    height: 2.45rem;
+  }
+
+  .focus-profile-name {
+    font-size: .84rem;
+  }
+
+  .focus-profile-level {
+    font-size: .58rem;
+  }
+
+  .focus-session-dashboard-visual {
+    order: 1;
+  }
+
+  .focus-session-dashboard-copy {
+    order: 2;
+    max-width: none;
+    text-align: left;
+  }
+
+  .focus-session-dashboard-date {
+    display: none;
+  }
+
+  .focus-session-dashboard-art {
+    width: min(88vw, 390px);
+    padding: 0;
+    border-radius: 1.35rem;
+  }
+
+  .focus-session-dashboard-visual .focus-visual-label {
+    margin-top: .45rem;
+    font-size: .56rem;
+  }
+
+  .focus-session-dashboard-visual .focus-countdown {
+    margin-top: .22rem;
+    font-size: clamp(3.3rem, 16vw, 4.8rem);
+  }
+
+  .focus-session-dashboard-visual .focus-progress-wrap {
+    width: min(100%, 420px);
+    margin-top: .65rem;
+  }
+
+  .focus-session-dashboard-visual .focus-progress-track {
+    height: .7rem;
+  }
+
+  .focus-session-dashboard-visual .focus-progress-meta {
+    font-size: .55rem;
+  }
+
+  .focus-session-dashboard-copy h1 {
+    font-size: clamp(2.7rem, 14vw, 4.1rem);
+  }
+
+  .focus-session-dashboard-copy .focus-mode-subtitle {
+    margin-top: .5rem;
+    font-size: .92rem;
+  }
+
+  .focus-session-dashboard-actions {
+    margin-top: .9rem;
+    width: 100%;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .45rem;
+  }
+
+  .focus-session-dashboard-actions .focus-control-button {
+    min-height: 3rem;
+    padding-inline: .35rem;
+    font-size: .56rem;
+    letter-spacing: .06em;
+  }
+
+  .focus-session-dashboard .focus-quote {
+    margin-top: .8rem;
+    font-size: .78rem;
+    line-height: 1.35;
+  }
+
+  .focus-session-dashboard .focus-end-button {
+    margin-top: .55rem;
+    font-size: .56rem;
+  }
+}
+
+@media (max-width: 767px) and (max-height: 760px) {
+  .focus-session-stage {
+    padding: .55rem;
+  }
+
+  .focus-session-dashboard {
+    gap: .55rem;
+    min-height: 0;
+  }
+
+  .focus-session-dashboard-art {
+    width: min(76vw, 315px);
+  }
+
+  .focus-session-dashboard-visual .focus-countdown {
+    font-size: clamp(2.9rem, 13vw, 4rem);
+  }
+
+  .focus-session-dashboard-copy h1 {
+    font-size: clamp(2.35rem, 12vw, 3.7rem);
+  }
+
+  .focus-session-dashboard-actions {
+    margin-top: .68rem;
+  }
+
+  .focus-session-dashboard-actions .focus-control-button {
+    min-height: 2.7rem;
+  }
+
+  .focus-session-dashboard .focus-quote {
+    margin-top: .55rem;
+    font-size: .7rem;
+  }
+}

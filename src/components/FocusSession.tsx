@@ -46,38 +46,6 @@ function formatClock(date: Date) {
 
 
 /* Focus study artwork lives in its own component so the session UI only controls placement/state. */
-function ProfilePanel({
-  name,
-  level,
-  title,
-}: {
-  name: string;
-  level: number;
-  title: string;
-}) {
-  return (
-    <aside className="focus-profile-panel rounded-3xl border border-rule bg-paper-raised p-4 md:p-5">
-      <div className="focus-profile-card rounded-2xl border border-rule bg-paper px-3.5 py-3.5">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl border border-rule bg-[#efe6cf] p-1 text-[#211d16] shrink-0">
-            <IconProfile className="h-full w-full" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-[9px] font-semibold uppercase tracking-[0.22em] text-accent">Profile</p>
-            <p className="truncate text-sm font-semibold">{name || "User"}</p>
-            <p className="text-[10px] uppercase tracking-[0.16em] text-ink-soft">Level {level}</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-4">
-        <p className="text-[9px] font-semibold uppercase tracking-[0.22em] text-accent">Now focusing</p>
-        <p className="mt-1 font-serif text-lg font-semibold leading-tight truncate">{title || "Focus Session"}</p>
-      </div>
-    </aside>
-  );
-}
-
 export function FocusSession() {
   const { data: session } = useSession();
   const { level } = useLevel();
@@ -456,18 +424,22 @@ export function FocusSession() {
           </div>
         )}
 
-        <div className={isFullscreen ? "focus-fullscreen-stage" : "grid gap-2 lg:grid-cols-[minmax(210px,0.46fr)_minmax(430px,1.54fr)]"}>
+        <div className={isFullscreen ? "focus-fullscreen-stage" : "focus-session-stage"}>
           {!isFullscreen && (
-            <div className="flex min-h-0 flex-col gap-2.5">
-              <ProfilePanel name={displayName} level={level} title={title} />
-              {!isBreak && (
-                <div className="flex flex-col gap-2 rounded-3xl border border-rule bg-paper-raised p-2.5">
-                  <button onClick={pauseResume} className="rounded-2xl border-2 border-rule px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider transition hover:border-accent">{phase === "focusing" ? "Pause" : "Resume"}</button>
-                  <button onClick={takeBreak} className="rounded-2xl border-2 border-rule px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider transition hover:border-accent">Break 5m</button>
-                  <button onClick={toggleFullscreen} className="rounded-2xl border-2 border-rule px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider transition hover:border-accent">Full screen</button>
+            <header className="focus-session-mobile-header">
+              <div className="focus-profile-mini">
+                <div className="focus-profile-avatar">
+                  {profileImage ? <img src={profileImage} alt="" /> : <IconProfile className="h-7 w-7" />}
                 </div>
-              )}
-            </div>
+                <div className="min-w-0">
+                  <p className="focus-profile-name">{displayName}</p>
+                  <p className="focus-profile-level">Level {level} · Focus Builder</p>
+                </div>
+              </div>
+              <button onClick={toggleFullscreen} className="focus-fullscreen-icon-button" title="Fullscreen" aria-label="Fullscreen">
+                <IconExpand className="h-4 w-4" />
+              </button>
+            </header>
           )}
 
           {isFullscreen ? (
@@ -542,46 +514,51 @@ export function FocusSession() {
               </div>
             </section>
           ) : (
-            <section className="focus-timer-panel order-1 lg:order-2 min-h-0 rounded-3xl border border-white/12 bg-[#11100e] px-3 py-3 text-white md:px-4 md:py-3.5">
-              <div className="text-center">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/70">
-                  {new Date().toLocaleDateString(undefined, { month: "short", day: "numeric", weekday: "short" }).toUpperCase()} · {new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).toUpperCase()}
-                </p>
-                <div className="mt-3 focus-art-frame mx-auto max-w-[min(80%,340px)] rounded-full border border-white/15 bg-black/20 p-1">
-                  <FocusStudyIllustration running={phase !== "paused"} />
-                </div>
-                <p className="mt-2 text-[10px] uppercase tracking-[0.45em] text-white/60">{isBreak ? "Break" : "Focus Session"}</p>
-                <p className="mt-2 text-[10px] uppercase tracking-[0.32em] text-white/55">{isBreak ? "Break Remaining" : "Remaining"}</p>
-                <p className="mt-0.5 font-sans text-3xl font-light tabular-nums sm:text-4xl lg:text-5xl">{formatTime(countdownSeconds)}</p>
-                <div className="mx-auto mt-2.5 w-full max-w-lg">
-                  <div className="h-1.5 overflow-hidden rounded-full bg-white/12">
-                    <div className="h-full rounded-full bg-[#f39a3d] transition-[width] duration-1000 ease-linear" style={{ width: `${Math.min(100, Math.max(0, countdownProgress * 100))}%` }} />
-                  </div>
-                  <div className="mt-1.5 flex items-center justify-between text-[9px] text-white/55">
-                    <span>{isBreak ? "Break start" : sessionStartLabel}</span>
-                    <span>{isBreak ? `${Math.round(breakTotalSeconds / 60)} min break` : `${Math.max(1, Math.round(totalSeconds / 60))} min`}</span>
-                    <span>{isBreak ? "Resume" : sessionEndLabel}</span>
-                  </div>
-                </div>
-                <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
+            <section className="focus-session-dashboard">
+              <div className="focus-session-dashboard-copy">
+                <p className="focus-mode-eyebrow">{isBreak ? "BREAK TIME" : "FOCUS MODE"}<span aria-hidden="true" /></p>
+                <h1>{title.trim() || "Focus Mode"}</h1>
+                <p className="focus-mode-subtitle">Distraction fades. Progress stays.</p>
+
+                <div className="focus-session-dashboard-actions">
                   {isBreak ? (
                     <>
-                      <button onClick={extendBreak} className="rounded-xl border border-white/20 px-3 py-2 text-[11px] font-semibold uppercase tracking-widest transition hover:border-white">+1 Minute</button>
-                      <button onClick={() => setPhase("focusing")} className="flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-[#11100e]"><IconPlay className="h-4 w-4" /> Resume Focus</button>
+                      <button onClick={extendBreak} className="focus-control-button focus-control-button-secondary">+1 MINUTE</button>
+                      <button onClick={() => setPhase("focusing")} className="focus-control-button focus-control-button-primary"><IconPlay className="h-4 w-4" /> RESUME FOCUS</button>
                     </>
                   ) : (
                     <>
-                      <button onClick={pauseResume} className="flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-[#11100e]">
+                      <button onClick={pauseResume} className="focus-control-button focus-control-button-primary">
                         {phase === "focusing" ? <IconPause className="h-4 w-4" /> : <IconPlay className="h-4 w-4" />}
-                        {phase === "focusing" ? "Pause" : "Resume"}
+                        {phase === "focusing" ? "PAUSE" : "RESUME"}
                       </button>
-                      <button onClick={takeBreak} className="rounded-xl border border-white/20 px-3 py-2 text-[11px] font-semibold uppercase tracking-widest transition hover:border-white">Break (5 min)</button>
-                      <button onClick={toggleFullscreen} className="flex items-center gap-2 rounded-xl border border-white/20 px-3 py-2 text-[11px] font-semibold uppercase tracking-widest transition hover:border-white"><IconExpand className="h-4 w-4" /> Fullscreen</button>
+                      <button onClick={takeBreak} className="focus-control-button focus-control-button-secondary">BREAK (5 MIN)</button>
+                      <button onClick={toggleFullscreen} className="focus-control-button focus-control-button-secondary"><IconExpand className="h-4 w-4" /> FULLSCREEN</button>
                     </>
                   )}
                 </div>
-                <p className="mx-auto mt-2.5 max-w-md font-serif text-[11px] italic text-white/62">&ldquo;{quote}&rdquo;</p>
-                <button onClick={endSessionEarly} className="mt-2.5 text-[10px] font-semibold uppercase tracking-widest text-red-300 underline-offset-4 hover:underline">End Session &amp; Save Progress</button>
+
+                <blockquote className="focus-quote">&ldquo;{quote}&rdquo;</blockquote>
+                <button onClick={endSessionEarly} className="focus-end-button">END SESSION &amp; SAVE PROGRESS</button>
+              </div>
+
+              <div className="focus-session-dashboard-visual">
+                <p className="focus-session-dashboard-date">{new Date().toLocaleDateString(undefined, { month: "short", day: "numeric", weekday: "short" }).toUpperCase()} · {new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).toUpperCase()}</p>
+                <div className="focus-session-dashboard-art">
+                  <FocusStudyIllustration running={phase !== "paused"} />
+                </div>
+                <p className="focus-visual-label">{isBreak ? "BREAK" : "FOCUS SESSION"}</p>
+                <div className="focus-countdown">{formatTime(countdownSeconds)}</div>
+                <div className="focus-progress-wrap">
+                  <div className="focus-progress-track">
+                    <div className="focus-progress-fill" style={{ width: `${Math.min(100, Math.max(0, countdownProgress * 100))}%` }} />
+                  </div>
+                  <div className="focus-progress-meta">
+                    <span>{isBreak ? "BREAK START" : sessionStartLabel}</span>
+                    <span>{isBreak ? `${Math.round(breakTotalSeconds / 60)} MIN` : `${Math.max(1, Math.round(totalSeconds / 60))} MIN`}</span>
+                    <span>{isBreak ? "RESUME" : sessionEndLabel}</span>
+                  </div>
+                </div>
               </div>
             </section>
           )}
