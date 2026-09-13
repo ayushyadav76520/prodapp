@@ -415,124 +415,90 @@ export function FocusSession() {
 
   if (phase === "setup") {
     return (
-      <div className="space-y-6">
-        <section className="rounded-3xl border border-rule bg-paper-raised p-5 md:p-7">
-          <div className="grid gap-6 md:grid-cols-[minmax(300px,0.92fr)_minmax(360px,1.08fr)] md:items-stretch">
-            <div className="rounded-2xl border border-rule bg-paper p-5 md:p-6">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">ZenSpace</p>
-              <h2 className="mt-1 font-serif text-4xl font-semibold tracking-tight">Focus Session</h2>
-              <p className="mt-2 text-sm text-ink-soft">Stay consistent, build a better you.</p>
+      <div className="focus-setup-shell rounded-3xl border border-rule bg-paper-raised p-3 md:p-4">
+        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(300px,0.82fr)]">
+          <section className="rounded-2xl border-2 border-rule bg-paper p-4 md:p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">ZenSpace</p>
+                <h2 className="mt-1 font-serif text-3xl font-semibold tracking-tight">Focus Session</h2>
+                <p className="mt-1 text-sm text-ink-soft">Stay consistent, build a better you.</p>
+              </div>
+              <span className="rounded-full border border-rule px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-soft">Ready</span>
+            </div>
 
-              <div className="mt-8 space-y-5">
+            <div className="mt-5 grid gap-4 sm:grid-cols-[1.35fr_.65fr]">
+              <div>
+                <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-soft">Session title</label>
+                <input
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="e.g. Study DSA"
+                  className="mt-1.5 w-full rounded-xl border-2 border-rule bg-transparent px-4 py-3 text-sm outline-none transition focus:border-accent"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-soft">Minutes</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={480}
+                  value={durationMin}
+                  onChange={(e) => setDurationMin(Number(e.target.value) || 1)}
+                  className="mt-1.5 w-full rounded-xl border-2 border-rule bg-transparent px-4 py-3 text-xl font-semibold outline-none transition focus:border-accent"
+                />
+              </div>
+            </div>
+
+            <div className="mt-4 rounded-2xl border-2 border-rule p-4">
+              <div className="flex items-center justify-between gap-4">
                 <div>
-                  <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-soft">Session title</label>
-                  <input
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="e.g. Study DSA"
-                    className="mt-2 w-full rounded-xl border border-rule bg-transparent px-4 py-3 text-sm outline-none transition focus:border-accent"
-                  />
+                  <p className="text-xs font-semibold uppercase tracking-[0.15em]">Break</p>
+                  <p className="mt-1 text-sm text-ink-soft">Starts at 5 min · +1 min whenever you need.</p>
                 </div>
-                <div>
-                  <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-soft">Session time</label>
-                  <div className="mt-2 flex items-center gap-3">
-                    <input
-                      type="number"
-                      min={1}
-                      max={480}
-                      value={durationMin}
-                      onChange={(e) => setDurationMin(Number(e.target.value) || 1)}
-                      className="w-28 rounded-xl border border-rule bg-transparent px-4 py-3 text-xl font-semibold outline-none transition focus:border-accent"
-                    />
-                    <span className="text-sm text-ink-soft">minutes</span>
-                  </div>
-                </div>
-                <div className="rounded-2xl border border-rule p-4">
-                  <div className="flex items-center justify-between gap-4">
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.15em]">Break</p>
-                      <p className="mt-1 text-sm text-ink-soft">Starts at 5 min · extend by +1 min anytime.</p>
-                    </div>
-                    <span className="rounded-full border border-rule px-3 py-1 text-xs font-semibold">5:00</span>
-                  </div>
-                </div>
-              </div>
-
-              <button
-                onClick={start}
-                className="mt-7 flex w-full items-center justify-center gap-2 rounded-xl bg-ink px-5 py-3.5 text-sm font-semibold text-paper transition hover:bg-accent"
-              >
-                <IconPlay className="h-4 w-4" /> Start Session
-              </button>
-            </div>
-
-            <div className="focus-visual-card rounded-2xl border border-rule bg-[#11100e] p-5 text-white md:p-7">
-              <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.22em] text-white/65">
-                <span>Preview</span>
-                <span>Focus Session</span>
-              </div>
-              <div className="mt-6 flex flex-col items-center justify-center text-center">
-                <div className="focus-art-frame rounded-full border border-white/15 bg-black/20 p-2">
-                  <FocusIllustration compact />
-                </div>
-                <p className="mt-5 text-xs uppercase tracking-[0.42em] text-white/70">Elapsed</p>
-                <p className="mt-2 font-sans text-6xl font-light tabular-nums md:text-7xl">05:00</p>
-                <div className="mt-6 w-full max-w-md">
-                  <div className="h-1.5 overflow-hidden rounded-full bg-white/15">
-                    <div className="h-full w-[48%] rounded-full bg-white" />
-                  </div>
-                  <div className="mt-2 flex justify-between text-[10px] text-white/55">
-                    <span>11:15 AM</span><span>10m</span><span>11:25 AM</span>
-                  </div>
-                </div>
+                <span className="rounded-xl border-2 border-rule px-3 py-1.5 text-sm font-semibold tabular-nums">5:00</span>
               </div>
             </div>
-          </div>
-        </section>
 
-        <section className="rounded-3xl border border-rule bg-paper-raised p-5 md:p-6">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">History</p>
-              <h3 className="mt-1 font-serif text-2xl font-semibold">Your Sessions</h3>
+            <button
+              onClick={start}
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-ink px-5 py-3.5 text-sm font-semibold text-paper transition hover:bg-accent"
+            >
+              <IconPlay className="h-4 w-4" /> Start Session
+            </button>
+          </section>
+
+          <section className="rounded-2xl border-2 border-rule bg-paper p-4 md:p-5">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">History</p>
+                <h3 className="mt-1 font-serif text-2xl font-semibold">Your Sessions</h3>
+              </div>
+              <span className="rounded-full border border-rule px-2.5 py-1 text-[10px] uppercase tracking-widest text-ink-soft">{history.length}</span>
             </div>
-            {historySync === "syncing" && <span className="text-[10px] uppercase tracking-[0.16em] text-ink-soft">Syncing…</span>}
-          </div>
-          <p className="mt-2 text-sm text-ink-soft">
-            {history.length} session{history.length !== 1 ? "s" : ""} · {totalHistoryMinutes} minutes total · synced across devices
-          </p>
-          {history.length === 0 ? (
-            <p className="mt-4 rounded-2xl border border-dashed border-rule p-6 text-center text-sm text-ink-soft">No sessions yet.</p>
-          ) : (
-            <ul className="mt-4 space-y-2">
-              {history.map((rec) => (
-                <li key={rec.id} className="flex items-center gap-3 rounded-2xl border border-rule bg-paper p-3.5">
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold">{rec.title}</p>
-                    <p className="mt-0.5 text-xs text-ink-soft">{rec.durationMinutes} min · {new Date(rec.completedAt).toLocaleDateString()}</p>
-                  </div>
-                  <button
-                    onClick={() => shareRecord(rec)}
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-rule text-ink-soft transition hover:border-accent hover:text-accent"
-                    aria-label="Share session"
-                    title="Share session"
-                  >
-                    <IconShare className="h-5 w-5" />
-                  </button>
-                  <button
-                    onClick={() => deleteRecord(rec.id, rec.title)}
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-rule text-ink-soft transition hover:border-red-500 hover:text-red-500"
-                    aria-label="Delete session"
-                    title="Delete session"
-                    disabled={deletingId === rec.id}
-                  >
-                    <IconTrash className="h-5 w-5" />
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
+            <p className="mt-1.5 text-xs text-ink-soft">{totalHistoryMinutes} minutes total · synced across devices</p>
+            {historySync === "syncing" && <p className="mt-2 text-[10px] uppercase tracking-widest text-ink-soft">Syncing…</p>}
+
+            <div className="mt-3 max-h-[330px] overflow-y-auto pr-1">
+              {history.length === 0 ? (
+                <p className="rounded-2xl border border-dashed border-rule p-6 text-center text-sm text-ink-soft">No sessions yet.</p>
+              ) : (
+                <ul className="space-y-2">
+                  {history.map((rec) => (
+                    <li key={rec.id} className="flex items-center gap-2 rounded-xl border-2 border-rule bg-paper-raised p-2.5">
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold">{rec.title}</p>
+                        <p className="mt-0.5 text-[11px] text-ink-soft">{rec.durationMinutes} min · {new Date(rec.completedAt).toLocaleDateString()}</p>
+                      </div>
+                      <button onClick={() => shareRecord(rec)} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-2 border-rule text-ink-soft transition hover:border-accent hover:text-accent" aria-label="Share session" title="Share session"><IconShare className="h-5 w-5" /></button>
+                      <button onClick={() => deleteRecord(rec.id, rec.title)} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-2 border-rule text-ink-soft transition hover:border-red-500 hover:text-red-500" aria-label="Delete session" title="Delete session" disabled={deletingId === rec.id}><IconTrash className="h-5 w-5" /></button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </section>
+        </div>
       </div>
     );
   }
