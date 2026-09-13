@@ -179,7 +179,7 @@ export function FocusSession() {
   const { level } = useLevel();
   const [phase, setPhase] = useState<Phase>("setup");
   const [title, setTitle] = useState("");
-  const [durationMin, setDurationMin] = useState(25);
+  const [durationMin, setDurationMin] = useState<number | "">("");
   const [totalSeconds, setTotalSeconds] = useState(25 * 60);
   const [remainingSeconds, setRemainingSeconds] = useState(25 * 60);
   const [breakRemaining, setBreakRemaining] = useState(5 * 60);
@@ -279,7 +279,8 @@ export function FocusSession() {
   }, []);
 
   const start = () => {
-    const secs = Math.max(1, durationMin) * 60;
+    const minutes = Math.max(1, Number(durationMin) || 1);
+    const secs = minutes * 60;
     setTotalSeconds(secs);
     setRemainingSeconds(secs);
     setSessionStartedAt(new Date());
@@ -321,7 +322,7 @@ export function FocusSession() {
   const reset = () => {
     setPhase("setup");
     setTitle("");
-    setDurationMin(25);
+    setDurationMin("");
     setBreakRemaining(5 * 60);
     setBreakTotalSeconds(5 * 60);
     setSessionStartedAt(null);
@@ -428,8 +429,12 @@ export function FocusSession() {
                   min={1}
                   max={480}
                   value={durationMin}
-                  onChange={(e) => setDurationMin(Number(e.target.value) || 1)}
-                  className="mt-1.5 w-full rounded-xl border-2 border-rule bg-transparent px-3.5 py-2.5 text-lg font-semibold outline-none transition focus:border-accent"
+                  onChange={(e) => {
+                    const raw = e.target.value;
+                    setDurationMin(raw === "" ? "" : Math.min(480, Math.max(1, Number(raw))));
+                  }}
+                  placeholder="Minutes"
+                  className="mt-1.5 w-full rounded-xl border-2 border-rule bg-transparent px-3.5 py-2.5 text-lg font-semibold outline-none transition focus:border-accent placeholder:text-ink-soft/55"
                 />
               </div>
             </div>
@@ -446,7 +451,8 @@ export function FocusSession() {
 
             <button
               onClick={start}
-              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-ink px-5 py-3 text-sm font-semibold text-paper transition hover:bg-accent"
+              disabled={!durationMin}
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-ink px-5 py-3 text-sm font-semibold text-paper transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-45"
             >
               <IconPlay className="h-4 w-4" /> Start Session
             </button>
@@ -542,7 +548,7 @@ export function FocusSession() {
         </div>
 
         <div
-          className={`grid gap-2 lg:min-h-[min(500px,calc(100vh-190px))] ${
+          className={`grid gap-2 ${
             isFullscreen
               ? "lg:grid-cols-1 lg:min-h-[calc(100vh-92px)]"
               : "lg:grid-cols-[minmax(210px,0.46fr)_minmax(430px,1.54fr)]"
