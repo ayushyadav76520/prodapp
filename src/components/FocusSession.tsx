@@ -43,6 +43,63 @@ function formatClock(date: Date) {
   return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
 }
 
+
+function FocusIllustration({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className={`focus-illustration ${compact ? "focus-illustration-compact" : ""}`} aria-label="Animated focus study illustration" role="img">
+      <svg viewBox="0 0 560 460" className="h-full w-full" aria-hidden="true">
+        <defs>
+          <radialGradient id="focusGlow" cx="50%" cy="45%" r="58%">
+            <stop offset="0%" stopColor="#d8d3c7" stopOpacity=".95" />
+            <stop offset="62%" stopColor="#8f8a80" stopOpacity=".45" />
+            <stop offset="100%" stopColor="#302e2a" stopOpacity="0" />
+          </radialGradient>
+          <linearGradient id="deskLight" x1="0" x2="1">
+            <stop offset="0" stopColor="#d5c8ad" />
+            <stop offset="1" stopColor="#8d8068" />
+          </linearGradient>
+        </defs>
+        <circle cx="280" cy="215" r="190" fill="url(#focusGlow)" className="focus-orbit focus-orbit-1" />
+        <circle cx="280" cy="215" r="166" className="focus-ring focus-ring-1" />
+        <circle cx="280" cy="215" r="142" className="focus-ring focus-ring-2" />
+        <circle cx="280" cy="215" r="118" className="focus-ring focus-ring-3" />
+        <circle cx="280" cy="215" r="94" className="focus-ring focus-ring-4" />
+
+        <g className="focus-lamp">
+          <path d="M130 315V177L170 137" fill="none" stroke="#26231f" strokeWidth="8" strokeLinecap="round" />
+          <path d="M166 136L205 153L180 188L143 170Z" fill="#3b3832" stroke="#1f1d1a" strokeWidth="5" />
+          <path d="M178 174L158 206" stroke="#f3eee2" strokeWidth="12" strokeLinecap="round" opacity=".7" />
+        </g>
+
+        <g className="focus-person">
+          <circle cx="350" cy="154" r="35" fill="#161513" />
+          <path d="M323 153C331 127 374 122 383 150C371 145 350 145 337 159Z" fill="#080807" />
+          <path d="M330 178C342 190 364 190 376 176L369 207H338Z" fill="#d7d2c8" />
+          <path d="M367 204C405 199 435 222 432 264L417 326H336L344 263C347 238 350 217 367 204Z" fill="#77736d" />
+          <path d="M421 234C452 244 461 276 445 302L423 293L435 268L413 254Z" fill="#77736d" />
+          <path d="M347 263L306 307L328 320L370 282Z" fill="#9a958c" />
+          <path d="M305 306L272 336" stroke="#1b1917" strokeWidth="8" strokeLinecap="round" />
+          <path d="M272 336L291 340" stroke="#1b1917" strokeWidth="7" strokeLinecap="round" />
+        </g>
+
+        <g className="focus-desk">
+          <path d="M102 324H438" stroke="url(#deskLight)" strokeWidth="14" strokeLinecap="round" />
+          <path d="M135 338L118 394M410 338L428 394" stroke="#4b4740" strokeWidth="9" strokeLinecap="round" />
+          <rect x="218" y="300" width="100" height="10" rx="5" fill="#37342f" />
+          <path d="M247 300L263 279H304L315 300Z" fill="#2a2824" />
+          <path d="M270 287L286 260" stroke="#25231f" strokeWidth="4" strokeLinecap="round" />
+        </g>
+
+        <g className="focus-pencil">
+          <path d="M293 311L315 285" stroke="#e3b06d" strokeWidth="5" strokeLinecap="round" />
+          <path d="M315 285L319 281" stroke="#211f1b" strokeWidth="4" strokeLinecap="round" />
+        </g>
+      </svg>
+      <span className="sr-only">A person studying at a desk under a lamp</span>
+    </div>
+  );
+}
+
 function ProfilePanel({
   name,
   level,
@@ -374,7 +431,7 @@ export function FocusSession() {
               </div>
               <div className="mt-6 flex flex-col items-center justify-center text-center">
                 <div className="focus-art-frame rounded-full border border-white/15 bg-black/20 p-2">
-                  <img src="/focus-study.jpg" alt="Focus session illustration" className="focus-art h-56 w-56 rounded-full object-cover md:h-72 md:w-72" />
+                  <FocusIllustration compact />
                 </div>
                 <p className="mt-5 text-xs uppercase tracking-[0.42em] text-white/70">Elapsed</p>
                 <p className="mt-2 font-sans text-6xl font-light tabular-nums md:text-7xl">05:00</p>
@@ -443,7 +500,7 @@ export function FocusSession() {
       <section className="rounded-3xl border border-rule bg-paper-raised p-5 md:p-7">
         <div className="grid gap-6 md:grid-cols-[0.75fr_1.25fr] md:items-center">
           <div className="rounded-2xl border border-rule bg-[#11100e] p-5 text-center text-white">
-            <img src="/focus-study.jpg" alt="Focus session" className="focus-art mx-auto h-56 w-56 rounded-full object-cover" />
+            <FocusIllustration compact />
             <p className="mt-4 text-[10px] uppercase tracking-[0.28em] text-white/60">Session Complete</p>
           </div>
           <div>
@@ -512,7 +569,7 @@ export function FocusSession() {
 
               <div className="mt-6">
                 <div className="focus-art-frame mx-auto rounded-full border border-white/15 bg-black/20 p-2">
-                  <img src="/focus-study.jpg" alt="Person focusing at a desk" className="focus-art h-56 w-56 rounded-full object-cover sm:h-64 sm:w-64 md:h-72 md:w-72 lg:h-80 lg:w-80" />
+                  <FocusIllustration />
                 </div>
                 <p className="mt-5 text-xs uppercase tracking-[0.5em] text-white/60">{isBreak ? "Break" : "Focus Session"}</p>
               </div>

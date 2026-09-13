@@ -83,3 +83,66 @@ body {
 @media (max-width: 767px) {
   .focus-art { animation-duration: 6s; }
 }
+
+/* Focus Session is drawn in SVG/CSS so there is no static reference image. */
+.focus-illustration {
+  position: relative;
+  width: min(100%, 560px);
+  aspect-ratio: 560 / 460;
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: 999px;
+}
+
+.focus-illustration svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.focus-illustration .focus-ring {
+  fill: none;
+  stroke: rgba(235, 231, 220, .18);
+  stroke-width: 15;
+  transform-origin: 280px 215px;
+  animation: focus-ring-pulse 5.5s ease-in-out infinite;
+}
+.focus-illustration .focus-ring-2 { animation-delay: -.8s; }
+.focus-illustration .focus-ring-3 { animation-delay: -1.6s; }
+.focus-illustration .focus-ring-4 { animation-delay: -2.4s; }
+.focus-illustration .focus-orbit { animation: focus-glow-pulse 4.8s ease-in-out infinite; }
+.focus-illustration .focus-person { animation: focus-person-breathe 4.2s ease-in-out infinite; transform-origin: 350px 240px; }
+.focus-illustration .focus-lamp { animation: focus-lamp-sway 6s ease-in-out infinite; transform-origin: 130px 315px; }
+.focus-illustration .focus-pencil { animation: focus-write 2.8s ease-in-out infinite; transform-origin: 293px 311px; }
+.focus-illustration .focus-desk { animation: focus-desk-breathe 4.2s ease-in-out infinite; }
+
+.focus-illustration-compact { max-width: 420px; }
+
+@keyframes focus-ring-pulse {
+  0%, 100% { opacity: .55; transform: scale(1); }
+  50% { opacity: .9; transform: scale(1.025); }
+}
+@keyframes focus-glow-pulse {
+  0%, 100% { opacity: .62; transform: scale(.98); }
+  50% { opacity: .92; transform: scale(1.025); }
+}
+@keyframes focus-person-breathe {
+  0%, 100% { transform: translateY(2px); }
+  50% { transform: translateY(-3px); }
+}
+@keyframes focus-lamp-sway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-1.2deg); }
+}
+@keyframes focus-write {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(-7px, 7px) rotate(-4deg); }
+}
+@keyframes focus-desk-breathe {
+  0%, 100% { opacity: .94; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .focus-illustration * { animation: none !important; }
+}
