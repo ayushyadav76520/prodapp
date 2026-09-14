@@ -179,16 +179,16 @@ export default function SkillsPage() {
 
   return (
     <div className="focus-skills-shell mx-auto w-full max-w-[1400px] px-3 sm:px-5 lg:px-8 py-5 sm:py-7">
-      <header className="flex items-start justify-between gap-4 border-b border-rule pb-4">
+      <header className="flex items-start justify-between gap-4 border-b border-rule pb-5 sm:pb-6">
         <div className="min-w-0">
-          <p className="text-[11px] uppercase tracking-[0.2em] text-accent font-medium mb-1">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-accent font-medium mb-1.5">
             Section Four
           </p>
           <h1 className="font-serif text-3xl md:text-4xl font-semibold tracking-tight">
             ZenSpace
           </h1>
           {tab === "challenge" && (
-            <p className="mt-1.5 text-sm text-ink-soft max-w-sm">
+            <p className="mt-2.5 text-sm text-ink-soft max-w-sm leading-relaxed">
               Complete challenges, build streaks, and become a better you.
             </p>
           )}
@@ -206,7 +206,7 @@ export default function SkillsPage() {
         </div>
       </header>
 
-      <div className="flex gap-5 text-sm border-b border-rule mt-5 mb-5">
+      <div className="flex gap-5 text-sm border-b border-rule mt-6 mb-6">
         {(["session", "challenge"] as const).map((t) => {
           const Icon = t === "session" ? IconFocus : IconTrophy;
           return (
