@@ -179,7 +179,7 @@ export default function SkillsPage() {
 
   return (
     <div className="focus-skills-shell mx-auto w-full max-w-[1400px] px-3 sm:px-5 lg:px-8 py-5 sm:py-7">
-      <header className="flex items-start justify-between gap-4 border-b border-rule pb-5 sm:pb-6">
+      <header className="flex items-start justify-between gap-4 border-b border-rule pb-9 sm:pb-10">
         <div className="min-w-0">
           <p className="text-[11px] uppercase tracking-[0.2em] text-accent font-medium mb-1.5">
             Section Four
@@ -188,7 +188,7 @@ export default function SkillsPage() {
             ZenSpace
           </h1>
           {tab === "challenge" && (
-            <p className="mt-2.5 text-sm text-ink-soft max-w-sm leading-relaxed">
+            <p className="mt-3 mb-1 text-sm text-ink-soft max-w-sm leading-relaxed">
               Complete challenges, build streaks, and become a better you.
             </p>
           )}
@@ -206,7 +206,7 @@ export default function SkillsPage() {
         </div>
       </header>
 
-      <div className="flex gap-5 text-sm border-b border-rule mt-6 mb-6">
+      <div className="flex gap-5 text-sm border-b border-rule mt-9 mb-6">
         {(["session", "challenge"] as const).map((t) => {
           const Icon = t === "session" ? IconFocus : IconTrophy;
           return (
@@ -318,14 +318,14 @@ export default function SkillsPage() {
               const pct = progressPercent(skill);
               const { text, Icon } = skillStyle(skill.id);
               return (
-                <div key={skill.id} className="rounded-2xl border border-rule bg-paper-raised p-3.5 sm:p-4">
+                <div key={skill.id} className="rounded-2xl border border-rule bg-paper-raised p-3.5 sm:p-4 md:p-3">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex min-w-0 items-center gap-3">
-                      <span className={`grid h-11 w-11 sm:h-12 sm:w-12 shrink-0 place-items-center rounded-full border border-rule ${text}`}>
-                        <Icon className="h-5 w-5" />
+                      <span className={`grid h-11 w-11 sm:h-12 sm:w-12 md:h-10 md:w-10 shrink-0 place-items-center rounded-full border border-rule ${text}`}>
+                        <Icon className="h-5 w-5 md:h-4 md:w-4" />
                       </span>
                       <div className="min-w-0">
-                        <p className="font-serif text-base sm:text-lg font-semibold truncate">{skill.name}</p>
+                        <p className="font-serif text-base sm:text-lg md:text-base font-semibold truncate">{skill.name}</p>
                         <p className="text-xs sm:text-sm text-ink-soft mt-0.5">
                           Day {daysElapsed(skill) + 1} of {skill.durationDays} ·{" "}
                           {daysRemaining(skill)} days left
@@ -335,22 +335,22 @@ export default function SkillsPage() {
                     <div className="flex shrink-0 items-center gap-2">
                       <button
                         onClick={() => shareSkill(skill)}
-                        className="grid h-8 w-8 place-items-center rounded-full border border-rule text-ink-soft hover:border-accent hover:text-accent transition-colors"
+                        className="grid h-8 w-8 md:h-7 md:w-7 place-items-center rounded-full border border-rule text-ink-soft hover:border-accent hover:text-accent transition-colors"
                         aria-label="Share progress"
                       >
-                        <IconShare className="w-4 h-4" />
+                        <IconShare className="w-4 h-4 md:w-3.5 md:h-3.5" />
                       </button>
                       <button
                         onClick={() => removeSkill(skill.id, skill.name)}
-                        className="grid h-8 w-8 place-items-center rounded-full border border-rule text-ink-soft hover:border-red-500 hover:text-red-500 transition-colors"
+                        className="grid h-8 w-8 md:h-7 md:w-7 place-items-center rounded-full border border-rule text-ink-soft hover:border-red-500 hover:text-red-500 transition-colors"
                         aria-label="Delete skill"
                       >
-                        <IconTrash className="w-4 h-4" />
+                        <IconTrash className="w-4 h-4 md:w-3.5 md:h-3.5" />
                       </button>
                     </div>
                   </div>
 
-                  <div className="mt-2.5">
+                  <div className="mt-2.5 md:mt-2">
                     <div className="flex items-center justify-between text-[10px] uppercase tracking-widest text-ink-soft mb-1">
                       <span>Progress</span>
                       <span className="tabular-nums">{pct.toFixed(2)}%</span>
@@ -366,7 +366,7 @@ export default function SkillsPage() {
                     </div>
                   </div>
 
-                  <div className="mt-2.5 flex items-center justify-between">
+                  <div className="mt-2.5 md:mt-2 flex items-center justify-between">
                     <div className="flex items-center gap-1.5 text-sm">
                       <span>🔥</span>
                       <span className="font-serif font-semibold text-base">{streak}</span>
@@ -376,10 +376,10 @@ export default function SkillsPage() {
                     </div>
                     <button
                       onClick={() => checkIn(skill)}
-                      className={`rounded-lg text-xs font-semibold uppercase tracking-widest px-3.5 py-1.5 transition-colors ${
+                      className={`rounded-lg text-xs font-semibold uppercase tracking-widest px-3.5 py-1.5 md:py-1 transition-colors ${
                         checkedToday
-                          ? "border border-emerald-600/40 text-emerald-700 dark:text-emerald-400"
-                          : "bg-paper text-ink hover:brightness-95"
+                          ? "bg-emerald-600 text-white hover:brightness-110"
+                          : "bg-accent text-ink hover:brightness-110"
                       }`}
                     >
                       {checkedToday ? "✓ Done today" : "Check in"}
