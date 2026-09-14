@@ -12,12 +12,61 @@ import {
   toggleTodayCheckIn,
 } from "@/lib/skills";
 import { SyncStatus } from "@/components/SyncStatus";
-import { IconTrash, IconShare, IconFocus, IconTrophy } from "@/components/icons";
+import { IconTrash, IconShare, IconFocus, IconTrophy, IconPlus } from "@/components/icons";
 import { FocusSession } from "@/components/FocusSession";
 import { generateShareCard, shareOrDownload } from "@/lib/shareCard";
 import { useLevel } from "@/lib/use-google-data";
 
 const DURATIONS = [30, 60, 90] as const;
+
+function IconChat({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className={className}>
+      <path d="M4 5.5h16v10.5H9.5L5 20v-4H4Z" strokeLinejoin="round" />
+      <circle cx="9" cy="10.5" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="10.5" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="10.5" r="0.9" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function IconCode({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" className={className}>
+      <path d="M9 6.5 4 12l5 5.5M15 6.5 20 12l-5 5.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function IconDumbbell({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className}>
+      <path d="M4 10v4M2.5 9.5v5M20 10v4M21.5 9.5v5M7 8v8M17 8v8M7 12h10" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function IconBook({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className={className}>
+      <path d="M12 6.2c-1.8-1.3-4.3-1.7-7-1.4v13c2.7-.3 5.2.1 7 1.4 1.8-1.3 4.3-1.7 7-1.4v-13c-2.7-.3-5.2.1-7 1.4Z" strokeLinejoin="round" />
+      <path d="M12 6.2v13" />
+    </svg>
+  );
+}
+
+const SKILL_STYLES = [
+  { bg: "bg-orange-900/40", text: "text-orange-400", Icon: IconChat },
+  { bg: "bg-indigo-900/40", text: "text-indigo-400", Icon: IconCode },
+  { bg: "bg-emerald-900/40", text: "text-emerald-400", Icon: IconDumbbell },
+  { bg: "bg-rose-900/40", text: "text-rose-400", Icon: IconBook },
+] as const;
+
+function skillStyle(id: string) {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+  return SKILL_STYLES[hash % SKILL_STYLES.length];
+}
 
 export default function SkillsPage() {
   const { data: session, status: sessionStatus } = useSession();
@@ -155,16 +204,31 @@ export default function SkillsPage() {
 
   return (
     <div className="focus-skills-shell mx-auto w-full max-w-[1400px] px-3 sm:px-5 lg:px-8 py-4 sm:py-5">
-      <header className="flex items-start justify-between border-b border-rule pb-3">
-        <div>
+      <header className="flex items-start justify-between gap-4 border-b border-rule pb-3">
+        <div className="min-w-0">
           <p className="text-[11px] uppercase tracking-[0.2em] text-accent font-medium mb-1">
             Section Four
           </p>
           <h1 className="font-serif text-3xl md:text-4xl font-semibold tracking-tight">
             ZenSpace
           </h1>
+          {tab === "challenge" && (
+            <p className="mt-1.5 text-sm text-ink-soft max-w-sm">
+              Complete challenges, build streaks, and become a better you.
+            </p>
+          )}
         </div>
-        {tab === "challenge" && <SyncStatus state={syncState} onRetry={refresh} />}
+        <div className="flex shrink-0 flex-col items-end gap-2.5">
+          {tab === "challenge" && <SyncStatus state={syncState} onRetry={refresh} />}
+          {tab === "challenge" && (
+            <button
+              onClick={() => setShowForm((v) => !v)}
+              className="flex items-center gap-1.5 rounded-xl bg-accent text-ink px-4 py-2.5 text-sm font-semibold hover:brightness-110 transition whitespace-nowrap"
+            >
+              <IconPlus className="w-4 h-4" /> {showForm ? "Cancel" : "New Challenge"}
+            </button>
+          )}
+        </div>
       </header>
 
       <div className="flex gap-5 text-sm border-b border-rule mt-4 mb-4">
@@ -188,24 +252,15 @@ export default function SkillsPage() {
       {tab === "session" && <FocusSession />}
 
       {tab === "challenge" && (
-        <div className="max-w-2xl space-y-6">
-          <div className="flex justify-end">
-            <button
-              onClick={() => setShowForm((v) => !v)}
-              className="text-xs uppercase tracking-widest border border-rule px-3 py-1.5 hover:border-ink transition-colors"
-            >
-              {showForm ? "Cancel" : "+ New Challenge"}
-            </button>
-          </div>
-
+        <div className="space-y-4">
           {error && (
-            <div className="border border-red-600/30 bg-red-600/5 p-4 text-sm text-red-700 dark:text-red-400">
+            <div className="rounded-xl border border-red-600/30 bg-red-600/5 p-4 text-sm text-red-700 dark:text-red-400">
               {error}
             </div>
           )}
 
           {showForm && (
-            <div className="border border-rule p-5 space-y-4 bg-paper-raised">
+            <div className="max-w-2xl rounded-xl border border-rule p-5 space-y-4 bg-paper-raised">
               <div>
                 <label className="text-xs uppercase tracking-widest text-ink-soft">
                   What skill are you learning?
@@ -214,7 +269,7 @@ export default function SkillsPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Guitar, Spanish, Cooking"
-                  className="mt-1.5 w-full border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
+                  className="mt-1.5 w-full rounded-lg border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
                 />
               </div>
               <div>
@@ -229,7 +284,7 @@ export default function SkillsPage() {
                         setDuration(d);
                         setUseCustom(false);
                       }}
-                      className={`px-4 py-1.5 text-sm font-medium border transition-colors ${
+                      className={`px-4 py-1.5 text-sm font-medium rounded-lg border transition-colors ${
                         !useCustom && duration === d
                           ? "bg-ink text-paper border-ink"
                           : "border-rule text-ink-soft hover:border-ink"
@@ -240,7 +295,7 @@ export default function SkillsPage() {
                   ))}
                   <button
                     onClick={() => setUseCustom(true)}
-                    className={`px-4 py-1.5 text-sm font-medium border transition-colors ${
+                    className={`px-4 py-1.5 text-sm font-medium rounded-lg border transition-colors ${
                       useCustom
                         ? "bg-ink text-paper border-ink"
                         : "border-rule text-ink-soft hover:border-ink"
@@ -257,14 +312,14 @@ export default function SkillsPage() {
                     value={customDays}
                     onChange={(e) => setCustomDays(e.target.value)}
                     placeholder="Number of days"
-                    className="mt-2 w-40 border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
+                    className="mt-2 w-40 rounded-lg border border-rule bg-transparent px-3 py-2 text-sm outline-none focus:border-accent"
                   />
                 )}
               </div>
               <button
                 onClick={addSkill}
                 disabled={!name.trim() || saving || (useCustom && !customDays)}
-                className="bg-ink text-paper text-sm font-medium px-4 py-2 hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="rounded-lg bg-ink text-paper text-sm font-medium px-4 py-2 hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 {saving ? "Starting…" : "Start Challenge"}
               </button>
@@ -276,7 +331,7 @@ export default function SkillsPage() {
           )}
 
           {syncState !== "syncing" && skills.length === 0 && !showForm && (
-            <div className="border border-dashed border-rule p-10 text-center text-sm text-ink-soft">
+            <div className="rounded-xl border border-dashed border-rule p-10 text-center text-sm text-ink-soft">
               No active skill challenges yet. Start one above.
             </div>
           )}
@@ -286,35 +341,41 @@ export default function SkillsPage() {
               const streak = currentStreak(skill);
               const checkedToday = isCheckedInToday(skill);
               const pct = progressPercent(skill);
+              const { bg, text, Icon } = skillStyle(skill.id);
               return (
-                <div key={skill.id} className="border border-rule p-5">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <p className="font-medium text-sm">{skill.name}</p>
-                      <p className="text-xs text-ink-soft mt-0.5">
-                        Day {daysElapsed(skill) + 1} of {skill.durationDays} ·{" "}
-                        {daysRemaining(skill)} days left
-                      </p>
+                <div key={skill.id} className="rounded-2xl border border-rule bg-paper-raised p-4 sm:p-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex min-w-0 items-center gap-3.5">
+                      <span className={`grid h-12 w-12 sm:h-14 sm:w-14 shrink-0 place-items-center rounded-full ${bg} ${text}`}>
+                        <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="font-serif text-lg font-semibold truncate">{skill.name}</p>
+                        <p className="text-xs sm:text-sm text-ink-soft mt-0.5">
+                          Day {daysElapsed(skill) + 1} of {skill.durationDays} ·{" "}
+                          {daysRemaining(skill)} days left
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex shrink-0 items-center gap-2">
                       <button
                         onClick={() => shareSkill(skill)}
-                        className="w-11 h-11 rounded-full border border-rule text-ink-soft flex items-center justify-center hover:border-accent hover:text-accent transition-colors"
+                        className="grid h-9 w-9 place-items-center rounded-full border border-rule text-ink-soft hover:border-accent hover:text-accent transition-colors"
                         aria-label="Share progress"
                       >
-                        <IconShare className="w-5 h-5" />
+                        <IconShare className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => removeSkill(skill.id, skill.name)}
-                        className="w-12 h-12 rounded-full border border-rule text-ink-soft flex items-center justify-center hover:border-red-600 hover:text-red-600 transition-colors"
+                        className="grid h-9 w-9 place-items-center rounded-full border border-rule text-ink-soft hover:border-red-500 hover:text-red-500 transition-colors"
                         aria-label="Delete skill"
                       >
-                        <IconTrash className="w-6 h-6" />
+                        <IconTrash className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
 
-                  <div className="mt-3">
+                  <div className="mt-4">
                     <div className="flex items-center justify-between text-[10px] uppercase tracking-widest text-ink-soft mb-1.5">
                       <span>Progress</span>
                       <span className="tabular-nums">{pct.toFixed(2)}%</span>
@@ -340,10 +401,10 @@ export default function SkillsPage() {
                     </div>
                     <button
                       onClick={() => checkIn(skill)}
-                      className={`text-xs uppercase tracking-widest px-4 py-1.5 transition-colors ${
+                      className={`rounded-lg text-xs font-semibold uppercase tracking-widest px-4 py-2 transition-colors ${
                         checkedToday
                           ? "border border-emerald-600/40 text-emerald-700 dark:text-emerald-400"
-                          : "bg-ink text-paper hover:bg-accent"
+                          : "bg-paper text-ink hover:brightness-95"
                       }`}
                     >
                       {checkedToday ? "✓ Done today" : "Check in"}
