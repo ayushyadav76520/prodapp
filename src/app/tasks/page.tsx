@@ -1,11 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { useLevel, useTasksData } from "@/lib/use-google-data";
 import { SyncStatus } from "@/components/SyncStatus";
-import { IconShare, IconTrash } from "@/components/icons";
+import {
+  IconShare,
+  IconTrash,
+  IconTasks,
+  IconGraduationCap,
+  IconBriefcase,
+  IconFolder,
+  IconStar,
+  IconChevronDown,
+} from "@/components/icons";
 import { generateShareCard, shareOrDownload } from "@/lib/shareCard";
+
+// Deterministic icon per category, based on the category name — so a
+// category always gets the same icon across renders/devices without
+// needing to store an extra field for it.
+const CATEGORY_ICONS = [IconTasks, IconGraduationCap, IconBriefcase, IconFolder, IconStar];
+function categoryIcon(title: string) {
+  let hash = 0;
+  for (let i = 0; i < title.length; i++) hash = (hash * 31 + title.charCodeAt(i)) >>> 0;
+  return CATEGORY_ICONS[hash % CATEGORY_ICONS.length];
+}
 
 export default function TasksPage() {
   const { status: sessionStatus, data: session } = useSession();
@@ -19,6 +38,26 @@ export default function TasksPage() {
   const [showCategoryForm, setShowCategoryForm] = useState(false);
   const [categoryName, setCategoryName] = useState("");
   const [savingCategory, setSavingCategory] = useState(false);
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+  // On mobile, the first category starts expanded and the rest collapsed.
+  // Desktop always shows every category in full (handled purely via CSS),
+  // so this state only matters below the md breakpoint.
+  useEffect(() => {
+    if (taskLists.length === 0) return;
+    setExpanded((prev) => {
+      if (Object.keys(prev).length > 0) return prev;
+      const next: Record<string, boolean> = {};
+      taskLists.forEach((list, i) => {
+        next[list.id] = i === 0;
+      });
+      return next;
+    });
+  }, [taskLists]);
+
+  const toggleExpanded = (listId: string) => {
+    setExpanded((prev) => ({ ...prev, [listId]: !prev[listId] }));
+  };
 
   const addTask = async (taskListId: string) => {
     if (!newTaskTitle.trim() || saving) return;
@@ -219,19 +258,29 @@ export default function TasksPage() {
         </div>
       )}
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
+      <div className="grid gap-5 md:gap-6 lg:gap-7 sm:grid-cols-2 lg:grid-cols-3 items-start">
         {taskLists.map((list) => {
           const listTasks = tasks.filter((t) => t.taskListId === list.id);
           const isAdding = addingToList === list.id;
+          const isOpen = expanded[list.id] ?? true;
+          const CatIcon = categoryIcon(list.title);
           return (
             <div key={list.id} className="border border-rule">
-              <div className="flex items-center justify-between px-4 py-2.5 border-b border-rule bg-accent/10">
-                <h2 className="text-xs md:text-sm uppercase tracking-widest font-bold text-ink">{list.title}</h2>
-                <div className="flex items-center gap-2.5">
+              <div className="flex items-center justify-between gap-3 px-4 py-4 md:px-5 border-b border-rule bg-accent/10">
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="w-10 h-10 rounded-full bg-accent/15 text-accent flex items-center justify-center shrink-0">
+                    <CatIcon className="w-5 h-5" />
+                  </span>
+                  <h2 className="text-sm md:text-base uppercase tracking-widest font-bold text-ink truncate">
+                    {list.title}
+                  </h2>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
                   <button
                     onClick={() => {
                       setAddingToList(isAdding ? null : list.id);
                       setNewTaskTitle("");
+                      if (!isOpen) toggleExpanded(list.id);
                     }}
                     className="w-10 h-10 rounded-full flex items-center justify-center text-ink-soft hover:text-accent hover:bg-paper transition-colors text-2xl leading-none"
                     aria-label="Add task"
@@ -252,73 +301,85 @@ export default function TasksPage() {
                   >
                     <IconTrash className="w-6 h-6" />
                   </button>
+                  <button
+                    onClick={() => toggleExpanded(list.id)}
+                    className="md:hidden w-10 h-10 rounded-full flex items-center justify-center text-ink-soft hover:text-accent hover:bg-paper transition-colors"
+                    aria-label={isOpen ? "Collapse category" : "Expand category"}
+                    aria-expanded={isOpen}
+                  >
+                    <IconChevronDown
+                      className={`w-5 h-5 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                    />
+                  </button>
                 </div>
               </div>
 
-              {isAdding && (
-                <div className="p-3 border-b border-rule flex gap-2">
-                  <input
-                    autoFocus
-                    value={newTaskTitle}
-                    onChange={(e) => setNewTaskTitle(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && addTask(list.id)}
-                    placeholder="Task title"
-                    className="flex-1 border border-rule bg-transparent px-2.5 py-1.5 text-sm outline-none focus:border-accent"
-                  />
-                  <button
-                    onClick={() => addTask(list.id)}
-                    disabled={!newTaskTitle.trim() || saving}
-                    className="text-xs uppercase tracking-widest bg-ink text-paper px-3 disabled:opacity-40"
-                  >
-                    Add
-                  </button>
-                </div>
-              )}
+              <div className={`${isOpen ? "block" : "hidden"} md:block`}>
+                {isAdding && (
+                  <div className="p-3.5 border-b border-rule flex gap-2">
+                    <input
+                      autoFocus
+                      value={newTaskTitle}
+                      onChange={(e) => setNewTaskTitle(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && addTask(list.id)}
+                      placeholder="Task title"
+                      className="flex-1 border border-rule bg-transparent px-2.5 py-1.5 text-sm outline-none focus:border-accent"
+                    />
+                    <button
+                      onClick={() => addTask(list.id)}
+                      disabled={!newTaskTitle.trim() || saving}
+                      className="text-xs uppercase tracking-widest bg-ink text-paper px-3 disabled:opacity-40"
+                    >
+                      Add
+                    </button>
+                  </div>
+                )}
 
-              {listTasks.length === 0 ? (
-                <p className="text-xs text-ink-soft px-4 py-6 text-center">No tasks yet.</p>
-              ) : (
-                <ul className="divide-y divide-rule px-4">
-                  {listTasks.map((task) => {
-                    const pending = pendingIds.has(task.id);
-                    return (
-                      <li key={task.id} className="py-3 flex items-start gap-3 group">
-                        <button
-                          onClick={() => toggleTask(task.id, list.id, task.status)}
-                          disabled={pending}
-                          className={`mt-0.5 w-4 h-4 border shrink-0 transition-colors ${
-                            task.status === "completed"
-                              ? "bg-ink border-ink"
-                              : "border-ink-soft hover:border-ink"
-                          } ${pending ? "opacity-40" : ""}`}
-                        />
-                        <div className="flex-1">
-                          <p
-                            className={`text-sm ${
-                              task.status === "completed" ? "line-through text-ink-soft" : ""
-                            }`}
-                          >
-                            {task.title || "(Untitled task)"}
-                          </p>
-                          {task.due && (
-                            <p className="text-xs text-ink-soft mt-0.5">
-                              Due {new Date(task.due).toLocaleDateString()}
+                {listTasks.length === 0 ? (
+                  <p className="text-xs text-ink-soft px-4 py-8 text-center">No tasks yet.</p>
+                ) : (
+                  <ul className="divide-y divide-rule px-4 md:px-5">
+                    {listTasks.map((task) => {
+                      const pending = pendingIds.has(task.id);
+                      return (
+                        <li key={task.id} className="py-4 md:py-4.5 flex items-start gap-3 group">
+                          <button
+                            onClick={() => toggleTask(task.id, list.id, task.status)}
+                            disabled={pending}
+                            className={`mt-0.5 w-4 h-4 border shrink-0 transition-colors ${
+                              task.status === "completed"
+                                ? "bg-ink border-ink"
+                                : "border-ink-soft hover:border-ink"
+                            } ${pending ? "opacity-40" : ""}`}
+                          />
+                          <div className="flex-1">
+                            <p
+                              className={`text-sm ${
+                                task.status === "completed" ? "line-through text-ink-soft" : ""
+                              }`}
+                            >
+                              {task.title || "(Untitled task)"}
                             </p>
-                          )}
-                        </div>
-                        <button
-                          onClick={() => deleteTaskItem(task.id, list.id)}
-                          disabled={pending}
-                          className="text-ink-soft/50 hover:text-red-600 transition-colors shrink-0 mt-0.5"
-                          aria-label="Delete task"
-                        >
-                          <IconTrash className="w-6 h-6" />
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
+                            {task.due && (
+                              <p className="text-xs text-ink-soft mt-0.5">
+                                Due {new Date(task.due).toLocaleDateString()}
+                              </p>
+                            )}
+                          </div>
+                          <button
+                            onClick={() => deleteTaskItem(task.id, list.id)}
+                            disabled={pending}
+                            className="text-ink-soft/50 hover:text-red-600 transition-colors shrink-0 mt-0.5"
+                            aria-label="Delete task"
+                          >
+                            <IconTrash className="w-6 h-6" />
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </div>
             </div>
           );
         })}

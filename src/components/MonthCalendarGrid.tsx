@@ -42,68 +42,64 @@ export function MonthCalendarGrid({
   const isSameDay = (a: Date, b: Date) => a.toDateString() === b.toDateString();
 
   return (
-    <div className="rounded-2xl border border-rule bg-paper-raised p-2 md:p-3">
-      <div className="flex items-center justify-between px-1 pb-2">
+    <div className="border border-rule bg-paper-raised">
+      <div className="flex items-center justify-between px-3 py-2 border-b border-rule">
         <button
           onClick={() => setCursor(new Date(year, month - 1, 1))}
-          className="grid h-6 w-6 md:h-7 md:w-7 place-items-center rounded-lg border border-rule text-ink-soft hover:text-ink hover:border-ink transition-colors"
+          className="text-ink-soft hover:text-ink text-sm px-1"
           aria-label="Previous month"
         >
           ‹
         </button>
-        <p className="font-serif text-xs md:text-sm font-bold tracking-wide">
-          {cursor.toLocaleDateString(undefined, { month: "long", year: "numeric" })}
+        <p className="font-serif text-xs font-semibold tracking-wide">
+          {cursor.toLocaleDateString(undefined, { month: "long", year: "numeric" }).toUpperCase()}
         </p>
         <button
           onClick={() => setCursor(new Date(year, month + 1, 1))}
-          className="grid h-6 w-6 md:h-7 md:w-7 place-items-center rounded-lg border border-rule text-ink-soft hover:text-ink hover:border-ink transition-colors"
+          className="text-ink-soft hover:text-ink text-sm px-1"
           aria-label="Next month"
         >
           ›
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-x-0.5 text-center">
+      <div className="grid grid-cols-7 text-center px-1.5 pt-2">
         {WEEKDAYS.map((d, i) => (
-          <div
-            key={i}
-            className="rounded-md bg-accent/15 text-accent md:bg-transparent md:text-ink-soft text-[9px] md:text-[10px] font-semibold uppercase tracking-widest py-1 mb-1 md:mb-0 md:py-1"
-          >
+          <div key={i} className="text-[9px] uppercase tracking-widest text-ink-soft py-0.5">
             {d}
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-x-0.5 gap-y-1">
+      <div className="grid grid-cols-7 px-1.5 pb-2">
         {cells.map((date, i) => {
-          if (!date) return <div key={i} className="h-7 md:aspect-square" />;
+          if (!date) return <div key={i} className="aspect-square" />;
           const hasEvent = eventDays.has(date.toDateString());
           const isToday = isSameDay(date, today);
           const isSelected = isSameDay(date, selectedDate);
           return (
-            <div key={i} className="grid place-items-center">
-              <button
-                onClick={() => {
-                  onSelectDate(date);
-                }}
-                className={`relative flex h-7 w-full md:h-8 md:w-8 flex-col items-center justify-center rounded-md md:rounded-lg text-[11px] md:text-[12px] transition-colors ${
-                  isSelected
-                    ? "bg-accent text-ink font-semibold"
-                    : isToday
-                    ? "text-accent font-semibold"
-                    : "text-ink hover:bg-rule/40"
-                }`}
-              >
-                <span>{date.getDate()}</span>
-                {hasEvent && (
-                  <span
-                    className={`absolute bottom-0.5 h-1 w-1 rounded-full ${
-                      isSelected ? "bg-ink" : "bg-accent"
-                    }`}
-                  />
-                )}
-              </button>
-            </div>
+            <button
+              key={i}
+              onClick={() => {
+                onSelectDate(date);
+              }}
+              className={`aspect-square flex flex-col items-center justify-center text-[11px] relative transition-colors ${
+                isSelected
+                  ? "bg-ink text-paper"
+                  : isToday
+                  ? "text-accent font-semibold"
+                  : "text-ink hover:bg-rule/40"
+              }`}
+            >
+              <span>{date.getDate()}</span>
+              {hasEvent && (
+                <span
+                  className={`absolute bottom-0.5 w-1 h-1 rounded-full ${
+                    isSelected ? "bg-paper" : "bg-accent"
+                  }`}
+                />
+              )}
+            </button>
           );
         })}
       </div>
