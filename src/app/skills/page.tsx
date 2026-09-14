@@ -181,14 +181,14 @@ export default function SkillsPage() {
     <div className="focus-skills-shell mx-auto w-full max-w-[1400px] px-3 sm:px-5 lg:px-8 py-5 sm:py-7">
       <header className="flex items-start justify-between gap-4 border-b border-rule pb-9 sm:pb-10">
         <div className="min-w-0">
-          <p className="text-[11px] uppercase tracking-[0.2em] text-accent font-medium mb-1.5">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-accent font-medium mb-3 sm:mb-3">
             Section Four
           </p>
-          <h1 className="font-serif text-3xl md:text-4xl font-semibold tracking-tight">
+          <h1 className="font-serif text-3xl md:text-4xl font-semibold tracking-tight mt-1">
             ZenSpace
           </h1>
           {tab === "challenge" && (
-            <p className="mt-3 mb-1 text-sm text-ink-soft max-w-sm leading-relaxed">
+            <p className="mt-4 sm:mt-4 mb-1 text-sm text-ink-soft max-w-sm leading-relaxed">
               Complete challenges, build streaks, and become a better you.
             </p>
           )}
