@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { useSession, signIn } from "next-auth/react";
 import { useCalendarData } from "@/lib/use-google-data";
 import { SyncStatus } from "@/components/SyncStatus";
@@ -12,11 +11,7 @@ import {
   IconSun,
   IconClock,
   IconDots,
-  IconLeaf,
   IconCalendar,
-  IconSkills,
-  IconCheck,
-  IconTasks,
 } from "@/components/icons";
 import type { GoogleEvent } from "@/lib/google-api";
 
@@ -438,63 +433,6 @@ export default function CalendarPage() {
               setSelectedDate((cur) => (cur && cur.toDateString() === d.toDateString() ? null : d));
             }}
           />
-
-          <div className="rounded-2xl border border-rule bg-paper-raised p-4">
-            <div className="mb-3 flex items-center justify-between">
-              <h3 className="font-serif text-base font-semibold">Quick Actions</h3>
-              <span className="text-[10px] uppercase tracking-widest text-ink-soft">Create instantly</span>
-            </div>
-            <div className="grid grid-cols-2 gap-2.5">
-              <button
-                onClick={() => setShowForm(true)}
-                className="flex items-center gap-2 rounded-xl border border-rule p-2.5 text-left hover:border-ink transition-colors"
-              >
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent/20 text-accent">
-                  <IconPlus className="h-4 w-4" />
-                </span>
-                <span className="text-xs font-medium leading-tight">Add Event</span>
-              </button>
-              <Link
-                href="/skills"
-                className="flex items-center gap-2 rounded-xl border border-rule p-2.5 text-left hover:border-ink transition-colors"
-              >
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-purple-500/15 text-purple-400">
-                  <IconSkills className="h-4 w-4" />
-                </span>
-                <span className="text-xs font-medium leading-tight">Focus Session</span>
-              </Link>
-              <Link
-                href="/tasks"
-                className="flex items-center gap-2 rounded-xl border border-rule p-2.5 text-left hover:border-ink transition-colors"
-              >
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-emerald-500/15 text-emerald-400">
-                  <IconCheck className="h-4 w-4" />
-                </span>
-                <span className="text-xs font-medium leading-tight">Add Task</span>
-              </Link>
-              <Link
-                href="/tasks"
-                className="flex items-center gap-2 rounded-xl border border-rule p-2.5 text-left hover:border-ink transition-colors"
-              >
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-blue-500/15 text-blue-400">
-                  <IconTasks className="h-4 w-4" />
-                </span>
-                <span className="text-xs font-medium leading-tight">View All Tasks</span>
-              </Link>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-rule bg-paper-raised p-4">
-            <div className="flex items-start gap-3">
-              <IconLeaf className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
-              <p className="font-serif text-sm italic leading-snug">
-                Discipline today,
-                <br />
-                freedom tomorrow.
-              </p>
-            </div>
-            <div className="mt-3 h-px w-8 bg-accent" />
-          </div>
         </div>
       </div>
     </div>
