@@ -42,64 +42,65 @@ export function MonthCalendarGrid({
   const isSameDay = (a: Date, b: Date) => a.toDateString() === b.toDateString();
 
   return (
-    <div className="border border-rule bg-paper-raised">
-      <div className="flex items-center justify-between px-3 py-2 border-b border-rule">
+    <div className="rounded-2xl border border-rule bg-paper-raised p-3">
+      <div className="flex items-center justify-between px-1 pb-2">
         <button
           onClick={() => setCursor(new Date(year, month - 1, 1))}
-          className="text-ink-soft hover:text-ink text-sm px-1"
+          className="grid h-7 w-7 place-items-center rounded-lg border border-rule text-ink-soft hover:text-ink hover:border-ink transition-colors"
           aria-label="Previous month"
         >
           ‹
         </button>
-        <p className="font-serif text-xs font-semibold tracking-wide">
-          {cursor.toLocaleDateString(undefined, { month: "long", year: "numeric" }).toUpperCase()}
+        <p className="font-serif text-sm font-bold tracking-wide">
+          {cursor.toLocaleDateString(undefined, { month: "long", year: "numeric" })}
         </p>
         <button
           onClick={() => setCursor(new Date(year, month + 1, 1))}
-          className="text-ink-soft hover:text-ink text-sm px-1"
+          className="grid h-7 w-7 place-items-center rounded-lg border border-rule text-ink-soft hover:text-ink hover:border-ink transition-colors"
           aria-label="Next month"
         >
           ›
         </button>
       </div>
 
-      <div className="grid grid-cols-7 text-center px-1.5 pt-2">
+      <div className="grid grid-cols-7 text-center">
         {WEEKDAYS.map((d, i) => (
-          <div key={i} className="text-[9px] uppercase tracking-widest text-ink-soft py-0.5">
+          <div key={i} className="text-[10px] font-medium uppercase tracking-widest text-ink-soft py-1">
             {d}
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 px-1.5 pb-2">
+      <div className="grid grid-cols-7 gap-y-1">
         {cells.map((date, i) => {
           if (!date) return <div key={i} className="aspect-square" />;
           const hasEvent = eventDays.has(date.toDateString());
           const isToday = isSameDay(date, today);
           const isSelected = isSameDay(date, selectedDate);
           return (
-            <button
-              key={i}
-              onClick={() => {
-                onSelectDate(date);
-              }}
-              className={`aspect-square flex flex-col items-center justify-center text-[11px] relative transition-colors ${
-                isSelected
-                  ? "bg-ink text-paper"
-                  : isToday
-                  ? "text-accent font-semibold"
-                  : "text-ink hover:bg-rule/40"
-              }`}
-            >
-              <span>{date.getDate()}</span>
-              {hasEvent && (
-                <span
-                  className={`absolute bottom-0.5 w-1 h-1 rounded-full ${
-                    isSelected ? "bg-paper" : "bg-accent"
-                  }`}
-                />
-              )}
-            </button>
+            <div key={i} className="grid place-items-center py-0.5">
+              <button
+                onClick={() => {
+                  onSelectDate(date);
+                }}
+                className={`relative flex h-8 w-8 flex-col items-center justify-center rounded-lg text-[12px] transition-colors ${
+                  isSelected
+                    ? "bg-accent text-ink font-semibold"
+                    : isToday
+                    ? "text-accent font-semibold"
+                    : "text-ink hover:bg-rule/40"
+                }`}
+              >
+                <span>{date.getDate()}</span>
+                {hasEvent && (
+                  <span
+                    className={`absolute bottom-0.5 h-1 w-1 rounded-full ${
+                      isSelected ? "bg-ink" : "bg-accent"
+                    }`}
+                  />
+                )}
+              </button>
+            </div>
           );
         })}
       </div>
