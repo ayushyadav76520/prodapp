@@ -30,6 +30,9 @@ interface FocusSessionRecord {
   title: string;
   durationMinutes: number;
   completedAt: string;
+  totalMinutes?: number;
+  remainingSeconds?: number;
+  incomplete?: boolean;
 }
 
 type Phase = "setup" | "focusing" | "paused" | "break" | "completed";
@@ -64,6 +67,8 @@ export function FocusSession() {
   const [history, setHistory] = useState<FocusSessionRecord[]>([]);
   const [historySync, setHistorySync] = useState<"idle" | "syncing" | "error">("idle");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [activeRecordId, setActiveRecordId] = useState<string | null>(null);
+  const [lastEndedIncomplete, setLastEndedIncomplete] = useState(false);
   const lastBreakMarkRef = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -106,33 +111,51 @@ export function FocusSession() {
     return () => clearInterval(interval);
   }, [phase]);
 
-  const saveSession = useCallback(
-    async (minutes: number) => {
-      if (minutes <= 0) return;
+  const persistSession = useCallback(
+    async (opts: { minutes: number; incomplete: boolean; remainingSecondsLeft: number; totalMinutes: number }) => {
+      const { minutes, incomplete, remainingSecondsLeft, totalMinutes } = opts;
+      const payload = {
+        title: title.trim() || "Focus Session",
+        durationMinutes: minutes,
+        totalMinutes,
+        remainingSeconds: incomplete ? remainingSecondsLeft : undefined,
+        incomplete,
+      };
       try {
-        await fetch("/api/focus-sessions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            title: title.trim() || "Focus Session",
-            durationMinutes: minutes,
-          }),
-        });
+        if (activeRecordId) {
+          const res = await fetch(`/api/focus-sessions/${activeRecordId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          if (!res.ok) throw new Error("Failed to update session");
+        } else {
+          const res = await fetch("/api/focus-sessions", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error("Failed to save session");
+          if (data.session?.id) setActiveRecordId(data.session.id);
+        }
+        if (!incomplete) setActiveRecordId(null);
         refreshHistory();
       } catch {
         // Best effort; the server history will remain intact if the request fails.
       }
     },
-    [title, refreshHistory]
+    [title, activeRecordId, refreshHistory]
   );
 
   useEffect(() => {
     if (phase !== "focusing" || remainingSeconds !== 0) return;
     const minutes = Math.round(totalSeconds / 60);
     setLastSavedMinutes(minutes);
-    saveSession(minutes);
+    setLastEndedIncomplete(false);
+    persistSession({ minutes, incomplete: false, remainingSecondsLeft: 0, totalMinutes: minutes });
     setPhase("completed");
-  }, [remainingSeconds, phase, totalSeconds, saveSession]);
+  }, [remainingSeconds, phase, totalSeconds, persistSession]);
 
   useEffect(() => {
     if (phase !== "focusing") return;
@@ -157,7 +180,23 @@ export function FocusSession() {
     setRemainingSeconds(secs);
     setSessionStartedAt(new Date());
     setBreakBanner(false);
+    setActiveRecordId(null);
     lastBreakMarkRef.current = 0;
+    setPhase("focusing");
+  };
+
+  const resumeRecord = (rec: FocusSessionRecord) => {
+    const totalMinutes = rec.totalMinutes ?? rec.durationMinutes;
+    const secsRemaining = rec.remainingSeconds ?? 0;
+    const secsTotal = Math.max(secsRemaining, totalMinutes * 60);
+    const elapsedSoFar = secsTotal - secsRemaining;
+    setTitle(rec.title);
+    setTotalSeconds(secsTotal);
+    setRemainingSeconds(secsRemaining);
+    setSessionStartedAt(new Date(Date.now() - elapsedSoFar * 1000));
+    setBreakBanner(false);
+    setActiveRecordId(rec.id);
+    lastBreakMarkRef.current = Math.floor(elapsedSoFar / (45 * 60));
     setPhase("focusing");
   };
 
@@ -178,8 +217,15 @@ export function FocusSession() {
   const endSessionEarly = () => {
     const focusedSeconds = totalSeconds - remainingSeconds;
     const minutes = Math.round(focusedSeconds / 60);
+    const stillHasTimeLeft = remainingSeconds > 0;
     setLastSavedMinutes(minutes);
-    if (minutes > 0) saveSession(minutes);
+    setLastEndedIncomplete(stillHasTimeLeft);
+    persistSession({
+      minutes,
+      incomplete: stillHasTimeLeft,
+      remainingSecondsLeft: remainingSeconds,
+      totalMinutes: Math.round(totalSeconds / 60),
+    });
     setPhase("completed");
   };
 
@@ -199,6 +245,7 @@ export function FocusSession() {
     setBreakTotalSeconds(5 * 60);
     setSessionStartedAt(null);
     setBreakBanner(false);
+    setActiveRecordId(null);
   };
 
   const deleteRecord = async (id: string, recordTitle: string) => {
@@ -346,8 +393,14 @@ export function FocusSession() {
                     <li key={rec.id} className="flex items-center gap-2 rounded-xl border-2 border-rule bg-paper-raised p-2.5">
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-semibold">{rec.title}</p>
-                        <p className="mt-0.5 text-[11px] text-ink-soft">{rec.durationMinutes} min · {new Date(rec.completedAt).toLocaleDateString()}</p>
+                        <p className="mt-0.5 text-[11px] text-ink-soft">
+                          {rec.durationMinutes} min · {new Date(rec.completedAt).toLocaleDateString()}
+                          {rec.incomplete && <span className="ml-1.5 rounded-full bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent">Paused</span>}
+                        </p>
                       </div>
+                      {rec.incomplete && (
+                        <button onClick={() => resumeRecord(rec)} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-2 border-accent/50 text-accent transition hover:bg-accent hover:text-paper" aria-label="Resume session" title="Resume session"><IconPlay className="h-4 w-4" /></button>
+                      )}
                       <button onClick={() => shareRecord(rec)} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-2 border-rule text-ink-soft transition hover:border-accent hover:text-accent" aria-label="Share session" title="Share session"><IconShare className="h-5 w-5" /></button>
                       <button onClick={() => deleteRecord(rec.id, rec.title)} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-2 border-rule text-ink-soft transition hover:border-red-500 hover:text-red-500" aria-label="Delete session" title="Delete session" disabled={deletingId === rec.id}><IconTrash className="h-5 w-5" /></button>
                     </li>
@@ -367,12 +420,20 @@ export function FocusSession() {
         <div className="grid gap-6 md:grid-cols-[0.75fr_1.25fr] md:items-center">
           <div className="rounded-2xl border border-rule bg-[#11100e] p-5 text-center text-white">
             <FocusStudyIllustration className="max-w-[420px] mx-auto" />
-            <p className="mt-4 text-[10px] uppercase tracking-[0.28em] text-white/60">Session Complete</p>
+            <p className="mt-4 text-[10px] uppercase tracking-[0.28em] text-white/60">
+              {lastEndedIncomplete ? "Progress Saved" : "Session Complete"}
+            </p>
           </div>
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">Well done</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">
+              {lastEndedIncomplete ? "Paused" : "Well done"}
+            </p>
             <h2 className="mt-1 font-serif text-4xl font-semibold">{title.trim() || "Focus Session"}</h2>
-            <p className="mt-2 text-lg text-ink-soft">You focused for {lastSavedMinutes} minute{lastSavedMinutes !== 1 ? "s" : ""}.</p>
+            <p className="mt-2 text-lg text-ink-soft">
+              {lastEndedIncomplete
+                ? `You focused for ${lastSavedMinutes} minute${lastSavedMinutes !== 1 ? "s" : ""} — saved to History. Resume anytime to pick up where you left off.`
+                : `You focused for ${lastSavedMinutes} minute${lastSavedMinutes !== 1 ? "s" : ""}.`}
+            </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <button onClick={handleDownload} className="flex items-center gap-2 rounded-xl border border-rule px-4 py-2.5 text-xs font-semibold uppercase tracking-widest transition hover:border-ink">
                 <IconDownload className="h-4 w-4" /> Download

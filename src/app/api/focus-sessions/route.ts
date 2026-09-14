@@ -26,6 +26,9 @@ export async function GET() {
           title: t.title,
           durationMinutes: meta.durationMinutes,
           completedAt: meta.completedAt,
+          totalMinutes: meta.totalMinutes,
+          remainingSeconds: meta.remainingSeconds,
+          incomplete: meta.incomplete ?? false,
         };
       })
       .filter((s): s is NonNullable<typeof s> => s !== null)
@@ -47,9 +50,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Not signed in" }, { status: 401 });
   }
 
-  const { title, durationMinutes } = await req.json();
+  const { title, durationMinutes, totalMinutes, remainingSeconds, incomplete } = await req.json();
   const minutes = Number(durationMinutes);
-  if (!title || !Number.isFinite(minutes) || minutes <= 0) {
+  if (!title || !Number.isFinite(minutes) || minutes < 0) {
     return NextResponse.json({ error: "Invalid session data" }, { status: 400 });
   }
 
@@ -58,11 +61,25 @@ export async function POST(req: NextRequest) {
     const completedAt = new Date().toISOString();
     const task = await insertTask(session.accessToken, taskListId, {
       title,
-      notes: encodeFocusNotes({ durationMinutes: minutes, completedAt }),
+      notes: encodeFocusNotes({
+        durationMinutes: minutes,
+        completedAt,
+        totalMinutes,
+        remainingSeconds,
+        incomplete,
+      }),
     });
 
     return NextResponse.json({
-      session: { id: task.id, title, durationMinutes: minutes, completedAt },
+      session: {
+        id: task.id,
+        title,
+        durationMinutes: minutes,
+        completedAt,
+        totalMinutes,
+        remainingSeconds,
+        incomplete: incomplete ?? false,
+      },
     });
   } catch (err) {
     if (err instanceof GoogleApiError) {

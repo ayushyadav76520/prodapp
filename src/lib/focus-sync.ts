@@ -15,6 +15,11 @@ const NOTES_PREFIX = "FOCUS_META::";
 export interface FocusMeta {
   durationMinutes: number;
   completedAt: string;
+  // Present only when the session was ended before finishing — lets us
+  // resume it later from exactly where it was left off.
+  totalMinutes?: number;
+  remainingSeconds?: number;
+  incomplete?: boolean;
 }
 
 export function encodeFocusNotes(meta: FocusMeta): string {
