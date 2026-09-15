@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { useCalendarData } from "@/lib/use-google-data";
 import { SyncStatus } from "@/components/SyncStatus";
@@ -10,8 +10,16 @@ import type { GoogleEvent } from "@/lib/google-api";
 import { getEventMeta } from "@/lib/calendarColors";
 
 function getEventDate(event: GoogleEvent): Date | null {
-  const start = event.start?.dateTime ?? event.start?.date;
-  return start ? new Date(start) : null;
+  const date = event.start?.date;
+  if (date) {
+    // Google all-day events are date-only strings. Parse them in local time so
+    // they do not shift to the previous day in positive-offset timezones.
+    const [year, month, day] = date.split("-").map(Number);
+    if ([year, month, day].every(Number.isFinite)) return new Date(year, month - 1, day);
+  }
+
+  const dateTime = event.start?.dateTime;
+  return dateTime ? new Date(dateTime) : null;
 }
 
 function formatEventTime(event: GoogleEvent) {
@@ -47,6 +55,13 @@ export default function CalendarPage() {
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [todayKey, setTodayKey] = useState(() => new Date().toDateString());
+
+  useEffect(() => {
+    const updateToday = () => setTodayKey(new Date().toDateString());
+    const timer = window.setInterval(updateToday, 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const rangedEvents = useMemo(() => {
     let list: { event: GoogleEvent; date: Date }[];
@@ -85,7 +100,7 @@ export default function CalendarPage() {
       seen.add(key);
       return true;
     });
-  }, [events, view, selectedDate]);
+  }, [events, view, selectedDate, todayKey]);
 
   const rangeLabel = selectedDate
     ? dateHeading(selectedDate)
@@ -308,7 +323,7 @@ export default function CalendarPage() {
           <ul className="space-y-2.5">
             {rangedEvents.map(({ event, date: evDate }) => {
               const { label, color } = getEventMeta(event, calendars);
-              const isToday = evDate.toDateString() === new Date().toDateString();
+              const isToday = evDate.toDateString() === todayKey;
               return (
                 <li
                   key={event.id}
@@ -330,21 +345,21 @@ export default function CalendarPage() {
                     <p className="font-semibold text-sm truncate">{event.summary || "(No title)"}</p>
                     <div className="flex items-center gap-2 flex-wrap text-xs text-ink-soft">
                       <span className="flex items-center gap-1.5">
-                        <span className="relative flex w-2 h-2 shrink-0">
-                          {isToday && (
+                        {isToday && (
+                          <span className="relative flex w-2 h-2 shrink-0">
                             <span
                               className="absolute inset-0 rounded-full animate-ping"
                               style={{ backgroundColor: "#3b82f6" }}
                             />
-                          )}
-                          <span
-                            className="relative w-2 h-2 rounded-full"
-                            style={{ backgroundColor: color }}
-                          />
-                        </span>
+                            <span
+                              className="relative w-2 h-2 rounded-full"
+                              style={{ backgroundColor: "#3b82f6" }}
+                            />
+                          </span>
+                        )}
                         <span
                           className="rounded-full px-2 py-0.5 text-[10px] font-medium"
-                          style={{ backgroundColor: `${color}26`, color }}
+                          style={{ backgroundColor: `color-mix(in srgb, ${color} 15%, transparent)`, color }}
                         >
                           {label}
                         </span>
