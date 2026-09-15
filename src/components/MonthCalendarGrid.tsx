@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { GoogleEvent } from "@/lib/google-api";
+import { IconChevronLeft, IconChevronRight } from "@/components/icons";
 
 const WEEKDAYS = ["S", "M", "T", "W", "T", "F", "S"];
 
@@ -42,24 +43,24 @@ export function MonthCalendarGrid({
   const isSameDay = (a: Date, b: Date) => a.toDateString() === b.toDateString();
 
   return (
-    <div className="border border-rule bg-paper-raised">
-      <div className="flex items-center justify-between px-3 py-2 border-b border-rule">
+    <div className="rounded-2xl border border-rule bg-paper-raised overflow-hidden">
+      <div className="flex items-center justify-between px-3 py-2.5 border-b border-rule">
         <button
           onClick={() => setCursor(new Date(year, month - 1, 1))}
-          className="text-ink-soft hover:text-ink text-sm px-1"
+          className="w-7 h-7 rounded-full border border-rule flex items-center justify-center text-ink-soft hover:border-accent hover:text-accent transition-colors"
           aria-label="Previous month"
         >
-          ‹
+          <IconChevronLeft className="w-3.5 h-3.5" />
         </button>
         <p className="font-serif text-xs font-semibold tracking-wide">
-          {cursor.toLocaleDateString(undefined, { month: "long", year: "numeric" }).toUpperCase()}
+          {cursor.toLocaleDateString(undefined, { month: "long", year: "numeric" })}
         </p>
         <button
           onClick={() => setCursor(new Date(year, month + 1, 1))}
-          className="text-ink-soft hover:text-ink text-sm px-1"
+          className="w-7 h-7 rounded-full border border-rule flex items-center justify-center text-ink-soft hover:border-accent hover:text-accent transition-colors"
           aria-label="Next month"
         >
-          ›
+          <IconChevronRight className="w-3.5 h-3.5" />
         </button>
       </div>
 
@@ -71,7 +72,7 @@ export function MonthCalendarGrid({
         ))}
       </div>
 
-      <div className="grid grid-cols-7 px-1.5 pb-2">
+      <div className="grid grid-cols-7 gap-0.5 px-1.5 pb-2">
         {cells.map((date, i) => {
           if (!date) return <div key={i} className="aspect-square" />;
           const hasEvent = eventDays.has(date.toDateString());
@@ -83,9 +84,9 @@ export function MonthCalendarGrid({
               onClick={() => {
                 onSelectDate(date);
               }}
-              className={`aspect-square flex flex-col items-center justify-center text-[11px] relative transition-colors ${
+              className={`aspect-square rounded-lg flex flex-col items-center justify-center text-[11px] relative transition-colors ${
                 isSelected
-                  ? "bg-ink text-paper"
+                  ? "bg-accent text-paper font-semibold"
                   : isToday
                   ? "text-accent font-semibold"
                   : "text-ink hover:bg-rule/40"
@@ -94,7 +95,7 @@ export function MonthCalendarGrid({
               <span>{date.getDate()}</span>
               {hasEvent && (
                 <span
-                  className={`absolute bottom-0.5 w-1 h-1 rounded-full ${
+                  className={`absolute bottom-1 w-1 h-1 rounded-full ${
                     isSelected ? "bg-paper" : "bg-accent"
                   }`}
                 />
