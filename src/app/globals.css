@@ -2138,3 +2138,408 @@ body {
     letter-spacing: 0;
   }
 }
+
+/* =====================================================================
+   ZenSpace Challenge — reference-match final layout overrides
+   Keep the existing markup/functionality; only change geometry/placement.
+   ===================================================================== */
+
+/* The two wrapper rows are structural only. Their children participate
+   directly in the card grid so the same DOM works at every breakpoint. */
+.zen-challenge-card-top,
+.zen-challenge-card-bottom {
+  display: contents;
+}
+
+@media (min-width: 1101px) {
+  .focus-skills-header {
+    min-height: 6.6rem;
+    padding: .2rem 0 .9rem;
+  }
+
+  .focus-skills-heading h1 {
+    font-size: clamp(2.45rem, 3vw, 3rem) !important;
+    line-height: .98;
+  }
+
+  .focus-skills-subtitle {
+    margin-top: .5rem;
+    font-size: .9rem;
+  }
+
+  .focus-skills-header-actions {
+    padding-top: .05rem;
+    gap: .7rem;
+  }
+
+  .zen-new-challenge-button {
+    width: 210px;
+    height: 46px;
+    border-radius: .65rem;
+  }
+
+  .zen-challenge-list {
+    gap: 1rem;
+  }
+
+  .zen-challenge-card {
+    height: 148px;
+    padding: 1rem 1.05rem .9rem;
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr) 150px;
+    grid-template-rows: 58px minmax(0, 1fr) 34px;
+    grid-template-areas:
+      "identity identity actions"
+      ".        progress  actions"
+      ".        streak    checkin";
+    column-gap: .8rem;
+    row-gap: .2rem;
+  }
+
+  .zen-challenge-identity {
+    grid-area: identity;
+    min-width: 0;
+    gap: .85rem;
+    align-self: start;
+  }
+
+  .zen-challenge-icon {
+    width: 58px;
+    height: 58px;
+    flex-basis: 58px;
+  }
+
+  .zen-challenge-icon svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .zen-challenge-title-group h3 {
+    font-size: 1.3rem;
+  }
+
+  .zen-challenge-title-group p {
+    margin-top: .32rem;
+    font-size: .78rem;
+  }
+
+  .zen-challenge-actions {
+    grid-area: actions;
+    align-self: start;
+    justify-content: flex-end;
+    gap: .65rem;
+  }
+
+  .zen-challenge-icon-button {
+    width: 58px;
+    height: 58px;
+  }
+
+  .zen-challenge-progress-block {
+    grid-area: progress;
+    min-width: 0;
+    align-self: center;
+    justify-content: center;
+  }
+
+  .zen-challenge-progress-meta {
+    justify-content: flex-end;
+    margin-bottom: .32rem;
+    font-size: .68rem;
+  }
+
+  .zen-challenge-progress-meta span:first-child {
+    display: none;
+  }
+
+  .zen-challenge-progress-track {
+    height: 10px;
+  }
+
+  .zen-challenge-streak {
+    grid-area: streak;
+    align-self: end;
+    gap: .45rem;
+    font-size: .7rem;
+  }
+
+  .zen-challenge-flame {
+    font-size: 1.25rem;
+  }
+
+  .zen-checkin-button {
+    grid-area: checkin;
+    justify-self: end;
+    align-self: end;
+    width: 145px;
+    height: 42px;
+    border-radius: .45rem;
+    font-size: .78rem;
+  }
+}
+
+/* Reference mobile/tablet composition: the card intentionally becomes a
+   compact vertical block rather than a shrunken desktop row. */
+@media (min-width: 768px) and (max-width: 1100px) {
+  .focus-skills-shell {
+    max-width: 776px;
+    margin-inline: auto;
+    padding-inline: 0 !important;
+  }
+
+  .focus-skills-header {
+    min-height: 10rem;
+    padding-top: .1rem;
+  }
+
+  .focus-skills-heading h1 {
+    font-size: 3rem !important;
+  }
+
+  .focus-skills-subtitle {
+    max-width: 400px;
+    font-size: 1.05rem;
+    line-height: 1.35;
+  }
+
+  .focus-skills-header-actions {
+    padding-top: 3rem;
+    gap: .6rem;
+  }
+
+  .zen-new-challenge-button {
+    width: 247px;
+    height: 70px;
+    border-radius: .8rem;
+    font-size: 1.02rem;
+  }
+
+  .zen-challenge-list {
+    gap: .95rem;
+  }
+
+  .zen-challenge-card {
+    height: 261px;
+    padding: 1.05rem 1.2rem .85rem;
+    border-radius: 1.25rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: 86px minmax(0, 1fr) 49px;
+    grid-template-areas:
+      "identity actions"
+      "progress progress"
+      "streak   checkin";
+    column-gap: .8rem;
+    row-gap: .4rem;
+  }
+
+  .zen-challenge-identity {
+    grid-area: identity;
+    min-width: 0;
+    gap: .85rem;
+    align-self: start;
+  }
+
+  .zen-challenge-icon {
+    width: 78px;
+    height: 78px;
+    flex-basis: 78px;
+  }
+
+  .zen-challenge-icon svg {
+    width: 38px;
+    height: 38px;
+  }
+
+  .zen-challenge-title-group h3 {
+    font-size: 1.55rem;
+  }
+
+  .zen-challenge-title-group p {
+    margin-top: .45rem;
+    font-size: 1rem;
+  }
+
+  .zen-challenge-actions {
+    grid-area: actions;
+    justify-content: flex-end;
+    gap: .8rem;
+    align-self: start;
+  }
+
+  .zen-challenge-icon-button {
+    width: 74px;
+    height: 74px;
+  }
+
+  .zen-challenge-progress-block {
+    grid-area: progress;
+    min-width: 0;
+    justify-content: center;
+  }
+
+  .zen-challenge-progress-meta {
+    justify-content: space-between;
+    margin-bottom: .55rem;
+    font-size: 1rem;
+  }
+
+  .zen-challenge-progress-meta span:first-child {
+    display: inline;
+  }
+
+  .zen-challenge-progress-track {
+    height: 16px;
+  }
+
+  .zen-challenge-streak {
+    grid-area: streak;
+    align-self: end;
+    gap: .45rem;
+    font-size: .95rem;
+  }
+
+  .zen-challenge-flame {
+    font-size: 1.65rem;
+  }
+
+  .zen-challenge-streak-number {
+    font-size: 1.15rem;
+  }
+
+  .zen-checkin-button {
+    grid-area: checkin;
+    justify-self: end;
+    align-self: end;
+    width: 168px;
+    height: 56px;
+    border-radius: .55rem;
+    font-size: .96rem;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .focus-skills-shell {
+    padding-inline: .8rem !important;
+  }
+
+  .focus-skills-header {
+    min-height: 9.1rem;
+    padding-bottom: .85rem;
+  }
+
+  .focus-skills-heading h1 {
+    font-size: 2rem !important;
+  }
+
+  .focus-skills-subtitle {
+    max-width: 52%;
+    font-size: .82rem;
+  }
+
+  .focus-skills-header-actions {
+    padding-top: 2.7rem;
+    gap: .45rem;
+  }
+
+  .zen-new-challenge-button {
+    width: 160px;
+    height: 50px;
+    font-size: .8rem;
+  }
+
+  .zen-challenge-list {
+    gap: .85rem;
+  }
+
+  .zen-challenge-card {
+    height: 260px;
+    padding: 1rem .9rem .85rem;
+    border-radius: 1.15rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: 70px minmax(0, 1fr) 46px;
+    grid-template-areas:
+      "identity actions"
+      "progress progress"
+      "streak   checkin";
+    column-gap: .55rem;
+    row-gap: .5rem;
+  }
+
+  .zen-challenge-identity {
+    grid-area: identity;
+    min-width: 0;
+    gap: .7rem;
+    align-self: start;
+  }
+
+  .zen-challenge-icon {
+    width: 60px;
+    height: 60px;
+    flex-basis: 60px;
+  }
+
+  .zen-challenge-icon svg {
+    width: 31px;
+    height: 31px;
+  }
+
+  .zen-challenge-title-group h3 {
+    font-size: 1.1rem;
+  }
+
+  .zen-challenge-title-group p {
+    font-size: .74rem;
+  }
+
+  .zen-challenge-actions {
+    grid-area: actions;
+    justify-content: flex-end;
+    gap: .55rem;
+    align-self: start;
+  }
+
+  .zen-challenge-icon-button {
+    width: 50px;
+    height: 50px;
+  }
+
+  .zen-challenge-progress-block {
+    grid-area: progress;
+    min-width: 0;
+    justify-content: center;
+  }
+
+  .zen-challenge-progress-meta {
+    justify-content: space-between;
+    margin-bottom: .5rem;
+    font-size: .72rem;
+  }
+
+  .zen-challenge-progress-meta span:first-child {
+    display: inline;
+  }
+
+  .zen-challenge-progress-track {
+    height: 11px;
+  }
+
+  .zen-challenge-streak {
+    grid-area: streak;
+    align-self: end;
+    gap: .4rem;
+    font-size: .72rem;
+  }
+
+  .zen-checkin-button {
+    grid-area: checkin;
+    justify-self: end;
+    align-self: end;
+    width: 132px;
+    height: 44px;
+    font-size: .74rem;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+}
