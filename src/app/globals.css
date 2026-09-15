@@ -2622,3 +2622,319 @@ body {
     font-size: 0.7rem !important;
   }
 }
+
+
+/* Focus Mode reference-match v9
+   Presentation-only overrides: session/timer/state logic remains unchanged. */
+.focus-active-shell:fullscreen,
+.focus-active-shell:fullscreen .focus-session-frame,
+.focus-active-shell:fullscreen .focus-fullscreen-panel {
+  background: #0d0c0b !important;
+  color: #f3efe6;
+  background-image: none !important;
+}
+
+.focus-active-shell:fullscreen .focus-fullscreen-panel {
+  box-sizing: border-box;
+  padding: clamp(1.25rem, 2.4vw, 2.5rem) clamp(1.35rem, 4vw, 4.75rem);
+}
+
+.focus-active-shell:fullscreen .focus-fullscreen-topbar {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  min-height: 3.15rem;
+}
+
+.focus-active-shell:fullscreen .focus-fullscreen-grid {
+  width: min(1480px, 100%);
+  height: calc(100% - 3.15rem);
+  grid-template-columns: minmax(0, 1fr) minmax(420px, .92fr);
+  gap: clamp(3rem, 6vw, 7rem);
+  align-items: center;
+}
+
+.focus-active-shell:fullscreen .focus-fullscreen-copy {
+  padding-left: clamp(0rem, 1vw, 1rem);
+  max-width: 690px;
+  justify-self: start;
+}
+
+.focus-active-shell:fullscreen .focus-mode-eyebrow {
+  font-size: clamp(.66rem, .72vw, .78rem);
+  letter-spacing: .30em;
+}
+
+.focus-active-shell:fullscreen .focus-mode-eyebrow span {
+  width: clamp(1.7rem, 2.7vw, 2.6rem);
+}
+
+.focus-active-shell:fullscreen .focus-fullscreen-copy h1 {
+  margin-top: .95rem;
+  max-width: 680px;
+  font-size: clamp(3.6rem, 7vw, 7.8rem);
+  line-height: .9;
+  letter-spacing: -.065em;
+}
+
+.focus-active-shell:fullscreen .focus-mode-subtitle {
+  margin-top: 1.15rem;
+  max-width: 620px;
+  font-size: clamp(1rem, 1.35vw, 1.28rem);
+  color: rgba(243,239,230,.52);
+}
+
+.focus-live-datetime {
+  margin-top: 1.45rem;
+  color: #f39a3d;
+  font-size: clamp(.78rem, .9vw, .95rem);
+  font-weight: 800;
+  letter-spacing: .20em;
+  font-variant-numeric: tabular-nums;
+}
+
+.focus-active-shell:fullscreen .focus-fullscreen-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  width: auto;
+  max-width: none;
+  margin-top: 1.55rem;
+  gap: .7rem;
+}
+
+.focus-active-shell:fullscreen .focus-control-button {
+  min-height: 3.25rem;
+  flex: 0 0 auto;
+  padding-inline: 1.15rem;
+  border-radius: .82rem;
+}
+
+.focus-active-shell:fullscreen .focus-quote {
+  max-width: 600px;
+  margin-top: 2rem;
+  font-size: clamp(.88rem, 1vw, 1rem);
+  line-height: 1.55;
+}
+
+.focus-active-shell:fullscreen .focus-end-button {
+  margin-top: 1rem;
+  font-size: .67rem;
+}
+
+.focus-active-shell:fullscreen .focus-fullscreen-visual {
+  width: min(100%, 620px);
+  justify-self: center;
+  align-self: center;
+  min-width: 0;
+}
+
+.focus-active-shell:fullscreen .focus-fullscreen-art {
+  width: min(100%, 540px);
+  max-height: none;
+  margin-inline: auto;
+}
+
+.focus-active-shell:fullscreen .focus-fullscreen-art > .focus-study-illustration {
+  width: 100%;
+  max-width: 540px;
+}
+
+.focus-active-shell:fullscreen .focus-visual-label {
+  margin-top: 1rem;
+  font-size: .66rem;
+  letter-spacing: .38em;
+}
+
+.focus-active-shell:fullscreen .focus-countdown {
+  margin-top: .45rem;
+  font-size: clamp(4.2rem, 6.6vw, 7.2rem);
+  line-height: .86;
+  letter-spacing: -.04em;
+  font-weight: 300;
+}
+
+.focus-active-shell:fullscreen .focus-progress-wrap {
+  width: min(100%, 590px);
+  margin-top: 1.45rem;
+}
+
+.focus-active-shell:fullscreen .focus-progress-track {
+  height: 1rem;
+  background: rgba(255,255,255,.13);
+  box-shadow: none;
+}
+
+.focus-active-shell:fullscreen .focus-progress-meta {
+  margin-top: .65rem;
+  color: rgba(243,239,230,.52);
+  font-size: .66rem;
+  letter-spacing: .11em;
+}
+
+@media (max-width: 1100px) and (min-width: 768px) {
+  .focus-active-shell:fullscreen .focus-fullscreen-panel {
+    padding-inline: 2rem;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-grid {
+    grid-template-columns: minmax(0, .95fr) minmax(360px, 1.05fr);
+    gap: 2.5rem;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-copy h1 {
+    font-size: clamp(3rem, 6.5vw, 5.5rem);
+  }
+
+  .focus-active-shell:fullscreen .focus-live-datetime {
+    margin-top: 1.1rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .focus-active-shell:fullscreen {
+    overflow-y: auto;
+  }
+
+  .focus-active-shell:fullscreen .focus-session-frame {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-panel {
+    min-height: 100dvh;
+    height: auto;
+    padding: .9rem .9rem 1.3rem;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-topbar {
+    min-height: 2.8rem;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-grid {
+    height: auto;
+    margin-top: 1.4rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "copy"
+      "visual";
+    gap: 2rem;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-copy {
+    grid-area: copy;
+    display: block;
+    max-width: none;
+    padding: 0;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-visual {
+    grid-area: visual;
+    display: flex;
+    width: 100%;
+    max-width: none;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-copy h1 {
+    margin-top: .7rem;
+    font-size: clamp(2.8rem, 14vw, 4.4rem);
+  }
+
+  .focus-active-shell:fullscreen .focus-mode-subtitle {
+    margin-top: .6rem;
+    font-size: .93rem;
+  }
+
+  .focus-live-datetime {
+    margin-top: .9rem;
+    font-size: .72rem;
+    letter-spacing: .14em;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-action-row {
+    width: 100%;
+    margin-top: 1.05rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .5rem;
+  }
+
+  .focus-active-shell:fullscreen .focus-control-button {
+    min-height: 3rem;
+    min-width: 0;
+    padding: .55rem .35rem;
+    font-size: .6rem;
+    letter-spacing: .07em;
+  }
+
+  .focus-active-shell:fullscreen .focus-quote {
+    margin-top: 1.2rem;
+    font-size: .82rem;
+  }
+
+  .focus-active-shell:fullscreen .focus-end-button {
+    margin-top: .75rem;
+    font-size: .57rem;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-art {
+    width: min(82vw, 360px);
+    margin-inline: auto;
+  }
+
+  .focus-active-shell:fullscreen .focus-countdown {
+    font-size: clamp(3.5rem, 17vw, 5.2rem);
+  }
+
+  .focus-active-shell:fullscreen .focus-progress-wrap {
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .focus-active-shell:fullscreen .focus-progress-track {
+    height: .82rem;
+  }
+
+  .focus-active-shell:fullscreen .focus-progress-meta {
+    font-size: .56rem;
+  }
+}
+
+@media (max-width: 767px) and (max-height: 760px) {
+  .focus-active-shell:fullscreen .focus-fullscreen-grid {
+    gap: 1.35rem;
+    margin-top: 1rem;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-copy h1 {
+    font-size: clamp(2.35rem, 12vw, 3.6rem);
+  }
+
+  .focus-live-datetime {
+    margin-top: .65rem;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-art {
+    width: min(75vw, 300px);
+  }
+
+  .focus-active-shell:fullscreen .focus-countdown {
+    font-size: clamp(2.9rem, 14vw, 4rem);
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-action-row {
+    margin-top: .8rem;
+  }
+}
+
+
+.focus-session-dashboard-copy .focus-live-datetime {
+  margin-top: 1rem;
+  color: #f39a3d;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .18em;
+  font-variant-numeric: tabular-nums;
+}

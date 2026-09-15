@@ -61,6 +61,7 @@ export function FocusSession() {
   const [breakTotalSeconds, setBreakTotalSeconds] = useState(5 * 60);
   const [sessionStartedAt, setSessionStartedAt] = useState<Date | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [currentTime, setCurrentTime] = useState(() => new Date());
   const [breakBanner, setBreakBanner] = useState(false);
   const [quote] = useState(() => QUOTES[Math.floor(Math.random() * QUOTES.length)]);
   const [lastSavedMinutes, setLastSavedMinutes] = useState(0);
@@ -166,6 +167,13 @@ export function FocusSession() {
       setBreakBanner(true);
     }
   }, [remainingSeconds, phase, totalSeconds]);
+
+  useEffect(() => {
+    const updateClock = () => setCurrentTime(new Date());
+    updateClock();
+    const interval = window.setInterval(updateClock, 1000);
+    return () => window.clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const onFsChange = () => setIsFullscreen(!!document.fullscreenElement);
@@ -522,9 +530,6 @@ export function FocusSession() {
                     <p className="focus-profile-level">Level {level} · Focus Builder</p>
                   </div>
                 </div>
-                <div className="focus-fullscreen-date">
-                  {new Date().toLocaleDateString(undefined, { month: "short", day: "numeric", weekday: "short" }).toUpperCase()} · {new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).toUpperCase()}
-                </div>
                 <button onClick={toggleFullscreen} className="focus-fullscreen-icon-button" title="Exit fullscreen" aria-label="Exit fullscreen">
                   <IconCollapse className="h-4 w-4" />
                 </button>
@@ -535,6 +540,9 @@ export function FocusSession() {
                   <p className="focus-mode-eyebrow">{isBreak ? "BREAK TIME" : "FOCUS MODE"}<span aria-hidden="true" /></p>
                   <h1>{title.trim() || "Focus Mode"}</h1>
                   <p className="focus-mode-subtitle">Distraction fades. Progress stays.</p>
+                  <p className="focus-live-datetime" aria-live="polite">
+                    {currentTime.toLocaleDateString(undefined, { weekday: "short", day: "2-digit", month: "short" }).toUpperCase()} · {currentTime.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).toUpperCase()}
+                  </p>
 
                   <div className="focus-fullscreen-action-row">
                     {isBreak ? (
@@ -583,6 +591,9 @@ export function FocusSession() {
                 <p className="focus-mode-eyebrow">{isBreak ? "BREAK TIME" : "FOCUS MODE"}<span aria-hidden="true" /></p>
                 <h1>{title.trim() || "Focus Mode"}</h1>
                 <p className="focus-mode-subtitle">Distraction fades. Progress stays.</p>
+                <p className="focus-live-datetime" aria-live="polite">
+                  {currentTime.toLocaleDateString(undefined, { weekday: "short", day: "2-digit", month: "short" }).toUpperCase()} · {currentTime.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).toUpperCase()}
+                </p>
 
                 <div className="focus-session-dashboard-actions">
                   {isBreak ? (
@@ -607,7 +618,6 @@ export function FocusSession() {
               </div>
 
               <div className="focus-session-dashboard-visual">
-                <p className="focus-session-dashboard-date">{new Date().toLocaleDateString(undefined, { month: "short", day: "numeric", weekday: "short" }).toUpperCase()} · {new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).toUpperCase()}</p>
                 <div className="focus-session-dashboard-art">
                   <FocusStudyIllustration running={phase !== "paused"} />
                 </div>
