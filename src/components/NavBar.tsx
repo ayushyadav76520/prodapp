@@ -24,7 +24,7 @@ export function NavBar() {
   return (
     <>
       {/* Desktop masthead sidebar */}
-      <aside className="hidden md:flex md:flex-col md:w-60 md:shrink-0 md:border-r md:border-rule md:py-8 md:px-6">
+      <aside className="hidden md:flex md:flex-col md:w-[16.5rem] md:shrink-0 md:border-r md:border-rule md:py-8 md:px-6">
         <div className="mb-10">
           <p className="font-serif text-3xl font-semibold tracking-tight text-ink lowercase">
             conflict<span className="text-accent">-calendar</span>

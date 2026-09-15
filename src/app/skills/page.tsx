@@ -155,16 +155,24 @@ export default function SkillsPage() {
 
   return (
     <div className="focus-skills-shell mx-auto w-full max-w-[1400px] px-3 sm:px-5 lg:px-8 py-4 sm:py-5">
-      <header className="flex items-start justify-between border-b border-rule pb-3">
-        <div>
-          <p className="text-[11px] uppercase tracking-[0.2em] text-accent font-medium mb-1">
-            Section Four
-          </p>
-          <h1 className="font-serif text-3xl md:text-4xl font-semibold tracking-tight">
-            ZenSpace
-          </h1>
+      <header className="focus-skills-header">
+        <div className="focus-skills-heading">
+          <p className="focus-skills-eyebrow">Section Four</p>
+          <h1>ZenSpace</h1>
+          <p className="focus-skills-subtitle">Complete challenges, build streaks, and become a better you.</p>
         </div>
-        {tab === "challenge" && <SyncStatus state={syncState} onRetry={refresh} />}
+        <div className="focus-skills-header-actions">
+          {tab === "challenge" && (
+            <button
+              onClick={() => setShowForm((v) => !v)}
+              className="zen-new-challenge-button"
+            >
+              <span aria-hidden="true">+</span>
+              {showForm ? "Cancel" : "New Challenge"}
+            </button>
+          )}
+          {tab === "challenge" && <SyncStatus state={syncState} onRetry={refresh} />}
+        </div>
       </header>
 
       <div className="flex gap-5 text-sm border-b border-rule mt-4 mb-4">
@@ -189,16 +197,6 @@ export default function SkillsPage() {
 
       {tab === "challenge" && (
         <section className="zen-challenge-section" aria-label="Challenges">
-          <div className="zen-challenge-toolbar">
-            <button
-              onClick={() => setShowForm((v) => !v)}
-              className="zen-new-challenge-button"
-            >
-              <span aria-hidden="true">+</span>
-              {showForm ? "Cancel" : "New Challenge"}
-            </button>
-          </div>
-
           {error && (
             <div className="border border-red-600/30 bg-red-600/5 p-4 text-sm text-red-700 dark:text-red-400">
               {error}
