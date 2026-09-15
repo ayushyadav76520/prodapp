@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import type { GoogleEvent } from "@/lib/google-api";
+import type { GoogleEvent, GoogleCalendarListEntry } from "@/lib/google-api";
+import { getEventMeta } from "@/lib/calendarColors";
 import { IconChevronLeft, IconChevronRight } from "@/components/icons";
 
 const WEEKDAYS = ["S", "M", "T", "W", "T", "F", "S"];
@@ -14,10 +15,12 @@ function getEventDateKey(event: GoogleEvent): string | null {
 
 export function MonthCalendarGrid({
   events,
+  calendars,
   selectedDate,
   onSelectDate,
 }: {
   events: GoogleEvent[];
+  calendars: GoogleCalendarListEntry[];
   selectedDate: Date;
   onSelectDate: (d: Date) => void;
 }) {
@@ -25,7 +28,16 @@ export function MonthCalendarGrid({
     new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)
   );
 
-  const eventDays = new Set(events.map(getEventDateKey).filter(Boolean));
+  // Up to 3 distinct event colors per day, for the little dots under the date.
+  const dayColors = new Map<string, string[]>();
+  for (const event of events) {
+    const key = getEventDateKey(event);
+    if (!key) continue;
+    const { color } = getEventMeta(event, calendars);
+    const existing = dayColors.get(key) ?? [];
+    if (!existing.includes(color) && existing.length < 3) existing.push(color);
+    dayColors.set(key, existing);
+  }
 
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
@@ -43,48 +55,46 @@ export function MonthCalendarGrid({
   const isSameDay = (a: Date, b: Date) => a.toDateString() === b.toDateString();
 
   return (
-    <div className="rounded-2xl border border-rule bg-paper-raised overflow-hidden">
-      <div className="flex items-center justify-between px-3 py-2.5 border-b border-rule">
+    <div className="rounded-2xl border border-rule bg-paper-raised overflow-hidden w-full">
+      <div className="flex items-center justify-between px-3 py-2 border-b border-rule">
         <button
           onClick={() => setCursor(new Date(year, month - 1, 1))}
-          className="w-7 h-7 rounded-full border border-rule flex items-center justify-center text-ink-soft hover:border-accent hover:text-accent transition-colors"
+          className="w-6 h-6 rounded-full border border-rule flex items-center justify-center text-ink-soft hover:border-accent hover:text-accent transition-colors shrink-0"
           aria-label="Previous month"
         >
-          <IconChevronLeft className="w-3.5 h-3.5" />
+          <IconChevronLeft className="w-3 h-3" />
         </button>
-        <p className="font-serif text-xs font-semibold tracking-wide">
+        <p className="font-serif text-xs font-semibold tracking-wide truncate px-1">
           {cursor.toLocaleDateString(undefined, { month: "long", year: "numeric" })}
         </p>
         <button
           onClick={() => setCursor(new Date(year, month + 1, 1))}
-          className="w-7 h-7 rounded-full border border-rule flex items-center justify-center text-ink-soft hover:border-accent hover:text-accent transition-colors"
+          className="w-6 h-6 rounded-full border border-rule flex items-center justify-center text-ink-soft hover:border-accent hover:text-accent transition-colors shrink-0"
           aria-label="Next month"
         >
-          <IconChevronRight className="w-3.5 h-3.5" />
+          <IconChevronRight className="w-3 h-3" />
         </button>
       </div>
 
-      <div className="grid grid-cols-7 text-center px-1.5 pt-2">
+      <div className="grid grid-cols-7 text-center px-1 pt-1.5">
         {WEEKDAYS.map((d, i) => (
-          <div key={i} className="text-[9px] uppercase tracking-widest text-ink-soft py-0.5">
+          <div key={i} className="text-[8px] uppercase tracking-widest text-ink-soft py-0.5">
             {d}
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-0.5 px-1.5 pb-2">
+      <div className="grid grid-cols-7 gap-0.5 px-1 pb-1.5">
         {cells.map((date, i) => {
-          if (!date) return <div key={i} className="aspect-square" />;
-          const hasEvent = eventDays.has(date.toDateString());
+          if (!date) return <div key={i} className="h-7" />;
+          const colors = dayColors.get(date.toDateString()) ?? [];
           const isToday = isSameDay(date, today);
           const isSelected = isSameDay(date, selectedDate);
           return (
             <button
               key={i}
-              onClick={() => {
-                onSelectDate(date);
-              }}
-              className={`aspect-square rounded-lg flex flex-col items-center justify-center text-[11px] relative transition-colors ${
+              onClick={() => onSelectDate(date)}
+              className={`h-7 rounded-md flex flex-col items-center justify-center text-[10px] relative transition-colors ${
                 isSelected
                   ? "bg-accent text-paper font-semibold"
                   : isToday
@@ -93,12 +103,16 @@ export function MonthCalendarGrid({
               }`}
             >
               <span>{date.getDate()}</span>
-              {hasEvent && (
-                <span
-                  className={`absolute bottom-1 w-1 h-1 rounded-full ${
-                    isSelected ? "bg-paper" : "bg-accent"
-                  }`}
-                />
+              {colors.length > 0 && (
+                <span className="flex items-center gap-0.5 mt-0.5">
+                  {colors.map((c, ci) => (
+                    <span
+                      key={ci}
+                      className="w-1 h-1 rounded-full"
+                      style={{ backgroundColor: isSelected ? "currentColor" : c }}
+                    />
+                  ))}
+                </span>
               )}
             </button>
           );

@@ -6,9 +6,8 @@ import { useCalendarData } from "@/lib/use-google-data";
 import { SyncStatus } from "@/components/SyncStatus";
 import { MonthCalendarGrid } from "@/components/MonthCalendarGrid";
 import { IconTrash, IconCalendar, IconSun, IconClock } from "@/components/icons";
-import type { GoogleEvent, GoogleCalendarListEntry } from "@/lib/google-api";
-
-const FALLBACK_COLORS = ["#e08a5f", "#5b8fd6", "#7fb069", "#c77dff", "#d6a24a"];
+import type { GoogleEvent } from "@/lib/google-api";
+import { getEventMeta } from "@/lib/calendarColors";
 
 function getEventDate(event: GoogleEvent): Date | null {
   const start = event.start?.dateTime ?? event.start?.date;
@@ -33,18 +32,6 @@ function dateHeading(d: Date) {
   if (isSameDay(d, today)) return "Today";
   if (isSameDay(d, tomorrow)) return "Tomorrow";
   return d.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
-}
-
-// Colors calendar events by their source Google Calendar (e.g. "Holidays",
-// "Personal") — using Google's own calendar color when available, with a
-// deterministic fallback so the same calendar always gets the same color.
-function getEventMeta(event: GoogleEvent, calendars: GoogleCalendarListEntry[]) {
-  const cal = calendars.find((c) => c.id === event.calendarId);
-  const label = cal?.summary ?? "Event";
-  if (cal?.backgroundColor) return { label, color: cal.backgroundColor };
-  let hash = 0;
-  for (let i = 0; i < label.length; i++) hash = (hash * 31 + label.charCodeAt(i)) >>> 0;
-  return { label, color: FALLBACK_COLORS[hash % FALLBACK_COLORS.length] };
 }
 
 export default function CalendarPage() {
@@ -299,8 +286,8 @@ export default function CalendarPage() {
         </div>
       )}
 
-      <div className="grid md:grid-cols-[1fr_260px] gap-8 items-start">
-        <div className="order-2 md:order-1">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-8 items-start">
+        <div className="order-2 md:order-1 min-w-0">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-serif text-xl font-semibold">{rangeLabel}</h2>
             <span className="text-xs text-ink-soft">
@@ -371,9 +358,10 @@ export default function CalendarPage() {
           </ul>
         </div>
 
-        <div className="order-1 md:order-2 md:sticky md:top-10">
+        <div className="order-1 md:order-2 md:sticky md:top-10 min-w-0">
           <MonthCalendarGrid
             events={events}
+            calendars={calendars}
             selectedDate={selectedDate ?? new Date()}
             onSelectDate={(d) =>
               setSelectedDate((cur) => (cur && cur.toDateString() === d.toDateString() ? null : d))
