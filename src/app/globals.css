@@ -2543,3 +2543,18 @@ body {
     letter-spacing: 0;
   }
 }
+
+/* Final desktop compact-card correction: match the supplied reference height. */
+@media (min-width: 1101px) {
+  .zen-challenge-list {
+    gap: 1rem;
+  }
+
+  .zen-challenge-card {
+    height: 148px !important;
+    min-height: 148px !important;
+    max-height: 148px !important;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+}
