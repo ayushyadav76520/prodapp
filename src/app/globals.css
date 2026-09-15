@@ -3357,3 +3357,264 @@ body {
     font-size: .56rem;
   }
 }
+
+/* Focus Session mobile reference pass — mobile/fullscreen only.
+   Deliberately scoped so desktop/laptop fullscreen styles above remain unchanged. */
+@media (max-width: 767px) {
+  .focus-active-shell:fullscreen .focus-fullscreen-panel {
+    padding: 0.95rem 1rem 1.5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-topbar {
+    margin: 0;
+    min-height: 2.85rem;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-grid {
+    width: 100%;
+    margin-top: 2rem;
+    padding: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(7.2rem, 30vw, 9rem);
+    grid-template-rows: auto auto auto auto auto auto auto auto auto auto;
+    column-gap: 0.85rem;
+    row-gap: 0;
+    align-items: start;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-copy,
+  .focus-active-shell:fullscreen .focus-fullscreen-visual {
+    display: contents;
+    width: auto;
+    padding: 0;
+  }
+
+  .focus-active-shell:fullscreen .focus-mode-eyebrow {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+    margin: 0;
+    gap: 0.7rem;
+    min-width: 0;
+    color: #f39a3d;
+    font-size: clamp(0.62rem, 2.7vw, 0.72rem);
+    line-height: 1;
+    letter-spacing: 0.22em;
+    white-space: nowrap;
+  }
+
+  .focus-active-shell:fullscreen .focus-mode-eyebrow span {
+    width: clamp(2.3rem, 13vw, 3.3rem);
+    height: 1px;
+    flex: 0 0 auto;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-copy h1 {
+    grid-column: 1;
+    grid-row: 2;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0.5rem 0 0;
+    font-size: clamp(3.4rem, 18vw, 5.6rem);
+    line-height: 0.88;
+    font-weight: 800;
+    letter-spacing: -0.06em;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .focus-active-shell:fullscreen .focus-mode-subtitle {
+    grid-column: 1;
+    grid-row: 3;
+    min-width: 0;
+    margin: 0.55rem 0 0;
+    color: rgba(243, 239, 230, 0.63);
+    font-size: clamp(0.95rem, 4.1vw, 1.1rem);
+    line-height: 1.28;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-art {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    justify-self: end;
+    align-self: start;
+    width: clamp(7.2rem, 30vw, 9rem);
+    height: clamp(7.2rem, 30vw, 9rem);
+    margin: 0;
+    border-radius: 1.15rem;
+    background: #11110f;
+    overflow: hidden;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-art > .focus-study-illustration {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+  }
+
+  .focus-active-shell:fullscreen .focus-live-datetime {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    margin: 1.35rem 0 0;
+    color: #f39a3d;
+    font-size: clamp(0.7rem, 3.25vw, 0.86rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-action-row {
+    grid-column: 1 / -1;
+    grid-row: 5;
+    width: 100%;
+    margin: 1.15rem 0 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.62rem;
+  }
+
+  .focus-active-shell:fullscreen .focus-control-button {
+    width: 100%;
+    min-width: 0;
+    min-height: 3.25rem;
+    padding: 0.75rem 0.9rem;
+    border-radius: 0.92rem;
+    font-size: clamp(0.65rem, 3vw, 0.8rem);
+    letter-spacing: 0.08em;
+  }
+
+  .focus-active-shell:fullscreen .focus-control-button-primary {
+    background: #f6a13f;
+    border-color: #f6a13f;
+    color: #17120d;
+  }
+
+  .focus-active-shell:fullscreen .focus-control-button-secondary {
+    background: rgba(255, 255, 255, 0.008);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #f3efe6;
+  }
+
+  .focus-active-shell:fullscreen .focus-quote {
+    grid-column: 1 / -1;
+    grid-row: 6;
+    max-width: 100%;
+    margin: 1.55rem 0 0;
+    padding: 0 0.35rem;
+    color: rgba(243, 239, 230, 0.74);
+    font-size: clamp(0.88rem, 3.9vw, 1rem);
+    line-height: 1.5;
+  }
+
+  .focus-active-shell:fullscreen .focus-end-button {
+    grid-column: 1 / -1;
+    grid-row: 7;
+    justify-self: start;
+    margin: 1rem 0 0;
+    max-width: 100%;
+    color: #ff7967;
+    font-size: clamp(0.65rem, 3vw, 0.78rem);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: 0.09em;
+    text-align: left;
+  }
+
+  .focus-active-shell:fullscreen .focus-visual-label {
+    grid-column: 1 / -1;
+    grid-row: 8;
+    margin: 2.1rem 0 0;
+    color: rgba(243, 239, 230, 0.52);
+    font-size: clamp(0.62rem, 3vw, 0.74rem);
+    line-height: 1;
+    letter-spacing: 0.34em;
+    text-align: center;
+  }
+
+  .focus-active-shell:fullscreen .focus-countdown {
+    grid-column: 1 / -1;
+    grid-row: 9;
+    margin: 0.35rem 0 0;
+    color: #f39a3d;
+    font-size: clamp(3.95rem, 18vw, 5.4rem);
+    line-height: 0.92;
+    font-weight: 300;
+    letter-spacing: -0.05em;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .focus-active-shell:fullscreen .focus-progress-wrap {
+    grid-column: 1 / -1;
+    grid-row: 10;
+    width: 100%;
+    margin: 1rem 0 0;
+  }
+
+  .focus-active-shell:fullscreen .focus-progress-track {
+    width: 100%;
+    height: 0.86rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.13);
+    overflow: hidden;
+  }
+
+  .focus-active-shell:fullscreen .focus-progress-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: #f6a13f;
+  }
+
+  .focus-active-shell:fullscreen .focus-progress-meta {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.62rem;
+    color: rgba(243, 239, 230, 0.55);
+    font-size: clamp(0.58rem, 2.65vw, 0.7rem);
+    line-height: 1;
+    letter-spacing: 0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .focus-active-shell:fullscreen .focus-progress-meta span:nth-child(1) {
+    text-align: left;
+  }
+
+  .focus-active-shell:fullscreen .focus-progress-meta span:nth-child(2) {
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .focus-active-shell:fullscreen .focus-progress-meta span:nth-child(3) {
+    text-align: right;
+  }
+
+}
+
+@media (max-width: 380px) {
+  .focus-active-shell:fullscreen .focus-fullscreen-panel {
+    padding-inline: 0.85rem;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-grid {
+    grid-template-columns: minmax(0, 1fr) 6.9rem;
+    column-gap: 0.7rem;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-art {
+    width: 6.9rem;
+    height: 6.9rem;
+  }
+
+  .focus-active-shell:fullscreen .focus-live-datetime {
+    letter-spacing: 0.085em;
+  }
+}
