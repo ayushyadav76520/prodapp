@@ -308,6 +308,7 @@ export default function CalendarPage() {
           <ul className="space-y-2.5">
             {rangedEvents.map(({ event, date: evDate }) => {
               const { label, color } = getEventMeta(event, calendars);
+              const isToday = evDate.toDateString() === new Date().toDateString();
               return (
                 <li
                   key={event.id}
@@ -329,7 +330,18 @@ export default function CalendarPage() {
                     <p className="font-semibold text-sm truncate">{event.summary || "(No title)"}</p>
                     <div className="flex items-center gap-2 flex-wrap text-xs text-ink-soft">
                       <span className="flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                        <span className="relative flex w-2 h-2 shrink-0">
+                          {label === "You" && isToday && (
+                            <span
+                              className="absolute inset-0 rounded-full animate-ping"
+                              style={{ backgroundColor: color }}
+                            />
+                          )}
+                          <span
+                            className="relative w-2 h-2 rounded-full"
+                            style={{ backgroundColor: color }}
+                          />
+                        </span>
                         <span
                           className="rounded-full px-2 py-0.5 text-[10px] font-medium"
                           style={{ backgroundColor: `${color}26`, color }}
