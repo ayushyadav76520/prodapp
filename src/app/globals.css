@@ -3956,3 +3956,318 @@ body {
     width: min(100%, 270px);
   }
 }
+
+/* FINAL MOBILE REFERENCE LOCK — 2026-09-16
+   Mobile fullscreen only. Desktop/laptop is intentionally untouched. */
+@media (max-width: 767px) {
+  .focus-active-shell:fullscreen {
+    width: 100vw !important;
+    min-height: 100dvh !important;
+    height: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    background: #0d0c0b !important;
+  }
+
+  .focus-active-shell:fullscreen .focus-session-frame,
+  .focus-active-shell:fullscreen .focus-fullscreen-stage,
+  .focus-active-shell:fullscreen .focus-fullscreen-panel {
+    width: 100% !important;
+    min-height: 100dvh !important;
+    height: auto !important;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-panel {
+    position: relative !important;
+    box-sizing: border-box !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+  }
+
+  /* Header: fixed to the same visual inset as the reference. */
+  .focus-active-shell:fullscreen .focus-fullscreen-topbar {
+    position: absolute !important;
+    top: 5.45vh !important;
+    left: 10.05vw !important;
+    right: 10.05vw !important;
+    min-height: 3.6rem !important;
+    margin: 0 !important;
+    z-index: 10 !important;
+  }
+
+  .focus-active-shell:fullscreen .focus-profile-mini {
+    gap: .82rem !important;
+  }
+
+  .focus-active-shell:fullscreen .focus-profile-avatar {
+    width: 3.9rem !important;
+    height: 3.9rem !important;
+  }
+
+  .focus-active-shell:fullscreen .focus-profile-name {
+    font-size: 1.02rem !important;
+    line-height: 1.1 !important;
+  }
+
+  .focus-active-shell:fullscreen .focus-profile-level {
+    margin-top: .2rem !important;
+    font-size: .78rem !important;
+    line-height: 1.1 !important;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-icon-button {
+    width: 3.2rem !important;
+    height: 3.2rem !important;
+    border-radius: 1rem !important;
+  }
+
+  /* Hero/content geometry. The reference uses ~10% side margins. */
+  .focus-active-shell:fullscreen .focus-fullscreen-grid {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100dvh !important;
+    margin: 0 !important;
+    padding: 15.15vh 10.05vw 9vh !important;
+    box-sizing: border-box !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, .94fr) !important;
+    grid-template-rows: auto auto auto auto auto auto auto auto auto auto !important;
+    column-gap: 5.1vw !important;
+    row-gap: 0 !important;
+    align-content: start !important;
+    align-items: start !important;
+    overflow: visible !important;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-copy,
+  .focus-active-shell:fullscreen .focus-fullscreen-visual {
+    display: contents !important;
+  }
+
+  /* FOCUS MODE label */
+  .focus-active-shell:fullscreen .mobile-hero-eyebrow {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    align-self: start !important;
+    margin: 0 !important;
+    gap: .72rem !important;
+    font-size: clamp(.68rem, 2.55vw, .86rem) !important;
+    line-height: 1 !important;
+    letter-spacing: .28em !important;
+    white-space: nowrap !important;
+  }
+
+  .focus-active-shell:fullscreen .mobile-hero-eyebrow span {
+    width: clamp(2.15rem, 8.7vw, 3.1rem) !important;
+    height: 1px !important;
+  }
+
+  /* Session title */
+  .focus-active-shell:fullscreen .mobile-hero-title {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 3.25vh 0 0 !important;
+    font-size: clamp(4.05rem, 15.1vw, 8rem) !important;
+    line-height: .83 !important;
+    letter-spacing: -.065em !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+  }
+
+  /* Tagline */
+  .focus-active-shell:fullscreen .mobile-hero-subtitle {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 2.05vh 0 0 !important;
+    color: rgba(243,239,230,.61) !important;
+    font-size: clamp(1rem, 4.25vw, 1.42rem) !important;
+    line-height: 1.32 !important;
+  }
+
+  /* Existing live date/time — no hardcoded value. */
+  .focus-active-shell:fullscreen .mobile-hero-datetime {
+    grid-column: 1 / -1 !important;
+    grid-row: 4 !important;
+    margin: 4.7vh 0 0 !important;
+    color: #f39a3d !important;
+    font-size: clamp(.9rem, 3.95vw, 1.34rem) !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    letter-spacing: .105em !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+  }
+
+  /* Small illustration: same upper-right role and substantially larger than v5. */
+  .focus-active-shell:fullscreen .mobile-hero-art {
+    grid-column: 2 !important;
+    grid-row: 1 / span 3 !important;
+    justify-self: end !important;
+    align-self: start !important;
+    width: min(38vw, 19.5rem) !important;
+    height: auto !important;
+    margin: -.15vh 0 0 !important;
+    padding: 0 !important;
+    border-radius: 1.35rem !important;
+    background: #11110f !important;
+    overflow: hidden !important;
+  }
+
+  .focus-active-shell:fullscreen .mobile-hero-art .focus-study-illustration {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    max-width: none !important;
+    max-height: none !important;
+  }
+
+  /* Three large stacked controls. */
+  .focus-active-shell:fullscreen .mobile-hero-actions {
+    grid-column: 1 / -1 !important;
+    grid-row: 5 !important;
+    width: 100% !important;
+    margin: 3.65vh 0 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.05rem !important;
+  }
+
+  .focus-active-shell:fullscreen .mobile-hero-actions button {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 5.05rem !important;
+    height: 5.05rem !important;
+    padding: .9rem 1rem !important;
+    border-radius: 1.05rem !important;
+    font-size: clamp(.8rem, 3.2vw, 1rem) !important;
+    letter-spacing: .105em !important;
+  }
+
+  /* Quote */
+  .focus-active-shell:fullscreen .mobile-hero-quote {
+    grid-column: 1 / -1 !important;
+    grid-row: 6 !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 4.25vh 0 0 !important;
+    padding: 0 1vw !important;
+    box-sizing: border-box !important;
+    font-size: clamp(1rem, 4.1vw, 1.34rem) !important;
+    line-height: 1.48 !important;
+  }
+
+  /* End session */
+  .focus-active-shell:fullscreen .mobile-hero-end {
+    grid-column: 1 / -1 !important;
+    grid-row: 7 !important;
+    justify-self: start !important;
+    margin: 3.55vh 0 0 !important;
+    font-size: clamp(.7rem, 3.05vw, .94rem) !important;
+    line-height: 1.1 !important;
+    letter-spacing: .09em !important;
+    white-space: nowrap !important;
+  }
+
+  /* Timer section: divider, label, timer, thick progress bar. */
+  .focus-active-shell:fullscreen .mobile-timer-label {
+    grid-column: 1 / -1 !important;
+    grid-row: 8 !important;
+    justify-self: center !important;
+    width: 100% !important;
+    margin: 5.55vh 0 0 !important;
+    padding-top: 4.05vh !important;
+    border-top: 1px solid rgba(243,239,230,.20) !important;
+    color: rgba(243,239,230,.54) !important;
+    font-size: clamp(.76rem, 3.15vw, .98rem) !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    letter-spacing: .36em !important;
+    text-align: center !important;
+  }
+
+  .focus-active-shell:fullscreen .mobile-timer-countdown {
+    grid-column: 1 / -1 !important;
+    grid-row: 9 !important;
+    justify-self: center !important;
+    margin: 2.2vh 0 0 !important;
+    color: #f39a3d !important;
+    font-size: clamp(4.8rem, 17.2vw, 8.5rem) !important;
+    line-height: .84 !important;
+    letter-spacing: -.055em !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+  }
+
+  .focus-active-shell:fullscreen .mobile-timer-progress {
+    grid-column: 1 / -1 !important;
+    grid-row: 10 !important;
+    width: 100% !important;
+    margin: 3.25vh 0 0 !important;
+  }
+
+  .focus-active-shell:fullscreen .mobile-timer-progress .focus-progress-track {
+    width: 100% !important;
+    height: 1.15rem !important;
+    border-radius: 999px !important;
+  }
+
+  .focus-active-shell:fullscreen .mobile-timer-progress .focus-progress-meta {
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr !important;
+    width: 100% !important;
+    margin-top: .72rem !important;
+    gap: .5rem !important;
+    font-size: clamp(.68rem, 2.85vw, .88rem) !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+  }
+
+  .focus-active-shell:fullscreen .mobile-timer-progress .focus-progress-meta span:nth-child(1) { text-align: left !important; }
+  .focus-active-shell:fullscreen .mobile-timer-progress .focus-progress-meta span:nth-child(2) { text-align: center !important; white-space: nowrap !important; }
+  .focus-active-shell:fullscreen .mobile-timer-progress .focus-progress-meta span:nth-child(3) { text-align: right !important; }
+}
+
+/* 360–374px: retain the reference composition without letting the hero overflow. */
+@media (max-width: 374px) {
+  .focus-active-shell:fullscreen .focus-fullscreen-topbar {
+    left: 9vw !important;
+    right: 9vw !important;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-grid {
+    padding-left: 9vw !important;
+    padding-right: 9vw !important;
+    column-gap: 4vw !important;
+  }
+
+  .focus-active-shell:fullscreen .focus-profile-avatar {
+    width: 3.45rem !important;
+    height: 3.45rem !important;
+  }
+
+  .focus-active-shell:fullscreen .focus-fullscreen-icon-button {
+    width: 2.9rem !important;
+    height: 2.9rem !important;
+  }
+
+  .focus-active-shell:fullscreen .mobile-hero-art {
+    width: 36vw !important;
+    max-width: 8.5rem !important;
+  }
+
+  .focus-active-shell:fullscreen .mobile-hero-title {
+    font-size: clamp(3.65rem, 15vw, 5rem) !important;
+  }
+
+  .focus-active-shell:fullscreen .mobile-hero-actions button {
+    min-height: 4.65rem !important;
+    height: 4.65rem !important;
+  }
+}
