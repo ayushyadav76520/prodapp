@@ -188,13 +188,14 @@ export default function SkillsPage() {
       {tab === "session" && <FocusSession />}
 
       {tab === "challenge" && (
-        <div className="max-w-2xl space-y-6">
-          <div className="flex justify-end">
+        <section className="zen-challenge-section" aria-label="Challenges">
+          <div className="zen-challenge-toolbar">
             <button
               onClick={() => setShowForm((v) => !v)}
-              className="text-xs uppercase tracking-widest border border-rule px-3 py-1.5 hover:border-ink transition-colors"
+              className="zen-new-challenge-button"
             >
-              {showForm ? "Cancel" : "+ New Challenge"}
+              <span aria-hidden="true">+</span>
+              {showForm ? "Cancel" : "New Challenge"}
             </button>
           </div>
 
@@ -281,79 +282,75 @@ export default function SkillsPage() {
             </div>
           )}
 
-          <div className="space-y-4">
+          <div className="zen-challenge-list">
             {skills.map((skill) => {
               const streak = currentStreak(skill);
               const checkedToday = isCheckedInToday(skill);
               const pct = progressPercent(skill);
               return (
-                <div key={skill.id} className="border border-rule p-5">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <p className="font-medium text-sm">{skill.name}</p>
-                      <p className="text-xs text-ink-soft mt-0.5">
-                        Day {daysElapsed(skill) + 1} of {skill.durationDays} ·{" "}
-                        {daysRemaining(skill)} days left
-                      </p>
+                <article key={skill.id} className="zen-challenge-card">
+                  <div className="zen-challenge-card-top">
+                    <div className="zen-challenge-identity">
+                      <div className="zen-challenge-icon" aria-hidden="true">
+                        <IconTrophy className="w-7 h-7" />
+                      </div>
+                      <div className="zen-challenge-title-group">
+                        <h3>{skill.name}</h3>
+                        <p>
+                          Day {daysElapsed(skill) + 1} of {skill.durationDays} · {daysRemaining(skill)} days left
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-3">
+
+                    <div className="zen-challenge-actions">
                       <button
                         onClick={() => shareSkill(skill)}
-                        className="w-11 h-11 rounded-full border border-rule text-ink-soft flex items-center justify-center hover:border-accent hover:text-accent transition-colors"
+                        className="zen-challenge-icon-button"
                         aria-label="Share progress"
                       >
                         <IconShare className="w-5 h-5" />
                       </button>
                       <button
                         onClick={() => removeSkill(skill.id, skill.name)}
-                        className="w-12 h-12 rounded-full border border-rule text-ink-soft flex items-center justify-center hover:border-red-600 hover:text-red-600 transition-colors"
+                        className="zen-challenge-icon-button"
                         aria-label="Delete skill"
                       >
-                        <IconTrash className="w-6 h-6" />
+                        <IconTrash className="w-5 h-5" />
                       </button>
                     </div>
                   </div>
 
-                  <div className="mt-3">
-                    <div className="flex items-center justify-between text-[10px] uppercase tracking-widest text-ink-soft mb-1.5">
+                  <div className="zen-challenge-progress-block">
+                    <div className="zen-challenge-progress-meta">
                       <span>Progress</span>
                       <span className="tabular-nums">{pct.toFixed(2)}%</span>
                     </div>
-                    <div className="h-2 bg-rule rounded-full overflow-hidden">
+                    <div className="zen-challenge-progress-track" aria-label={`Progress ${pct.toFixed(2)} percent`}>
                       <div
-                        className="h-full bg-accent rounded-full transition-all"
-                        style={{
-                          width: `${Math.max(pct, 2)}%`,
-                          boxShadow: "0 0 8px var(--accent)",
-                        }}
+                        className="zen-challenge-progress-fill"
+                        style={{ width: `${Math.max(pct, 2)}%` }}
                       />
                     </div>
                   </div>
 
-                  <div className="mt-4 flex items-center justify-between">
-                    <div className="flex items-center gap-1.5 text-sm">
-                      <span>🔥</span>
-                      <span className="font-serif font-semibold text-lg">{streak}</span>
-                      <span className="text-ink-soft text-xs uppercase tracking-widest">
-                        day streak
-                      </span>
+                  <div className="zen-challenge-card-bottom">
+                    <div className="zen-challenge-streak">
+                      <span className="zen-challenge-flame" aria-hidden="true">🔥</span>
+                      <span className="zen-challenge-streak-number">{streak}</span>
+                      <span>day streak</span>
                     </div>
                     <button
                       onClick={() => checkIn(skill)}
-                      className={`text-xs uppercase tracking-widest px-4 py-1.5 transition-colors ${
-                        checkedToday
-                          ? "border border-emerald-600/40 text-emerald-700 dark:text-emerald-400"
-                          : "bg-ink text-paper hover:bg-accent"
-                      }`}
+                      className={`zen-checkin-button ${checkedToday ? "is-done" : ""}`}
                     >
                       {checkedToday ? "✓ Done today" : "Check in"}
                     </button>
                   </div>
-                </div>
+                </article>
               );
             })}
           </div>
-        </div>
+        </section>
       )}
     </div>
   );
