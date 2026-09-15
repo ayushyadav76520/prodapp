@@ -173,7 +173,16 @@ export function FocusSession() {
     return () => document.removeEventListener("fullscreenchange", onFsChange);
   }, []);
 
-  const start = () => {
+  const enterFullscreen = async () => {
+    if (document.fullscreenElement || !containerRef.current?.requestFullscreen) return;
+    try {
+      await containerRef.current.requestFullscreen();
+    } catch {
+      // Fullscreen can be denied/unsupported by the browser; keep the session running normally.
+    }
+  };
+
+  const start = async () => {
     const minutes = Math.max(1, Number(durationMin) || 1);
     const secs = minutes * 60;
     setTotalSeconds(secs);
@@ -183,9 +192,10 @@ export function FocusSession() {
     setActiveRecordId(null);
     lastBreakMarkRef.current = 0;
     setPhase("focusing");
+    await enterFullscreen();
   };
 
-  const resumeRecord = (rec: FocusSessionRecord) => {
+  const resumeRecord = async (rec: FocusSessionRecord) => {
     const totalMinutes = rec.totalMinutes ?? rec.durationMinutes;
     const secsRemaining = rec.remainingSeconds ?? 0;
     const secsTotal = Math.max(secsRemaining, totalMinutes * 60);
@@ -198,6 +208,7 @@ export function FocusSession() {
     setActiveRecordId(rec.id);
     lastBreakMarkRef.current = Math.floor(elapsedSoFar / (45 * 60));
     setPhase("focusing");
+    await enterFullscreen();
   };
 
   const pauseResume = () => setPhase((p) => (p === "focusing" ? "paused" : "focusing"));
