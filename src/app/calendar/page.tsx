@@ -331,7 +331,7 @@ export default function CalendarPage() {
                     <div className="flex items-center gap-2 flex-wrap text-xs text-ink-soft">
                       <span className="flex items-center gap-1.5">
                         <span className="relative flex w-2 h-2 shrink-0">
-                          {label === "You" && isToday && (
+                          {isToday && (
                             <span
                               className="absolute inset-0 rounded-full animate-ping"
                               style={{ backgroundColor: "#3b82f6" }}
