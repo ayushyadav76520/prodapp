@@ -173,16 +173,17 @@ export function FocusSession() {
     return () => document.removeEventListener("fullscreenchange", onFsChange);
   }, []);
 
-  const enterFullscreen = async () => {
-    if (document.fullscreenElement || !containerRef.current?.requestFullscreen) return;
-    try {
-      await containerRef.current.requestFullscreen();
-    } catch {
-      // Fullscreen can be denied/unsupported by the browser; keep the session running normally.
-    }
+  const enterFullscreen = () => {
+    if (document.fullscreenElement || !containerRef.current?.requestFullscreen) return Promise.resolve();
+    return containerRef.current.requestFullscreen();
   };
 
-  const start = async () => {
+  const start = () => {
+    // Request fullscreen directly from the Start Session click handler while the user gesture is active.
+    void enterFullscreen().catch((error) => {
+      console.warn("Fullscreen request failed:", error);
+    });
+
     const minutes = Math.max(1, Number(durationMin) || 1);
     const secs = minutes * 60;
     setTotalSeconds(secs);
@@ -192,10 +193,14 @@ export function FocusSession() {
     setActiveRecordId(null);
     lastBreakMarkRef.current = 0;
     setPhase("focusing");
-    await enterFullscreen();
   };
 
-  const resumeRecord = async (rec: FocusSessionRecord) => {
+  const resumeRecord = (rec: FocusSessionRecord) => {
+    // Resume is also a user gesture, so request fullscreen directly in this click path.
+    void enterFullscreen().catch((error) => {
+      console.warn("Fullscreen request failed:", error);
+    });
+
     const totalMinutes = rec.totalMinutes ?? rec.durationMinutes;
     const secsRemaining = rec.remainingSeconds ?? 0;
     const secsTotal = Math.max(secsRemaining, totalMinutes * 60);
@@ -208,7 +213,6 @@ export function FocusSession() {
     setActiveRecordId(rec.id);
     lastBreakMarkRef.current = Math.floor(elapsedSoFar / (45 * 60));
     setPhase("focusing");
-    await enterFullscreen();
   };
 
   const pauseResume = () => setPhase((p) => (p === "focusing" ? "paused" : "focusing"));
