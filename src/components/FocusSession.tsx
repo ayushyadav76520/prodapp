@@ -537,14 +537,14 @@ export function FocusSession() {
 
               <div className="focus-fullscreen-grid">
                 <div className="focus-fullscreen-copy">
-                  <p className="focus-mode-eyebrow">{isBreak ? "BREAK TIME" : "FOCUS MODE"}<span aria-hidden="true" /></p>
-                  <h1>{title.trim() || "Focus Mode"}</h1>
-                  <p className="focus-mode-subtitle">Distraction fades. Progress stays.</p>
-                  <p className="focus-live-datetime" aria-live="polite">
+                  <p className="focus-mode-eyebrow mobile-hero-eyebrow">{isBreak ? "BREAK TIME" : "FOCUS MODE"}<span aria-hidden="true" /></p>
+                  <h1 className="mobile-hero-title">{title.trim() || "Focus Mode"}</h1>
+                  <p className="focus-mode-subtitle mobile-hero-subtitle">Distraction fades. Progress stays.</p>
+                  <p className="focus-live-datetime mobile-hero-datetime" aria-live="polite">
                     {currentTime.toLocaleDateString(undefined, { weekday: "short", day: "2-digit", month: "short" }).toUpperCase()} · {currentTime.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).toUpperCase()}
                   </p>
 
-                  <div className="focus-fullscreen-action-row">
+                  <div className="focus-fullscreen-action-row mobile-hero-actions">
                     {isBreak ? (
                       <>
                         <button onClick={extendBreak} className="focus-control-button focus-control-button-secondary">+1 MINUTE</button>
@@ -562,17 +562,17 @@ export function FocusSession() {
                     )}
                   </div>
 
-                  <blockquote className="focus-quote">&ldquo;{quote}&rdquo;</blockquote>
-                  <button onClick={endSessionEarly} className="focus-end-button">END SESSION &amp; SAVE PROGRESS</button>
+                  <blockquote className="focus-quote mobile-hero-quote">&ldquo;{quote}&rdquo;</blockquote>
+                  <button onClick={endSessionEarly} className="focus-end-button mobile-hero-end">END SESSION &amp; SAVE PROGRESS</button>
                 </div>
 
                 <div className="focus-fullscreen-visual">
-                  <div className="focus-fullscreen-art">
+                  <div className="focus-fullscreen-art mobile-hero-art">
                     <FocusStudyIllustration running={phase !== "paused"} />
                   </div>
-                  <p className="focus-visual-label">{isBreak ? "BREAK" : "FOCUS SESSION"}</p>
-                  <div className="focus-countdown">{formatTime(countdownSeconds)}</div>
-                  <div className="focus-progress-wrap">
+                  <p className="focus-visual-label mobile-timer-label">{isBreak ? "BREAK" : "FOCUS SESSION"}</p>
+                  <div className="focus-countdown mobile-timer-countdown">{formatTime(countdownSeconds)}</div>
+                  <div className="focus-progress-wrap mobile-timer-progress">
                     <div className="focus-progress-track">
                       <div className="focus-progress-fill" style={{ width: `${Math.min(100, Math.max(0, countdownProgress * 100))}%` }} />
                     </div>
