@@ -334,7 +334,7 @@ export default function CalendarPage() {
                           {label === "You" && isToday && (
                             <span
                               className="absolute inset-0 rounded-full animate-ping"
-                              style={{ backgroundColor: color }}
+                              style={{ backgroundColor: "#3b82f6" }}
                             />
                           )}
                           <span
