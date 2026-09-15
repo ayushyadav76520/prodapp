@@ -2544,17 +2544,81 @@ body {
   }
 }
 
-/* Final desktop compact-card correction: match the supplied reference height. */
+/* Final desktop reference correction: compact cards with the same proportions
+   as the supplied laptop screenshot. */
 @media (min-width: 1101px) {
   .zen-challenge-list {
-    gap: 1rem;
+    gap: 0.8rem;
   }
 
   .zen-challenge-card {
-    height: 148px !important;
-    min-height: 148px !important;
-    max-height: 148px !important;
+    height: 120px !important;
+    min-height: 120px !important;
+    max-height: 120px !important;
+    padding: 0.55rem 0.8rem 0.5rem !important;
+    grid-template-columns: 82px minmax(0, 1fr) 136px !important;
+    grid-template-rows: 48px minmax(0, 1fr) 27px !important;
+    column-gap: 0.72rem !important;
+    row-gap: 0.08rem !important;
     overflow: hidden;
     box-sizing: border-box;
+  }
+
+  .zen-challenge-icon {
+    width: 72px !important;
+    height: 72px !important;
+    flex-basis: 72px !important;
+  }
+
+  .zen-challenge-icon svg {
+    width: 31px !important;
+    height: 31px !important;
+  }
+
+  .zen-challenge-title-group h3 {
+    font-size: 1.18rem !important;
+  }
+
+  .zen-challenge-title-group p {
+    margin-top: 0.2rem !important;
+    font-size: 0.72rem !important;
+  }
+
+  .zen-challenge-actions {
+    gap: 0.45rem !important;
+  }
+
+  .zen-challenge-icon-button {
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+  .zen-challenge-progress-meta {
+    margin-bottom: 0.2rem !important;
+    font-size: 0.62rem !important;
+  }
+
+  .zen-challenge-progress-track {
+    height: 9px !important;
+  }
+
+  .zen-challenge-streak {
+    gap: 0.35rem !important;
+    font-size: 0.64rem !important;
+  }
+
+  .zen-challenge-flame {
+    font-size: 1.05rem !important;
+  }
+
+  .zen-challenge-streak-number {
+    font-size: 0.9rem !important;
+  }
+
+  .zen-checkin-button {
+    width: 132px !important;
+    height: 34px !important;
+    border-radius: 0.4rem !important;
+    font-size: 0.7rem !important;
   }
 }
