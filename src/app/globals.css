@@ -3972,3 +3972,18 @@ body {
     width: 100% !important;
   }
 }
+
+/* Mobile-only compact Challenges cards: reduce card height without changing
+   desktop/tablet sizing or the overall challenge layout. */
+@media (max-width: 767px) {
+  .zen-challenge-card {
+    height: 220px !important;
+    min-height: 220px !important;
+    max-height: 220px !important;
+    padding: .8rem .85rem .7rem !important;
+    grid-template-rows: 64px minmax(0, 1fr) 42px;
+    row-gap: .35rem;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+}
