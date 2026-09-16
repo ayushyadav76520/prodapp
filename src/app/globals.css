@@ -3958,12 +3958,14 @@ body {
 }
 
 /* MOBILE BUTTON WIDTH REFINEMENT ONLY
-   Keep the proven V5 mobile composition unchanged; narrow only the three session buttons. */
+   Buttons must span the exact same left/right edges as the title, subtitle,
+   quote and date above them (matches the reference screenshot) — full width
+   of the grid column, not inset. */
 @media (max-width: 767px) {
   .focus-active-shell:fullscreen .mobile-hero-actions {
-    width: 92% !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 
   .focus-active-shell:fullscreen .mobile-hero-actions button {
