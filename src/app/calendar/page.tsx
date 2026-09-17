@@ -301,7 +301,7 @@ export default function CalendarPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_169px] gap-8 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-8 items-start">
         <div className="order-2 md:order-1 min-w-0">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-serif text-xl font-semibold">{rangeLabel}</h2>
