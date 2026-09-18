@@ -154,7 +154,7 @@ export default function SkillsPage() {
   }
 
   return (
-    <div className="focus-skills-shell mx-auto w-full max-w-[1400px] px-3 sm:px-5 lg:px-8 py-4 sm:py-5">
+    <div className={`focus-skills-shell zen-tab-${tab} mx-auto w-full max-w-[1400px] px-3 sm:px-5 lg:px-8 py-4 sm:py-5`}>
       <header className="focus-skills-header">
         <div className="focus-skills-heading">
           <p className="focus-skills-eyebrow">Section Four</p>

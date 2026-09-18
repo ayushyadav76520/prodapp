@@ -4113,3 +4113,51 @@ body {
     margin-top: 0.4rem !important;
   }
 }
+
+/* ============================================================
+   ZENSPACE MOBILE FIX — Challenge tab content was being clipped
+   because .focus-skills-shell locks height to 100dvh with
+   overflow hidden (needed for the Focus Session running-timer
+   view), but that same lock was wrongly also applying to the
+   Challenge tab's variable-length card list, hiding content
+   below the fold. On mobile, when the Challenge tab is active,
+   let the shell flow naturally with the page's own scroll
+   instead of being height-locked. The Session tab keeps its
+   existing locked-height behavior untouched (needed for the
+   compact running-timer layout fixed earlier).
+   ============================================================ */
+@media (max-width: 767px) {
+  .focus-skills-shell.zen-tab-challenge {
+    height: auto !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+    display: block !important;
+  }
+
+  .focus-skills-shell.zen-tab-challenge > * {
+    flex: none !important;
+  }
+
+  /* Challenge cards: let height follow content instead of a fixed 148px
+     box, so longer skill names/subtitles never get clipped or overflow. */
+  .zen-challenge-card {
+    height: auto !important;
+    min-height: 148px !important;
+    grid-template-rows: auto !important;
+    gap: 0.7rem !important;
+  }
+
+  .zen-challenge-card-top {
+    flex-wrap: nowrap !important;
+  }
+
+  .zen-challenge-title-group h3 {
+    font-size: 1.05rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .zen-challenge-card-bottom {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+}
