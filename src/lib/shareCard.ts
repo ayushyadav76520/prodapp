@@ -172,15 +172,6 @@ function drawPixelAvatar(ctx: CanvasRenderingContext2D, centerX: number, centerY
   ctx.strokeRect(x + 7 * u, y + 7 * u, 50 * u, 50 * u);
 }
 
-function initials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase())
-    .join("");
-}
-
 function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
   ctx.beginPath();
   ctx.moveTo(x + r, y);

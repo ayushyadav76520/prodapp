@@ -4161,3 +4161,128 @@ body {
     gap: 0.5rem !important;
   }
 }
+
+/* ============================================================
+   ZENSPACE MOBILE DENSITY PASS — shrink header + challenge cards
+   so at least 3 challenge cards are visible without scrolling on
+   a typical mobile screen at 100% zoom. Desktop untouched (all
+   rules scoped to max-width:767px).
+   ============================================================ */
+@media (max-width: 767px) {
+  .focus-skills-header {
+    margin-bottom: 0.6rem !important;
+    gap: 0.5rem !important;
+  }
+
+  .focus-skills-eyebrow {
+    font-size: 0.6rem !important;
+    margin-bottom: 0.15rem !important;
+  }
+
+  .focus-skills-heading h1 {
+    font-size: 1.5rem !important;
+    line-height: 1.05 !important;
+    margin: 0 !important;
+  }
+
+  .focus-skills-subtitle {
+    font-size: 0.68rem !important;
+    line-height: 1.25 !important;
+    margin-top: 0.2rem !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+  }
+
+  .zen-new-challenge-button {
+    height: 34px !important;
+    padding: 0 0.75rem !important;
+    font-size: 0.68rem !important;
+    border-radius: 10px !important;
+  }
+
+  /* Session/Challenge tab row */
+  .focus-skills-shell .flex.gap-5,
+  .focus-skills-shell .flex.gap-6 {
+    margin-top: 0.5rem !important;
+    padding-bottom: 0.4rem !important;
+  }
+
+  /* Challenge cards: aggressive compact pass */
+  .zen-challenge-list {
+    gap: 0.5rem !important;
+  }
+
+  .zen-challenge-card {
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 0.6rem 0.7rem !important;
+    border-radius: 14px !important;
+    gap: 0.4rem !important;
+  }
+
+  .zen-challenge-icon {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 9px !important;
+  }
+
+  .zen-challenge-icon svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  .zen-challenge-title-group h3 {
+    font-size: 0.88rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .zen-challenge-title-group p {
+    font-size: 0.62rem !important;
+    margin-top: 0.1rem !important;
+  }
+
+  .zen-challenge-icon-button {
+    width: 26px !important;
+    height: 26px !important;
+  }
+
+  .zen-challenge-icon-button svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+
+  .zen-challenge-progress-block {
+    margin-top: 0.3rem !important;
+  }
+
+  .zen-challenge-progress-meta {
+    font-size: 0.6rem !important;
+    margin-bottom: 0.2rem !important;
+  }
+
+  .zen-challenge-progress-track {
+    height: 5px !important;
+  }
+
+  .zen-challenge-card-bottom {
+    margin-top: 0.3rem !important;
+  }
+
+  .zen-challenge-streak {
+    font-size: 0.68rem !important;
+    gap: 0.25rem !important;
+  }
+
+  .zen-challenge-streak-number {
+    font-size: 0.85rem !important;
+  }
+
+  .zen-checkin-button {
+    height: 28px !important;
+    padding: 0 0.6rem !important;
+    font-size: 0.62rem !important;
+    border-radius: 8px !important;
+  }
+}

@@ -204,13 +204,13 @@ export default function TasksPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10 space-y-6">
-      <header className="flex items-start justify-between border-b border-rule pb-4">
+    <div className="max-w-6xl mx-auto px-3 py-4 space-y-3 md:px-6 md:py-10 md:space-y-6">
+      <header className="flex items-start justify-between border-b border-rule pb-2 md:pb-4">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.2em] text-accent font-medium mb-1">
+          <p className="text-[9px] md:text-[11px] uppercase tracking-[0.2em] text-accent font-medium mb-0.5 md:mb-1">
             Section Three
           </p>
-          <h1 className="font-serif text-3xl md:text-4xl font-semibold tracking-tight">Tasks</h1>
+          <h1 className="font-serif text-xl md:text-4xl font-semibold tracking-tight">Tasks</h1>
         </div>
         <SyncStatus state={syncState} onRetry={refresh} />
       </header>
@@ -266,44 +266,44 @@ export default function TasksPage() {
           const CatIcon = categoryIcon(list.title);
           return (
             <div key={list.id} className="border border-rule">
-              <div className="flex items-center justify-between gap-3 px-4 py-4 md:px-5 border-b border-rule bg-accent/10">
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className="w-10 h-10 rounded-full bg-accent/15 text-accent flex items-center justify-center shrink-0">
-                    <CatIcon className="w-5 h-5" />
+              <div className="flex items-center justify-between gap-2 px-3 py-2.5 md:px-5 md:py-4 md:gap-3 border-b border-rule bg-accent/10">
+                <div className="flex items-center gap-2 md:gap-3 min-w-0">
+                  <span className="w-7 h-7 md:w-10 md:h-10 rounded-full bg-accent/15 text-accent flex items-center justify-center shrink-0">
+                    <CatIcon className="w-3.5 h-3.5 md:w-5 md:h-5" />
                   </span>
-                  <h2 className="text-sm md:text-base uppercase tracking-widest font-bold text-ink truncate">
+                  <h2 className="text-xs md:text-base uppercase tracking-widest font-bold text-ink truncate">
                     {list.title}
                   </h2>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-0.5 md:gap-2 shrink-0">
                   <button
                     onClick={() => {
                       setAddingToList(isAdding ? null : list.id);
                       setNewTaskTitle("");
                       if (!isOpen) toggleExpanded(list.id);
                     }}
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-ink-soft hover:text-accent hover:bg-paper transition-colors text-2xl leading-none"
+                    className="w-7 h-7 md:w-10 md:h-10 rounded-full flex items-center justify-center text-ink-soft hover:text-accent hover:bg-paper transition-colors text-lg md:text-2xl leading-none"
                     aria-label="Add task"
                   >
                     +
                   </button>
                   <button
                     onClick={() => shareCategory(list.id, list.title)}
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-ink-soft hover:text-accent hover:bg-paper transition-colors"
+                    className="w-7 h-7 md:w-10 md:h-10 rounded-full flex items-center justify-center text-ink-soft hover:text-accent hover:bg-paper transition-colors"
                     aria-label="Share category"
                   >
-                    <IconShare className="w-5 h-5" />
+                    <IconShare className="w-3.5 h-3.5 md:w-5 md:h-5" />
                   </button>
                   <button
                     onClick={() => deleteCategory(list.id, list.title)}
-                    className="w-11 h-11 rounded-full flex items-center justify-center text-ink-soft/70 hover:text-red-600 hover:bg-paper transition-colors"
+                    className="w-8 h-8 md:w-11 md:h-11 rounded-full flex items-center justify-center text-ink-soft/70 hover:text-red-600 hover:bg-paper transition-colors"
                     aria-label="Delete category"
                   >
-                    <IconTrash className="w-6 h-6" />
+                    <IconTrash className="w-4 h-4 md:w-6 md:h-6" />
                   </button>
                   <button
                     onClick={() => toggleExpanded(list.id)}
-                    className="md:hidden w-10 h-10 rounded-full flex items-center justify-center text-ink-soft hover:text-accent hover:bg-paper transition-colors"
+                    className="md:hidden w-7 h-7 rounded-full flex items-center justify-center text-ink-soft hover:text-accent hover:bg-paper transition-colors"
                     aria-label={isOpen ? "Collapse category" : "Expand category"}
                     aria-expanded={isOpen}
                   >
@@ -338,15 +338,15 @@ export default function TasksPage() {
                 {listTasks.length === 0 ? (
                   <p className="text-xs text-ink-soft px-4 py-8 text-center">No tasks yet.</p>
                 ) : (
-                  <ul className="divide-y divide-rule px-4 md:px-5">
+                  <ul className="divide-y divide-rule px-3 md:px-5">
                     {listTasks.map((task) => {
                       const pending = pendingIds.has(task.id);
                       return (
-                        <li key={task.id} className="py-4 md:py-4.5 flex items-start gap-3 group">
+                        <li key={task.id} className="py-2 md:py-4.5 flex items-start gap-2 md:gap-3 group">
                           <button
                             onClick={() => toggleTask(task.id, list.id, task.status)}
                             disabled={pending}
-                            className={`mt-0.5 w-4 h-4 border shrink-0 transition-colors ${
+                            className={`mt-0.5 w-3.5 h-3.5 md:w-4 md:h-4 border shrink-0 transition-colors ${
                               task.status === "completed"
                                 ? "bg-ink border-ink"
                                 : "border-ink-soft hover:border-ink"
@@ -354,14 +354,14 @@ export default function TasksPage() {
                           />
                           <div className="flex-1">
                             <p
-                              className={`text-sm ${
+                              className={`text-xs md:text-sm ${
                                 task.status === "completed" ? "line-through text-ink-soft" : ""
                               }`}
                             >
                               {task.title || "(Untitled task)"}
                             </p>
                             {task.due && (
-                              <p className="text-xs text-ink-soft mt-0.5">
+                              <p className="text-[10px] md:text-xs text-ink-soft mt-0.5">
                                 Due {new Date(task.due).toLocaleDateString()}
                               </p>
                             )}
@@ -372,7 +372,7 @@ export default function TasksPage() {
                             className="text-ink-soft/50 hover:text-red-600 transition-colors shrink-0 mt-0.5"
                             aria-label="Delete task"
                           >
-                            <IconTrash className="w-6 h-6" />
+                            <IconTrash className="w-4 h-4 md:w-6 md:h-6" />
                           </button>
                         </li>
                       );

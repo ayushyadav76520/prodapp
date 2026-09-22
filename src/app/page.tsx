@@ -94,56 +94,56 @@ export default function HomePage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-3 sm:px-5 md:px-6 py-3 sm:py-5 md:py-5 pb-20 md:pb-5">
-      <div className={`grid gap-3 md:gap-4 md:grid-cols-[minmax(0,1.4fr)_minmax(290px,0.8fr)] transition-all duration-700 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"}`}>
-        <section className="rounded-[1.9rem] border border-rule bg-paper-raised p-4 sm:p-5 md:p-6 md:h-[430px] flex flex-col justify-between">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-center gap-4 sm:gap-5 min-w-0">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-[1.2rem] bg-[#efe6cf] text-ink flex items-center justify-center shrink-0 border border-rule shadow-sm overflow-hidden">
-                <IconProfile className="w-[3.8rem] h-[3.8rem] sm:w-[4.5rem] sm:h-[4.5rem] md:w-20 md:h-20" />
+    <div className="max-w-6xl mx-auto px-3 sm:px-5 md:px-6 py-2 sm:py-5 md:py-5 pb-20 md:pb-5">
+      <div className={`grid gap-2 md:gap-4 md:grid-cols-[minmax(0,1.4fr)_minmax(290px,0.8fr)] transition-all duration-700 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"}`}>
+        <section className="rounded-2xl sm:rounded-[1.9rem] border border-rule bg-paper-raised p-3 sm:p-5 md:p-6 md:h-[430px] flex flex-col justify-between">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-3 sm:gap-5 min-w-0">
+              <div className="w-11 h-11 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-xl sm:rounded-[1.2rem] bg-[#efe6cf] text-ink flex items-center justify-center shrink-0 border border-rule shadow-sm overflow-hidden">
+                <IconProfile className="w-[2.5rem] h-[2.5rem] sm:w-[4.5rem] sm:h-[4.5rem] md:w-20 md:h-20" />
               </div>
               <div className="min-w-0">
-                <p className="text-[11px] uppercase tracking-[0.18em] text-accent font-semibold">Profile</p>
-                <h1 className="font-serif text-[1.45rem] sm:text-2xl md:text-4xl font-semibold truncate mt-1">
+                <p className="text-[9px] sm:text-[11px] uppercase tracking-[0.18em] text-accent font-semibold">Profile</p>
+                <h1 className="font-serif text-base sm:text-2xl md:text-4xl font-semibold truncate mt-0.5 sm:mt-1">
                   {getGreeting()}, {session?.user?.name?.split(" ")[0] ?? "there"}
                 </h1>
-                <p className="text-sm sm:text-base text-ink-soft mt-1.5">{dateStr}</p>
+                <p className="text-xs sm:text-base text-ink-soft mt-0.5 sm:mt-1.5">{dateStr}</p>
               </div>
             </div>
-            <Link href="/settings" aria-label="Settings" className="w-9 h-9 md:w-11 md:h-11 rounded-full border border-rule flex items-center justify-center hover:border-ink transition-colors shrink-0">
-              <IconSettings className="w-4 h-4 md:w-5 md:h-5" />
+            <Link href="/settings" aria-label="Settings" className="w-7 h-7 sm:w-9 sm:h-9 md:w-11 md:h-11 rounded-full border border-rule flex items-center justify-center hover:border-ink transition-colors shrink-0">
+              <IconSettings className="w-3.5 h-3.5 md:w-5 md:h-5" />
             </Link>
           </div>
 
-          <div className="mt-5 pt-5 border-t border-rule flex items-end justify-between gap-5">
+          <div className="mt-2 pt-2 sm:mt-5 sm:pt-5 border-t border-rule flex items-end justify-between gap-5">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.2em] text-ink-soft font-semibold">Current level</p>
-              <div className="flex items-baseline gap-3 mt-1">
-                <p className="font-serif text-5xl sm:text-6xl md:text-7xl font-bold leading-none tabular-nums">{level}</p>
-                <span className="text-xs sm:text-sm md:text-base text-ink-soft">one level per active day</span>
+              <p className="text-[9px] sm:text-[11px] uppercase tracking-[0.2em] text-ink-soft font-semibold">Current level</p>
+              <div className="flex items-baseline gap-2 sm:gap-3 mt-0.5 sm:mt-1">
+                <p className="font-serif text-3xl sm:text-6xl md:text-7xl font-bold leading-none tabular-nums">{level}</p>
+                <span className="text-[10px] sm:text-sm md:text-base text-ink-soft">one level per active day</span>
               </div>
             </div>
           </div>
         </section>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-1 gap-3 md:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-1 gap-1.5 sm:gap-3 md:gap-4">
           <HomeCountCard
             href="/calendar"
-            icon={<IconCalendar className="w-6 h-6 sm:w-7 sm:h-7" />}
+            icon={<IconCalendar className="w-4 h-4 sm:w-7 sm:h-7" />}
             label="Today events"
             count={todaysEventCount}
             noun={todaysEventCount === 1 ? "event" : "events"}
           />
           <HomeCountCard
             href="/tasks"
-            icon={<IconTasks className="w-6 h-6 sm:w-7 sm:h-7" />}
+            icon={<IconTasks className="w-4 h-4 sm:w-7 sm:h-7" />}
             label="Tasks"
             count={pendingTaskCount}
             noun={pendingTaskCount === 1 ? "task" : "tasks"}
           />
           <HomeCountCard
             href="/skills"
-            icon={<IconTrophy className="w-6 h-6 sm:w-7 sm:h-7" />}
+            icon={<IconTrophy className="w-4 h-4 sm:w-7 sm:h-7" />}
             label="Challenges"
             count={challengeCount}
             noun={challengeCount === 1 ? "challenge" : "challenges"}
@@ -165,19 +165,19 @@ export default function HomePage() {
         </div>
       )}
 
-      <section className="mt-3 md:mt-4 rounded-[1.9rem] border border-rule bg-paper-raised overflow-hidden">
-        <div className="px-4 sm:px-5 md:px-6 py-3.5 sm:py-4 md:py-5 flex items-center gap-3">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-rule flex items-center justify-center shrink-0">
-            <span className="text-accent text-xl">“</span>
+      <section className="mt-2 md:mt-4 rounded-xl sm:rounded-[1.9rem] border border-rule bg-paper-raised overflow-hidden">
+        <div className="px-3 sm:px-5 md:px-6 py-2 sm:py-4 md:py-5 flex items-center gap-2 sm:gap-3">
+          <div className="w-6 h-6 sm:w-10 sm:h-10 rounded-full border border-rule flex items-center justify-center shrink-0">
+            <span className="text-accent text-xs sm:text-xl">“</span>
           </div>
           <div>
-            <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-ink-soft font-semibold">Today&apos;s reminder</p>
-            <blockquote className="font-serif text-[0.95rem] sm:text-lg md:text-xl leading-snug mt-1">
+            <p className="text-[8px] sm:text-[11px] uppercase tracking-[0.16em] sm:tracking-[0.2em] text-ink-soft font-semibold">Today&apos;s reminder</p>
+            <blockquote className="font-serif text-xs sm:text-lg md:text-xl leading-snug mt-0.5 sm:mt-1 line-clamp-2 sm:line-clamp-none">
               “{HOME_QUOTE}”
             </blockquote>
           </div>
         </div>
-        <div className="px-4 sm:px-5 md:px-6 pb-3.5 sm:pb-4 text-[10px] sm:text-xs text-ink-soft flex flex-wrap gap-x-4 gap-y-1.5">
+        <div className="hidden sm:flex px-4 sm:px-5 md:px-6 pb-3.5 sm:pb-4 text-[10px] sm:text-xs text-ink-soft flex-wrap gap-x-4 gap-y-1.5">
           <span>{completedTasksToday} task{completedTasksToday === 1 ? "" : "s"} completed today</span>
           <span>{completedChallengesToday} challenge check-in{completedChallengesToday === 1 ? "" : "s"}</span>
           <span>{focusSessionsToday} focus session{focusSessionsToday === 1 ? "" : "s"}</span>
@@ -203,17 +203,17 @@ function HomeCountCard({
   return (
     <Link
       href={href}
-      className="group rounded-[1.65rem] border border-rule bg-paper-raised p-3.5 sm:p-4 md:p-5 flex items-center justify-between gap-3 min-h-[88px] sm:min-h-[96px] md:h-[calc((430px-32px)/3)] hover:border-ink transition-colors"
+      className="group rounded-xl sm:rounded-[1.65rem] border border-rule bg-paper-raised p-2 sm:p-4 md:p-5 flex items-center justify-between gap-2 sm:gap-3 min-h-[46px] sm:min-h-[96px] md:h-[calc((430px-32px)/3)] hover:border-ink transition-colors"
     >
-      <div className="flex items-center gap-4 min-w-0">
+      <div className="flex items-center gap-2.5 sm:gap-4 min-w-0">
         <div className="text-accent shrink-0">{icon}</div>
-        <div className="min-w-0">
-          <p className="text-[10px] sm:text-[11px] md:text-xs uppercase tracking-[0.18em] text-ink-soft font-semibold">{label}</p>
-          <p className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold leading-none mt-1 tabular-nums">{count}</p>
-          <p className="text-xs sm:text-sm text-ink-soft mt-1">{noun}</p>
+        <div className="min-w-0 flex items-baseline gap-1.5 sm:block">
+          <p className="text-[8px] sm:text-[11px] md:text-xs uppercase tracking-[0.14em] sm:tracking-[0.18em] text-ink-soft font-semibold sm:mb-0">{label}</p>
+          <p className="font-serif text-lg sm:text-4xl md:text-5xl font-bold leading-none sm:mt-1 tabular-nums">{count}</p>
+          <p className="hidden sm:block text-xs sm:text-sm text-ink-soft mt-1">{noun}</p>
         </div>
       </div>
-      <IconArrowRight className="w-5 h-5 md:w-6 md:h-6 shrink-0 text-ink-soft group-hover:text-ink transition-colors" />
+      <IconArrowRight className="w-3.5 h-3.5 sm:w-5 sm:h-5 md:w-6 md:h-6 shrink-0 text-ink-soft group-hover:text-ink transition-colors" />
     </Link>
   );
 }

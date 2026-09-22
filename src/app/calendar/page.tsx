@@ -193,29 +193,29 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-10 space-y-6">
-      <header className="flex items-start justify-between gap-4 flex-wrap border-b border-rule pb-5">
+    <div className="max-w-5xl mx-auto px-3 py-4 space-y-3 md:px-6 md:py-10 md:space-y-6">
+      <header className="flex items-start justify-between gap-3 flex-wrap border-b border-rule pb-2 md:pb-5">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.2em] text-accent font-medium mb-1">
+          <p className="text-[9px] md:text-[11px] uppercase tracking-[0.2em] text-accent font-medium mb-0.5 md:mb-1">
             Section Two
           </p>
-          <h1 className="font-serif text-3xl md:text-4xl font-semibold tracking-tight">Calendar</h1>
-          <p className="mt-1.5 text-sm text-ink-soft max-w-md">
+          <h1 className="font-serif text-xl md:text-4xl font-semibold tracking-tight">Calendar</h1>
+          <p className="hidden md:block mt-1.5 text-sm text-ink-soft max-w-md">
             Plan your days, stay consistent, and make time for what matters.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 md:gap-3">
           <SyncStatus state={syncState} onRetry={refresh} />
           <button
             onClick={() => setShowForm((v) => !v)}
-            className="flex items-center gap-1.5 rounded-full bg-accent text-paper text-xs font-semibold uppercase tracking-widest px-4 py-2.5 hover:bg-ink transition-colors"
+            className="flex items-center gap-1 md:gap-1.5 rounded-full bg-accent text-paper text-[10px] md:text-xs font-semibold uppercase tracking-widest px-2.5 py-1.5 md:px-4 md:py-2.5 hover:bg-ink transition-colors"
           >
             {showForm ? "Cancel" : "+ Add Event"}
           </button>
         </div>
       </header>
 
-      <div className="flex flex-wrap items-center gap-1.5 rounded-full border border-rule p-1 w-fit text-xs uppercase tracking-widest">
+      <div className="flex flex-wrap items-center gap-1 md:gap-1.5 rounded-full border border-rule p-0.5 md:p-1 w-fit text-[10px] md:text-xs uppercase tracking-widest">
         {(["Month", "Day", "Week"] as const).map((v) => (
           <button
             key={v}
@@ -223,21 +223,21 @@ export default function CalendarPage() {
               setView(v);
               setSelectedDate(null);
             }}
-            className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 transition-colors ${
+            className={`flex items-center gap-1 md:gap-1.5 rounded-full px-2.5 py-1 md:px-3.5 md:py-1.5 transition-colors ${
               !selectedDate && view === v
                 ? "bg-accent text-paper font-semibold"
                 : "text-ink-soft hover:text-ink"
             }`}
           >
-            <IconCalendar className="w-3.5 h-3.5" />
+            <IconCalendar className="w-3 h-3 md:w-3.5 md:h-3.5" />
             {v}
           </button>
         ))}
         <button
           onClick={() => setSelectedDate(null)}
-          className="flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-ink-soft hover:text-ink transition-colors"
+          className="flex items-center gap-1 md:gap-1.5 rounded-full px-2.5 py-1 md:px-3.5 md:py-1.5 text-ink-soft hover:text-ink transition-colors"
         >
-          <IconSun className="w-3.5 h-3.5" />
+          <IconSun className="w-3 h-3 md:w-3.5 md:h-3.5" />
           Today
         </button>
       </div>
@@ -301,11 +301,11 @@ export default function CalendarPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-8 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-3 md:gap-8 items-start">
         <div className="order-2 md:order-1 min-w-0">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-serif text-xl font-semibold">{rangeLabel}</h2>
-            <span className="text-xs text-ink-soft">
+          <div className="flex items-center justify-between mb-2 md:mb-3">
+            <h2 className="font-serif text-base md:text-xl font-semibold">{rangeLabel}</h2>
+            <span className="text-[10px] md:text-xs text-ink-soft">
               {rangedEvents.length} event{rangedEvents.length === 1 ? "" : "s"}
             </span>
           </div>
@@ -320,52 +320,52 @@ export default function CalendarPage() {
             </div>
           )}
 
-          <ul className="space-y-2.5">
+          <ul className="space-y-1.5 md:space-y-2.5">
             {rangedEvents.map(({ event, date: evDate }) => {
               const { label, color } = getEventMeta(event, calendars);
               const isToday = evDate.toDateString() === todayKey;
               return (
                 <li
                   key={event.id}
-                  className="flex items-stretch gap-3 rounded-2xl border border-rule bg-paper-raised pr-3 overflow-hidden group"
+                  className="flex items-stretch gap-2 md:gap-3 rounded-xl md:rounded-2xl border border-rule bg-paper-raised pr-2 md:pr-3 overflow-hidden group"
                   style={{ borderLeft: `4px solid ${color}` }}
                 >
-                  <div className="flex flex-col items-center justify-center px-3 py-3 min-w-[64px] text-center">
-                    <span className="text-[10px] uppercase tracking-widest text-ink-soft">
+                  <div className="flex flex-col items-center justify-center px-2 py-2 md:px-3 md:py-3 min-w-[46px] md:min-w-[64px] text-center">
+                    <span className="text-[8px] md:text-[10px] uppercase tracking-widest text-ink-soft">
                       {evDate.toLocaleDateString(undefined, { weekday: "short" })}
                     </span>
-                    <span className="font-serif text-2xl font-semibold leading-none my-0.5">
+                    <span className="font-serif text-base md:text-2xl font-semibold leading-none my-0.5">
                       {evDate.getDate()}
                     </span>
-                    <span className="text-[10px] uppercase tracking-widest text-ink-soft">
+                    <span className="text-[8px] md:text-[10px] uppercase tracking-widest text-ink-soft">
                       {evDate.toLocaleDateString(undefined, { month: "short" })}
                     </span>
                   </div>
-                  <div className="flex-1 min-w-0 py-3 flex flex-col justify-center gap-1.5">
-                    <p className="font-semibold text-sm truncate">{event.summary || "(No title)"}</p>
-                    <div className="flex items-center gap-2 flex-wrap text-xs text-ink-soft">
-                      <span className="flex items-center gap-1.5">
+                  <div className="flex-1 min-w-0 py-1.5 md:py-3 flex flex-col justify-center gap-1 md:gap-1.5">
+                    <p className="font-semibold text-xs md:text-sm truncate">{event.summary || "(No title)"}</p>
+                    <div className="flex items-center gap-1.5 md:gap-2 flex-wrap text-[10px] md:text-xs text-ink-soft">
+                      <span className="flex items-center gap-1 md:gap-1.5">
                         {isToday && (
-                          <span className="relative flex w-2 h-2 shrink-0">
+                          <span className="relative flex w-1.5 h-1.5 md:w-2 md:h-2 shrink-0">
                             <span
                               className="absolute inset-0 rounded-full animate-ping"
                               style={{ backgroundColor: "#3b82f6" }}
                             />
                             <span
-                              className="relative w-2 h-2 rounded-full"
+                              className="relative w-1.5 h-1.5 md:w-2 md:h-2 rounded-full"
                               style={{ backgroundColor: "#3b82f6" }}
                             />
                           </span>
                         )}
                         <span
-                          className="rounded-full px-2 py-0.5 text-[10px] font-medium"
+                          className="rounded-full px-1.5 py-0.5 md:px-2 text-[9px] md:text-[10px] font-medium"
                           style={{ backgroundColor: `color-mix(in srgb, ${color} 15%, transparent)`, color }}
                         >
                           {label}
                         </span>
                       </span>
                       <span className="flex items-center gap-1">
-                        <IconClock className="w-3 h-3" />
+                        <IconClock className="w-2.5 h-2.5 md:w-3 md:h-3" />
                         {formatEventTime(event)}
                         {event.recurringEventId && " · Recurring"}
                       </span>
@@ -374,10 +374,10 @@ export default function CalendarPage() {
                   <button
                     onClick={() => deleteEventItem(event.id, event.calendarId)}
                     disabled={deletingId === event.id}
-                    className="self-center w-9 h-9 rounded-full flex items-center justify-center text-ink-soft/50 hover:text-red-600 hover:bg-paper transition-colors shrink-0"
+                    className="self-center w-6 h-6 md:w-9 md:h-9 rounded-full flex items-center justify-center text-ink-soft/50 hover:text-red-600 hover:bg-paper transition-colors shrink-0"
                     aria-label="Delete event"
                   >
-                    <IconTrash className="w-4.5 h-4.5" />
+                    <IconTrash className="w-3 h-3 md:w-4.5 md:h-4.5" />
                   </button>
                 </li>
               );

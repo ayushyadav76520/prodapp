@@ -19,11 +19,6 @@ function localDateKey(d: Date): string {
   return d.toDateString();
 }
 
-function isFuture(date: Date): boolean {
-  const now = new Date();
-  return date.getTime() > now.getTime();
-}
-
 /**
  * One level per calendar day with real activity, never counting future work.
  *
